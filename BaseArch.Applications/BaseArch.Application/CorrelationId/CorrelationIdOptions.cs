@@ -8,7 +8,7 @@
         /// <summary>
         /// The default header used for correlation id
         /// </summary>
-        public const string DefaultHeader = "X-Correlation-Id";
+        private const string DefaultHeader = "X-Correlation-Id";
 
         /// <summary>
         /// The name of the header from which the Correlation id is read from the request

@@ -46,7 +46,7 @@ public class YourSensitiveDataDestructuringPolicy : IDestructuringPolicy
 ```
 
 ***Note***
-> The destructing policy will only be executed with
+> - The destructing policy will only be executed with
 ```
 // It is ok for masking
 logger.LogInformation("Request from client is {@HttpRequest}", Request);
@@ -55,31 +55,25 @@ logger.LogInformation("Request from client is {@HttpRequest}", Request);
 logger.LogInformation("Request from client is {RequestMethod}", Request.Method);
 ```
 
+> - The destructing policy only masks for properties from destructing objects
+> - It is not available for the [Simple, Scalar Values](https://github.com/serilog/serilog/wiki/Structured-Data)
+> - It is not available for the Enrichers, such as: LogContext, Environment
+
 ### To register the default destructing policy
 
 ```
 builder.Host.UseSerilog((context, loggerConfiguration) =>
 {
     loggerConfiguration.ReadFrom.Configuration(context.Configuration);
-    loggerConfiguration.Destructure.With(new SensitiveDataDestructuringPolicy(context.Configuration));
+    loggerConfiguration.Destructure.With(new SensitiveDataDestructuringPolicy(opt =>
+    {
+        opt.MaskValue = "xxxx";
+        opt.Keywords = ["property"];
+    }));
 });
 ```
 
-You also need to configure the options for default sensitive destructing policy from appsettings files
-
-```
-"Logging": {
-    "SensitiveData": {
-      "Keywords": ["Property1", "Property2"],
-      "MaskValue": "**MASKED**"
-    }
-  }
-```
-
 ***Note***
-> - The destructing policy only masks for properties from destructing objects
-> - It is not available for the message
-> - It is not available for the Enrichers, such as: LogContext, Environment
 
 ### Reference
 > https://betterstack.com/community/guides/logging/sensitive-data/

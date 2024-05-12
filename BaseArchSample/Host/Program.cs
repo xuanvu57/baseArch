@@ -1,7 +1,7 @@
 using BaseArch.Application.CorrelationId;
 using BaseArch.Application.Extensions;
 using BaseArch.Infrastructure.DependencyInjection.Extensions;
-using BaseArch.Infrastructure.Serilog;
+using BaseArch.Infrastructure.Serilog.DestructingPolicies;
 using BaseArch.Infrastructure.Serilog.Extensions;
 using BaseArch.Infrastructure.StaticMultilingualProvider.Extensions;
 using BaseArch.Presentation.RestApi.Extensions;
@@ -31,7 +31,11 @@ namespace Host
                 builder.Host.UseSerilog((context, loggerConfiguration) =>
                 {
                     loggerConfiguration.ReadFrom.Configuration(context.Configuration);
-                    loggerConfiguration.Destructure.With(new SensitiveDataDestructuringPolicy(context.Configuration));
+                    loggerConfiguration.Destructure.With(new SensitiveDataDestructuringPolicy(opt =>
+                    {
+                        opt.MaskValue = "xxxx";
+                        opt.Keywords = ["Method"];
+                    }));
                 });
 
                 // Add services to the container.
