@@ -46,7 +46,11 @@ namespace BaseArch.Infrastructure.Serilog.DestructingPolicies
                 }
                 else
                 {
-                    logEventProperties.Add(new LogEventProperty(propertyInfo.Name, propertyValueFactory.CreatePropertyValue(propertyInfo.GetValue(value))));
+                    try
+                    {
+                        logEventProperties.Add(new LogEventProperty(propertyInfo.Name, propertyValueFactory.CreatePropertyValue(propertyInfo.GetValue(value))));
+                    }
+                    catch { continue; }
                 }
             }
 

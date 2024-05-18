@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\BaseArch.Presentations\BaseArch.Presentation.RestApi\BaseArch.Presentation.RestApi.csproj" />
     <ProjectReference Include="..\Application\Application.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

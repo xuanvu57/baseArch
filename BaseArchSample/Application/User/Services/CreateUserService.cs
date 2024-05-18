@@ -1,4 +1,5 @@
 ﻿using Application.User.Dtos.Requests;
+using Application.User.ExternalServices.Interfaces;
 using Application.User.Services.Interfaces;
 using Application.User.Validators.Interfaces;
 using BaseArch.Domain.Attributes;
@@ -10,7 +11,7 @@ using Domain.Repositories.Interfaces;
 namespace Application.User.Services
 {
     [DIService(DIServiceLifetime.Scoped)]
-    internal class CreateUserService(IUnitOfWork unitOfWork, ICreateUserValidator validator) : ICreateUserService
+    internal class CreateUserService(IUnitOfWork unitOfWork, ICreateUserValidator validator, IGreetingClient greetingClient) : ICreateUserService
     {
         private readonly IUserRepository userRepository = unitOfWork.GetRepository<IUserRepository>();
 
@@ -27,7 +28,12 @@ namespace Application.User.Services
 
             await userRepository.Create(user).ConfigureAwait(false);
             await unitOfWork.SaveChangesAndCommit().ConfigureAwait(false);
-            return user.Id;
+
+            if (await greetingClient.CheckUserExisted($"{user.FirstName} {user.LastName}"))
+            {
+                return user.Id;
+            }
+            return Guid.Empty;
         }
     }
 }

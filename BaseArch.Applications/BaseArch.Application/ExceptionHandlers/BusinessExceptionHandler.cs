@@ -5,16 +5,14 @@ using BaseArch.Domain.StandardMessages.Interfaces;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace BaseArch.Application.ExceptionHandlers
 {
     /// <summary>
     /// Default business excpetion handler
     /// </summary>
-    /// <param name="logger"><see cref="ILogger"/></param>
     /// <param name="standardMessageProvider"><see cref="IStandardMessageProvider"/></param>
-    public class BusinessExceptionHandler(ILogger<BusinessExceptionHandler> logger, IStandardMessageProvider standardMessageProvider) : IExceptionHandler
+    public class BusinessExceptionHandler(IStandardMessageProvider standardMessageProvider) : IExceptionHandler
     {
         /// <inheritdoc />
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)

@@ -1,6 +1,6 @@
-﻿namespace BaseArch.Presentation.RestApi.Models
+﻿namespace BaseArch.Domain.Models
 {
-    internal record RequestResponseLogModel
+    public record RequestResponseLogModel
     {
         public required RequestLogModel RequestLogModel { get; init; }
         public required ResponseLogModel ResponseLogModel { get; init; }

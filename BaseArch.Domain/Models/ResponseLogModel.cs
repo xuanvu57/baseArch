@@ -1,6 +1,6 @@
-﻿namespace BaseArch.Presentation.RestApi.Models
+﻿namespace BaseArch.Domain.Models
 {
-    internal record ResponseLogModel
+    public record ResponseLogModel
     {
         public DateTime TimeUtc { get; init; }
         public required string Status { get; init; }

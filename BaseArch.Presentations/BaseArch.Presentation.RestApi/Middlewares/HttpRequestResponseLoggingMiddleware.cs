@@ -1,4 +1,4 @@
-﻿using BaseArch.Presentation.RestApi.Models;
+﻿using BaseArch.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -19,7 +19,7 @@ namespace BaseArch.Presentation.RestApi.Middlewares
         /// <returns><see cref="Task"/></returns>
         public async Task Invoke(HttpContext httpContext, ILogger<HttpRequestResponseLoggingMiddleware> logger)
         {
-            if (httpContext.Request.Path.ToString().Contains("swagger"))
+            if (IgnoreForLogging(httpContext))
             {
                 await next(httpContext);
                 return;
@@ -56,6 +56,26 @@ namespace BaseArch.Presentation.RestApi.Middlewares
         }
 
         /// <summary>
+        /// Check if it should ignore logging for dummy logs and special cases
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <returns></returns>
+        private static bool IgnoreForLogging(HttpContext httpContext)
+        {
+            if (httpContext.Request.Path.ToString().Contains("swagger"))
+            {
+                return true;
+            }
+
+            if (httpContext.Request.ContentType == "application/grpc")
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Write log
         /// </summary>
         /// <param name="logger"><see cref="ILogger"/></param>
@@ -81,6 +101,7 @@ namespace BaseArch.Presentation.RestApi.Middlewares
             {
                 TimeUtc = DateTime.UtcNow,
                 ContentType = httpContext.Request.ContentType ?? "",
+                Scheme = httpContext.Request.Scheme,
                 Method = httpContext.Request.Method,
                 Path = httpContext.Request.Path,
                 Headers = FormatHeaders(httpContext.Request.Headers),

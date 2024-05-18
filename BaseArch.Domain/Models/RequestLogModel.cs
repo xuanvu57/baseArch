@@ -1,8 +1,9 @@
-﻿namespace BaseArch.Presentation.RestApi.Models
+﻿namespace BaseArch.Domain.Models
 {
-    internal record RequestLogModel
+    public record RequestLogModel
     {
         public DateTime TimeUtc { get; init; }
+        public required string Scheme { get; init; }
         public required string Method { get; init; }
         public required string Path { get; init; }
         public required string ContentType { get; init; }

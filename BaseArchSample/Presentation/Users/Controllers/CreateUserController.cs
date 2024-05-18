@@ -23,7 +23,7 @@ namespace Presentation.Users.Controllers
             ArgumentNullException.ThrowIfNull(request);
 
             var test = configuration.GetValue<string>("Configuration:FromEnvironment");
-            logger.LogInformation("It start to create user {firstname} {lastname} with {Test}", request.FirstName, request.LastName, test);
+            logger.LogInformation("[Controller] It start to create user {firstname} {lastname} with {Test}", request.FirstName, request.LastName, test);
 
             return await userService.CreateUser(request);
         }

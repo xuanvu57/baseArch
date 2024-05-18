@@ -1,6 +1,8 @@
 using BaseArch.Application.CorrelationId;
 using BaseArch.Application.Extensions;
 using BaseArch.Infrastructure.DependencyInjection.Extensions;
+using BaseArch.Infrastructure.gRPC.Extensions;
+using BaseArch.Infrastructure.gRPC.Interceptors;
 using BaseArch.Infrastructure.Serilog.DestructingPolicies;
 using BaseArch.Infrastructure.Serilog.Extensions;
 using BaseArch.Infrastructure.StaticMultilingualProvider.Extensions;
@@ -42,6 +44,10 @@ namespace Host
                 builder.Services.AddControllers();
 
                 // Add customized services
+                builder.Services.AddGrpcServices(option =>
+                {
+                    option.Interceptors.Add<GrpcRequestResponseLoggingInterceptor>();
+                });
                 builder.Services.AddServicesForRestApi();
                 builder.Services.AddRestApiVersioning(2);
                 builder.Services.AddSwagger();
@@ -67,6 +73,8 @@ namespace Host
                 }
                 app.UseHttpsRedirection();
                 app.UseAuthorization();
+
+                app.AutoMapGprcServices();
                 app.MapControllers();
 
                 Log.Information("Server is ready!");
