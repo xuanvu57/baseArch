@@ -77,6 +77,9 @@ builder.Host.UseSerilog((context, loggerConfiguration) =>
 
 ### Reference
 > https://betterstack.com/community/guides/logging/sensitive-data/
+>
 > https://dev.to/auvansangit/prevent-sensitive-data-exposure-in-log-with-serilog-1pk7
+>
 > https://github.com/dotnet/extensions/tree/main/src/Libraries/Microsoft.Extensions.Compliance.Redaction
+>
 > https://github.com/serilog-contrib/Serilog.Enrichers.Sensitive

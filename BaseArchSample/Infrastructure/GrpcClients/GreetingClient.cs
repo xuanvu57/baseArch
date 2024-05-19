@@ -17,7 +17,7 @@ namespace Infrastructure.GrpcClients
             var client = new Greeter.GreeterClient(channel);
             var reply = await client.SayHelloAsync(new HelloRequest { Name = fullName });
 
-            logger.LogInformation($"[Controller] Grpc server response with: {reply.Message}");
+            logger.LogInformation($"[GrpcClient] Grpc server response with: {reply.Message}");
             return await Task.FromResult(reply.Message);
         }
     }

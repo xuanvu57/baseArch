@@ -12,6 +12,21 @@ namespace BaseArch.Presentation.RestApi.Middlewares
     public class HttpRequestResponseLoggingMiddleware(RequestDelegate next)
     {
         /// <summary>
+        /// Message template format for logging
+        /// </summary>
+        private const string messageTemplateFormat = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
+
+        /// <summary>
+        /// The Request paths will be ignored for logging
+        /// </summary>
+        private static readonly IReadOnlyCollection<string> ignoredPaths = ["swagger"];
+
+        /// <summary>
+        /// The Request content types will be ignore for logging
+        /// </summary>
+        private static readonly IReadOnlyCollection<string> ignoredContentTypes = ["application/grpc"];
+
+        /// <summary>
         /// Handle the middleware
         /// </summary>
         /// <param name="httpContext"><see cref="HttpContext"/></param>
@@ -62,12 +77,12 @@ namespace BaseArch.Presentation.RestApi.Middlewares
         /// <returns></returns>
         private static bool IgnoreForLogging(HttpContext httpContext)
         {
-            if (httpContext.Request.Path.ToString().Contains("swagger"))
+            if (ignoredPaths.Any(p => httpContext.Request.Path.ToString().Contains(p)))
             {
                 return true;
             }
 
-            if (httpContext.Request.ContentType == "application/grpc")
+            if (ignoredContentTypes.Any(t => httpContext.Request.ContentType == t))
             {
                 return true;
             }
@@ -82,7 +97,7 @@ namespace BaseArch.Presentation.RestApi.Middlewares
         /// <param name="requestResponseLogModel"><see cref="RequestResponseLogModel"/></param>
         private static void WriteRequestResponseLog(ILogger<HttpRequestResponseLoggingMiddleware> logger, RequestResponseLogModel requestResponseLogModel)
         {
-            logger.LogInformation("HTTP {RequestMethod} {RequestPath} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}",
+            logger.LogInformation(messageTemplateFormat,
                 requestResponseLogModel.RequestLogModel.Method,
                 requestResponseLogModel.RequestLogModel.Path,
                 requestResponseLogModel.ResponseLogModel.Status,

@@ -7,8 +7,18 @@ using Microsoft.Extensions.Primitives;
 
 namespace BaseArch.Infrastructure.gRPC.Interceptors
 {
+    /// <summary>
+    /// Interceptor to log the request and response for gRPC request
+    /// </summary>
+    /// <param name="logger"></param>
     public class GrpcRequestResponseLoggingInterceptor(ILogger<GrpcRequestResponseLoggingInterceptor> logger) : Interceptor
     {
+        /// <summary>
+        /// Message template format for logging
+        /// </summary>
+        private const string messageTemplateFormat = "Grpc {GrpcMethod} {GrpcServiceMethod} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
+
+        /// <inheritdoc />
         public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request, ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
         {
             var responseBodyText = request.ToString() ?? "";
@@ -41,7 +51,7 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
         /// <param name="requestResponseLogModel"><see cref="RequestResponseLogModel"/></param>
         private static void WriteRequestResponseLog(ILogger<GrpcRequestResponseLoggingInterceptor> logger, RequestResponseLogModel requestResponseLogModel, ServerCallContext context)
         {
-            logger.LogInformation("Grpc {GrpcMethod} {GrpcServiceMethod} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}",
+            logger.LogInformation(messageTemplateFormat,
                 MethodType.Unary,
                 context.Method,
                 requestResponseLogModel.ResponseLogModel.Status,
