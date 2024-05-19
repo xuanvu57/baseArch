@@ -2,6 +2,6 @@
 {
     public interface IGreetingClient
     {
-        Task<bool> CheckUserExisted(string fullname);
+        Task<string> TryToSayHello(string fullName);
     }
 }

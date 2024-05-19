@@ -1,7 +1,6 @@
 ﻿using Application.User.ExternalServices.Interfaces;
 using BaseArch.Domain.Attributes;
 using BaseArch.Domain.Enums;
-using BaseArch.Infrastructure.gRPC;
 using BaseArchSample.Shares.gRPC;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -9,17 +8,11 @@ using Microsoft.Extensions.Logging;
 namespace Infrastructure.GrpcClients
 {
     [DIService(DIServiceLifetime.Scoped)]
-    public class GreetingClient(ILogger<GreetingClient> logger, IConfiguration configuration) : BaseGrpcClient(configuration), IGreetingClient
+    public class GreetingClient(ILogger<GreetingClient> logger, IConfiguration configuration) : SampleBaseGrpcClient(configuration), IGreetingClient
     {
-        public async Task<bool> CheckUserExisted(string fullname)
+        public async Task<string> TryToSayHello(string fullName)
         {
-            var response = await TryToSayHello(fullname);
-            return !string.IsNullOrEmpty(response);
-        }
-
-        private async Task<string> TryToSayHello(string fullName)
-        {
-            using var channel = CreateChannelFromConfigureKey("Services:BaseArchSample:Url");
+            using var channel = CreateChannelFromConfigureKey();
 
             var client = new Greeter.GreeterClient(channel);
             var reply = await client.SayHelloAsync(new HelloRequest { Name = fullName });

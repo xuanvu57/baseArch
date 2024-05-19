@@ -29,11 +29,12 @@ namespace Application.User.Services
             await userRepository.Create(user).ConfigureAwait(false);
             await unitOfWork.SaveChangesAndCommit().ConfigureAwait(false);
 
-            if (await greetingClient.CheckUserExisted($"{user.FirstName} {user.LastName}"))
+            var responseFromGrpcService = await greetingClient.TryToSayHello($"{user.FirstName} {user.LastName}");
+            if (string.IsNullOrEmpty(responseFromGrpcService))
             {
-                return user.Id;
+                return Guid.Empty;
             }
-            return Guid.Empty;
+            return user.Id;
         }
     }
 }

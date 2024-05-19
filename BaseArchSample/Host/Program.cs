@@ -74,8 +74,8 @@ namespace Host
                 app.UseHttpsRedirection();
                 app.UseAuthorization();
 
-                app.AutoMapGprcServices();
                 app.MapControllers();
+                app.AutoMapGprcServices();
 
                 Log.Information("Server is ready!");
                 app.Run();

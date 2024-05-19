@@ -5,14 +5,14 @@ namespace BaseArch.Infrastructure.gRPC
 {
     public abstract class BaseGrpcClient(IConfiguration configuration)
     {
-        public GrpcChannel CreateChannelFromConfigureKey(string appConfigKey)
+        protected GrpcChannel CreateChannelFromConfigureKey(string appConfigKey)
         {
             var uri = configuration.GetValue<string>(appConfigKey) ?? "";
 
             return CreateChannelFromUri(uri);
         }
 
-        public GrpcChannel CreateChannelFromUri(string uri)
+        protected GrpcChannel CreateChannelFromUri(string uri)
         {
             var uriAddress = new Uri(uri);
             var httpHandler = new HttpClientHandler();
