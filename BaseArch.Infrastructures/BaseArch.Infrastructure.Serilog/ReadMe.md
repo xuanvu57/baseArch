@@ -13,13 +13,16 @@ logger.LogInformation("Request from client is {RequestPath}", request.Path);
 ```
 
 ***Note:***
-> **Do not** log with the string interpolation because it will not create the property is unable to filter your logs
+
+> DO NOT log with the string interpolation because it will not create the property is unable to filter your logs
+
 ```
 // Do not
 logger.LogInformation($"Request from client is {Request.Path}");
 ```
 
 ## Log with object, it will create log's fields as the Class or Record's properties
+
 ```
 record RequestLog(string Method, string Path);
 
@@ -36,7 +39,7 @@ logger.LogInformation("Request from client is {@HttpRequest}", Request);
 
 # Sensitive data
 
-When you add the ***HttpRequestResponseLoggingMiddleware*** to log data from HttpRequest and HttpResponse, it may contain the sensitive data and you need to mask, remove or tokenize them within your logs
+When you add the `HttpRequestResponseLoggingMiddleware` to log data from `HttpRequest` and `HttpResponse`, it may contain the sensitive data and you need to mask, remove or tokenize them within your logs
 
 It provide a default destructing policy to masked your sensitive data during destructing objects
 
@@ -46,7 +49,8 @@ public class YourSensitiveDataDestructuringPolicy : IDestructuringPolicy
 ```
 
 ***Note***
-> - The destructing policy will only be executed with
+
+- The destructing policy will only be executed with
 ```
 // It is ok for masking
 logger.LogInformation("Request from client is {@HttpRequest}", Request);
@@ -55,9 +59,9 @@ logger.LogInformation("Request from client is {@HttpRequest}", Request);
 logger.LogInformation("Request from client is {RequestMethod}", Request.Method);
 ```
 
-> - The destructing policy only masks for properties from destructing objects
-> - It is not available for the [Simple, Scalar Values](https://github.com/serilog/serilog/wiki/Structured-Data)
-> - It is not available for the Enrichers, such as: LogContext, Environment
+- The destructing policy only masks for properties from destructing objects
+- It is not available for the [Simple, Scalar Values](https://github.com/serilog/serilog/wiki/Structured-Data)
+- It is not available for the Enrichers, such as: LogContext, Environment
 
 ### To register the default destructing policy
 

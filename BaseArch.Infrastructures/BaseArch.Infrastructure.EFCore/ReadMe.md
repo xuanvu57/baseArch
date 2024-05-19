@@ -1,16 +1,18 @@
 ﻿
 # BaseRepository
 
-This is the generic repository, which is implemented from IBaseRepository, to implement the common methods for any repository
+This is the generic repository, which is implemented from `IBaseRepository`, to implement the common methods for any repository
 
-> The common methods was defined in ***IBaseRepository***
+> The common methods was defined in `IBaseRepository`
 
 It require 3 types
-- ***TEntity***: this is type of the target entity
-- ***TKey***: this is the type of key property in the target entity
-- ***TUserKey***: this is the type of user id, it's used for implement the feature of permission
+
+- `TEntity`: this is type of the target entity
+- `TKey`: this is the type of key property in the target entity
+- `TUserKey`: this is the type of user id, it's used for implement the feature of permission
 
 Your repository can inherit from this generic repository as the following example
+
 ```
 public record UserEntity(string FullName): BaseEntity<Guid, Guid>;
 
@@ -25,12 +27,14 @@ public sealed class UserRepository(SampleDBContext dbContext) : BaseRepository<U
 
 # UnitOfWork
 
-It provide a abstract class of unit of work, which is implemented from IUnitOfWork, to manage the repositories
+It provide a abstract class of unit of work, which is implemented from `IUnitOfWork`, to manage the repositories
+
 It handles the creating repository with repository pool to ensure there is no duplicated repositories
 
-> The common methods was defined in ***IUnitOfWork***
+> The common methods was defined in `IUnitOfWork`
 
 You can create and access to your repository as the following examples
+
 ```
 class CreateUserService(IUnitOfWork unitOfWork) : ICreateUserService
 {

@@ -5,7 +5,7 @@
 
 It provides a default correlation id provider to generate correlation id as Guid
 
-You can customize your correlation id provider by implement interface ___ICorrelationIdProvider___
+You can customize your correlation id provider by implement interface `ICorrelationIdProvider`
 
 ```
 public class YourCorrelationIdProvider : ICorrelationIdProvider
@@ -19,7 +19,7 @@ You use the extension method to add the necessary services
 builder.Services.AddCorrelationIdServices<GuidCorrelationIdProvider>();
 ```
 
-You are able to customize the header name of correlation id for Request and Response with ___CorrelationIdOptions___ 
+You are able to customize the header name of correlation id for Request and Response with `CorrelationIdOptions`
 ```
 builder.Services.AddCorrelationIdServices<GuidCorrelationIdProvider>(opt =>
 {
@@ -30,7 +30,7 @@ builder.Services.AddCorrelationIdServices<GuidCorrelationIdProvider>(opt =>
 
 3. CorrelationIdMiddleware
 
-It requires you to add the ***CorrelationIdMiddleware*** to the pipeline
+It requires you to add the `CorrelationIdMiddleware` to the pipeline
 
 - This middleware will firstly check the Request's header to get the existing correlation id
 - Then it will generate new correlation id by the registered provider and append to Request's header if the correlation id was not found
@@ -42,20 +42,23 @@ app.UseCorrelationIdMiddleware();
 ```
 
 ***Note:***
+
 >To make sure that the correlation id always exists during a request's lifetime, this middlware should be added at the top of the pipeline
 
 4. Attach correlation id to Serilog LogContext
 
-You need to add the ***CustomizedSerilogLogContextMiddleware*** to the pipeline
+You need to add the `CustomizedSerilogLogContextMiddleware` to the pipeline
 
 - This middleware will push the ***correlation id*** to Serilog LogContext at with default property: ___CorrelationId___
+
 ```
 app.UseCorrelationIdMiddleware();
 app.UseCustomizedSerilogLogContextMiddleware();
 ```
 
 ***Note***
->To make sure that the correlation id is always attached to the Serilog LogContext before writing log, this middleware should be added at the top of the pipeline right after the ***CorrelationIdMiddleware***
+
+>To make sure that the correlation id is always attached to the Serilog LogContext before writing log, this middleware should be added at the top of the pipeline right after the `CorrelationIdMiddleware`
 
 ## IExceptionHandler
 
@@ -63,7 +66,7 @@ app.UseCustomizedSerilogLogContextMiddleware();
 
 It provides a default business exception handler to handle the excpetion from your business logic code
 
-You can customize one or many business exception to handle your business logic by implement the interface ___IExceptionHandler___
+You can customize one or many business exception to handle your business logic by implement the interface `IExceptionHandler`
 
 ```
 public class YourBusinessExceptionHandler: IExceptionHandler
@@ -72,6 +75,7 @@ public class YourBusinessExceptionHandler: IExceptionHandler
 2. Register the business exception handler
 
 You use the extension method to add the necessary service
+
 Currently, it supports maximum of 3 business exception handlers
 
 ```
@@ -82,8 +86,7 @@ services.AddBusinessExceptionHandler<BusinessExceptionHandler>();
 services.AddBusinessExceptionHandler<BusinessExceptionHandler, YourBusinessExceptionHandler>();
 ```
 
-
-These extension methods also add the ProblemDetails response to standardlize your response when problem occurs
+These extension methods also add the `ProblemDetails` response to standardlize your response when problem occurs
 
 ```
 services.AddProblemDetails();
@@ -91,7 +94,7 @@ services.AddProblemDetails();
 
 ***3. Prerequisites***
 
-It requires to add the ExceptionHandler middle to the pipeline
+It requires to use Exception handler middleware to the pipeline
 
 ```
 app.UseExceptionHandler();

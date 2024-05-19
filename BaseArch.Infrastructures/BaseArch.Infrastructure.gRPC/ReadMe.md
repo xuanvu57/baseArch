@@ -20,6 +20,7 @@ app.AutoMapGprcServices();
 ```
 
 ***Note***
+
 As default, the `HttpRequestResponseLoggingMiddleware` will ignore the request with Content-Type is ***application/grpc***
 
 If you would like to log the request and response from grpc services, you can add the provided interceptor `GrpcRequestResponseLoggingInterceptor`
@@ -60,10 +61,12 @@ public class GreetingClient(IConfiguration configuration) : BaseGrpcClient(confi
 
 ### Tip
 It is the best practice if you create your base client and set the configurations only once
+
 Then your client classes are able to reuse these configurations without duplication and changes to mistake
 
 ## 3. AppSettings.json
 You can define your gRPC server urls from appsetings[.Environment].json
+
 Then you can provide key of the url to create the corresponding channel
 
 ### References
