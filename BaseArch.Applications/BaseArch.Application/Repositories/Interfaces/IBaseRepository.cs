@@ -1,7 +1,7 @@
-﻿using BaseArch.Domain.BaseArchModels.Requests;
+﻿using BaseArch.Application.Models.Requests;
 using System.Linq.Expressions;
 
-namespace BaseArch.Domain.Repositories.Interfaces
+namespace BaseArch.Application.Repositories.Interfaces
 {
     /// <summary>
     /// The generic repository

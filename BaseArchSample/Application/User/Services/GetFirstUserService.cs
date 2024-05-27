@@ -1,9 +1,9 @@
-﻿using Application.User.Converters.Interfaces;
+﻿using Application.Repositories.Interfaces;
+using Application.User.Converters.Interfaces;
 using Application.User.Dtos;
 using Application.User.Services.Interfaces;
+using BaseArch.Application.Repositories.Interfaces;
 using BaseArch.Domain.DependencyInjection;
-using BaseArch.Domain.Repositories.Interfaces;
-using Domain.Repositories.Interfaces;
 
 namespace Application.User.Services
 {

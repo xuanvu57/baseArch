@@ -1,4 +1,4 @@
-﻿namespace BaseArch.Domain.BaseArchModels.Requests
+﻿namespace BaseArch.Application.Models.Requests
 {
     /// <summary>
     /// Sort model for sorting

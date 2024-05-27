@@ -1,7 +1,7 @@
-﻿using BaseArch.Domain.Repositories.Interfaces;
+﻿using BaseArch.Application.Repositories.Interfaces;
 using Domain.Entities;
 
-namespace Domain.Repositories.Interfaces
+namespace Application.Repositories.Interfaces
 {
     public interface IUserRepository : IBaseRepository<UserEntity, Guid>
     {

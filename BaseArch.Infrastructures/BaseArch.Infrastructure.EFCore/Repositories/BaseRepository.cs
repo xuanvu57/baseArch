@@ -1,8 +1,8 @@
-﻿using BaseArch.Domain.BaseArchModels.Requests;
+﻿using BaseArch.Application.Models;
+using BaseArch.Application.Models.Requests;
+using BaseArch.Application.Repositories.Interfaces;
 using BaseArch.Domain.DependencyInjection;
 using BaseArch.Domain.Entities;
-using BaseArch.Domain.Repositories.Interfaces;
-using BaseArch.Domain.RestApi;
 using BaseArch.Infrastructure.EFCore.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -45,14 +45,14 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
 
             if (queryModel is not null)
             {
-                if (queryModel.FilterQueryModel?.FirstOrDefault() is not null)
+                if (queryModel.Filters?.FirstOrDefault() is not null)
                 {
-                    queryable = queryable.GenerateANDFilterExpression(queryModel.FilterQueryModel);
+                    queryable = queryable.GenerateANDFilterExpression(queryModel.Filters);
                 }
 
-                if (!string.IsNullOrEmpty(queryModel.SearchQueryModel?.SearchText))
+                if (!string.IsNullOrEmpty(queryModel.Search?.SearchText))
                 {
-                    queryable = queryable.GenerateORFilterExpression(queryModel.SearchQueryModel.FieldNames, queryModel.SearchQueryModel.SearchText);
+                    queryable = queryable.GenerateORFilterExpression(queryModel.Search.FieldNames, queryModel.Search.SearchText);
                 }
             }
 
@@ -98,30 +98,30 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
 
             if (queryModel is not null)
             {
-                if (queryModel.FilterQueryModel?.FirstOrDefault() is not null)
+                if (queryModel.Filters?.FirstOrDefault() is not null)
                 {
-                    queryable = queryable.GenerateANDFilterExpression(queryModel.FilterQueryModel);
+                    queryable = queryable.GenerateANDFilterExpression(queryModel.Filters);
                 }
 
-                if (!string.IsNullOrEmpty(queryModel.SearchQueryModel?.SearchText))
+                if (!string.IsNullOrEmpty(queryModel.Search?.SearchText))
                 {
-                    queryable = queryable.GenerateORFilterExpression(queryModel.SearchQueryModel.FieldNames, queryModel.SearchQueryModel.SearchText);
+                    queryable = queryable.GenerateORFilterExpression(queryModel.Search.FieldNames, queryModel.Search.SearchText);
                 }
 
-                if (queryModel.SortQueryModel is not null && !string.IsNullOrWhiteSpace(queryModel.SortQueryModel.SortBy))
+                if (queryModel.Sort is not null && !string.IsNullOrWhiteSpace(queryModel.Sort.SortBy))
                 {
-                    queryable = queryModel.SortQueryModel.SortOrder switch
+                    queryable = queryModel.Sort.SortOrder switch
                     {
-                        SortOrderConst.Desc => queryable.CustomizedOrderByDescending(queryModel.SortQueryModel.SortBy),
-                        _ => queryable.CustomizedOrderBy(queryModel.SortQueryModel.SortBy)
+                        SortOrderConst.Desc => queryable.CustomizedOrderByDescending(queryModel.Sort.SortBy),
+                        _ => queryable.CustomizedOrderBy(queryModel.Sort.SortBy)
                     };
                 }
 
-                if (queryModel.PagingQueryModel is not null)
+                if (queryModel.Pagination is not null)
                 {
                     queryable = queryable
-                        .Skip((queryModel.PagingQueryModel.PageNumber <= 0 ? 1 : queryModel.PagingQueryModel.PageNumber - 1) * queryModel.PagingQueryModel.PageSize)
-                        .Take(queryModel.PagingQueryModel.PageSize);
+                        .Skip((queryModel.Pagination.PageNumber <= 0 ? 1 : queryModel.Pagination.PageNumber - 1) * queryModel.Pagination.PageSize)
+                        .Take(queryModel.Pagination.PageSize);
                 }
             }
 

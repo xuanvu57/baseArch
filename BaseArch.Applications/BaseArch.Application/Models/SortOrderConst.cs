@@ -1,4 +1,4 @@
-﻿namespace BaseArch.Domain.RestApi
+﻿namespace BaseArch.Application.Models
 {
     /// <summary>
     /// Order of sorting

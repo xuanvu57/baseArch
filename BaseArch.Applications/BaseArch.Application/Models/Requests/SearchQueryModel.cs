@@ -1,4 +1,4 @@
-﻿namespace BaseArch.Domain.BaseArchModels.Requests
+﻿namespace BaseArch.Application.Models.Requests
 {
     /// <summary>
     /// Search model for filtering from multi fields

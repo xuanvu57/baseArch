@@ -1,11 +1,11 @@
-﻿using Application.User.Dtos.Requests;
+﻿using Application.Repositories.Interfaces;
+using Application.User.Dtos.Requests;
 using Application.User.Validators.Interfaces;
+using BaseArch.Application.Repositories.Interfaces;
 using BaseArch.Domain.DependencyInjection;
 using BaseArch.Domain.ErrorHandling;
-using BaseArch.Domain.Repositories.Interfaces;
 using Domain.Constants;
 using Domain.MultilingualProviders.Interfaces;
-using Domain.Repositories.Interfaces;
 using FluentValidation;
 
 namespace Application.User.Validators

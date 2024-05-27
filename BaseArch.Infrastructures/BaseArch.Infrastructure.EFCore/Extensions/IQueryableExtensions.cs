@@ -1,7 +1,6 @@
-﻿using BaseArch.Domain.BaseArchModels.Requests;
+﻿using BaseArch.Application.Models.Requests;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace BaseArch.Infrastructure.EFCore.Extensions
 {
@@ -69,10 +68,10 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
         public static IQueryable<TEntity> GenerateORFilterExpression<TEntity>(this IQueryable<TEntity> source, IEnumerable<string> properties, object value)
         {
             Expression finalExpression = Expression.Empty();
-            ParameterExpression parameterExpression = Expression.Parameter(typeof(TEntity), "e");
-            ConstantExpression valueExpression = Expression.Constant($"%{value}%");
+            var parameterExpression = Expression.Parameter(typeof(TEntity), "e");
+            var valueExpression = Expression.Constant($"%{value}%");
 
-            foreach (string propertyName in properties)
+            foreach (var propertyName in properties)
             {
                 Expression nameProperty = Expression.Property(parameterExpression, propertyName);
 
@@ -82,7 +81,7 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
                 finalExpression = Expression.OrElse(finalExpression, e1);
             }
 
-            Expression<Func<TEntity, bool>> expression = Expression.Lambda<Func<TEntity, bool>>(finalExpression, parameterExpression);
+            var expression = Expression.Lambda<Func<TEntity, bool>>(finalExpression, parameterExpression);
 
             return source.Where(expression);
         }
@@ -97,12 +96,12 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
         public static IQueryable<TEntity> GenerateANDFilterExpression<TEntity>(this IQueryable<TEntity> source, IEnumerable<FilterQueryModel> filters)
         {
             Expression finalExpression = Expression.Empty();
-            ParameterExpression parameterExpression = Expression.Parameter(typeof(TEntity), "e");
+            var parameterExpression = Expression.Parameter(typeof(TEntity), "e");
 
-            foreach (FilterQueryModel filter in filters)
+            foreach (var filter in filters)
             {
                 Expression nameProperty = Expression.Property(parameterExpression, filter.FieldName);
-                ConstantExpression valueExpression = Expression.Constant($"%{filter.SearchText}%");
+                var valueExpression = Expression.Constant($"%{filter.SearchText}%");
 
                 Expression e1 = Expression.Call(typeof(DbFunctionsExtensions), nameof(DbFunctionsExtensions.Like), null,
                     Expression.Constant(EF.Functions), nameProperty, valueExpression);
@@ -110,7 +109,7 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
                 finalExpression = Expression.AndAlso(finalExpression, e1);
             }
 
-            Expression<Func<TEntity, bool>> expression = Expression.Lambda<Func<TEntity, bool>>(finalExpression, parameterExpression);
+            var expression = Expression.Lambda<Func<TEntity, bool>>(finalExpression, parameterExpression);
 
             return source.Where(expression);
         }
@@ -125,23 +124,23 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
         /// <returns><see cref="IOrderedQueryable"/></returns>
         private static IOrderedQueryable<TEntity> ApplyOrder<TEntity>(IQueryable<TEntity> source, string property, string methodName)
         {
-            string[] props = property.Split('.');
-            Type type = typeof(TEntity);
-            ParameterExpression arg = Expression.Parameter(type, "x");
+            var props = property.Split('.');
+            var type = typeof(TEntity);
+            var arg = Expression.Parameter(type, "x");
             Expression expr = arg;
-            foreach (string prop in props)
+            foreach (var prop in props)
             {
-                PropertyInfo? pi = type.GetProperty(prop);
+                var pi = type.GetProperty(prop);
                 if (pi != null)
                 {
                     expr = Expression.Property(expr, pi);
                     type = pi.PropertyType;
                 }
             }
-            Type delegateType = typeof(Func<,>).MakeGenericType(typeof(TEntity), type);
-            LambdaExpression lambda = Expression.Lambda(delegateType, expr, arg);
+            var delegateType = typeof(Func<,>).MakeGenericType(typeof(TEntity), type);
+            var lambda = Expression.Lambda(delegateType, expr, arg);
 
-            object? result = typeof(Queryable).GetMethods().Single(
+            var result = typeof(Queryable).GetMethods().Single(
                 method => method.Name == methodName
                 && method.IsGenericMethodDefinition
                 && method.GetGenericArguments().Length == 2

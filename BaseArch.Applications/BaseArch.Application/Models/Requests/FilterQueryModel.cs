@@ -1,4 +1,4 @@
-﻿namespace BaseArch.Domain.BaseArchModels.Requests
+﻿namespace BaseArch.Application.Models.Requests
 {
     /// <summary>
     /// Filter model for filtering from specific field

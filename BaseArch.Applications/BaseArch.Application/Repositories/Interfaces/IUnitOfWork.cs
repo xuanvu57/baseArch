@@ -1,6 +1,6 @@
 ﻿using BaseArch.Domain.Entities;
 
-namespace BaseArch.Domain.Repositories.Interfaces
+namespace BaseArch.Application.Repositories.Interfaces
 {
     /// <summary>
     /// Unit of work

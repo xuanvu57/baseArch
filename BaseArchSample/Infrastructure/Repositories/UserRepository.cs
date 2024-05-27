@@ -1,7 +1,7 @@
-﻿using BaseArch.Domain.DependencyInjection;
+﻿using Application.Repositories.Interfaces;
+using BaseArch.Domain.DependencyInjection;
 using BaseArch.Infrastructure.EFCore.Repositories;
 using Domain.Entities;
-using Domain.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
