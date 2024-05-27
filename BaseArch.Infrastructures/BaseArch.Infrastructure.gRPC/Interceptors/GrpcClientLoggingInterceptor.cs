@@ -1,5 +1,5 @@
-﻿using BaseArch.Domain.Loggings;
-using BaseArch.Domain.Loggings.Models;
+﻿using BaseArch.Application.Loggings;
+using BaseArch.Application.Loggings.Models;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Microsoft.AspNetCore.Http;

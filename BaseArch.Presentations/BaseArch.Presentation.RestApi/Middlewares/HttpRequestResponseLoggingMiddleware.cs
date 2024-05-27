@@ -1,5 +1,5 @@
-﻿using BaseArch.Domain.Loggings;
-using BaseArch.Domain.Loggings.Models;
+﻿using BaseArch.Application.Loggings;
+using BaseArch.Application.Loggings.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;

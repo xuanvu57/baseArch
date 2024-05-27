@@ -1,7 +1,7 @@
 ﻿using BaseArch.Application.ExceptionHandlers;
+using BaseArch.Application.Extensions;
 using BaseArch.Application.FluentValidation.Extensions;
 using BaseArch.Domain.DependencyInjection;
-using BaseArch.Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application

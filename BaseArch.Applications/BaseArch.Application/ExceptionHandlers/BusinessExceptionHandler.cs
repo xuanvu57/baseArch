@@ -1,6 +1,6 @@
-﻿using BaseArch.Domain.ErrorHandling;
-using BaseArch.Domain.StandardMessages;
-using BaseArch.Domain.StandardMessages.Interfaces;
+﻿using BaseArch.Domain.BaseArchMessages;
+using BaseArch.Domain.BaseArchMessages.Interfaces;
+using BaseArch.Domain.ErrorHandling;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,8 +10,8 @@ namespace BaseArch.Application.ExceptionHandlers
     /// <summary>
     /// Default business excpetion handler
     /// </summary>
-    /// <param name="standardMessageProvider"><see cref="IStandardMessageProvider"/></param>
-    public class BusinessExceptionHandler(IStandardMessageProvider standardMessageProvider) : IExceptionHandler
+    /// <param name="standardMessageProvider"><see cref="IBaseArchMessageProvider"/></param>
+    public class BusinessExceptionHandler(IBaseArchMessageProvider standardMessageProvider) : IExceptionHandler
     {
         /// <inheritdoc />
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
@@ -45,7 +45,7 @@ namespace BaseArch.Application.ExceptionHandlers
             var problemDetails = new ValidationProblemDetails
             {
                 Type = ProblemDetailsTypeConst.Type400BadRequest,
-                Title = await standardMessageProvider.GetString(StandardMessagesConst.BAMSG0002, argumentNullException.ParamName ?? ""),
+                Title = await standardMessageProvider.GetString(BaseArchMessagesConst.BAMSG0002, argumentNullException.ParamName ?? ""),
                 Status = StatusCodes.Status400BadRequest,
                 Instance = httpContext.Request.Path
             };
@@ -68,7 +68,7 @@ namespace BaseArch.Application.ExceptionHandlers
             var problemDetails = new ValidationProblemDetails
             {
                 Type = ProblemDetailsTypeConst.Type400BadRequest,
-                Title = await standardMessageProvider.GetString(StandardMessagesConst.BAMSG0001),
+                Title = await standardMessageProvider.GetString(BaseArchMessagesConst.BAMSG0001),
                 Status = StatusCodes.Status400BadRequest,
                 Errors = validationException.Errors,
                 Instance = httpContext.Request.Path

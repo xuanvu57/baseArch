@@ -1,4 +1,4 @@
-﻿namespace BaseArch.Domain.Loggings
+﻿namespace BaseArch.Application.Loggings
 {
     /// <summary>
     /// Standard message template for logging
