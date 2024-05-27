@@ -1,4 +1,4 @@
-﻿using BaseArch.Domain.Interfaces;
+﻿using BaseArch.Domain.Multilingual.Interfaces;
 using Microsoft.Extensions.Localization;
 
 namespace BaseArch.Infrastructure.StaticMultilingualProvider

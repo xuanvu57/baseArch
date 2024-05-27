@@ -1,4 +1,4 @@
-﻿using BaseArch.Domain.Interfaces;
+﻿using BaseArch.Domain.Multilingual.Interfaces;
 
 namespace BaseArch.Domain.BaseArchMessages.Interfaces
 {

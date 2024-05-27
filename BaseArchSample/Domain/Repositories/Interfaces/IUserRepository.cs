@@ -1,4 +1,4 @@
-﻿using BaseArch.Domain.Interfaces;
+﻿using BaseArch.Domain.Repositories.Interfaces;
 using Domain.Entities;
 
 namespace Domain.Repositories.Interfaces

@@ -2,7 +2,7 @@
 using Application.User.Validators.Interfaces;
 using BaseArch.Domain.DependencyInjection;
 using BaseArch.Domain.ErrorHandling;
-using BaseArch.Domain.Interfaces;
+using BaseArch.Domain.Repositories.Interfaces;
 using Domain.Constants;
 using Domain.MultilingualProviders.Interfaces;
 using Domain.Repositories.Interfaces;

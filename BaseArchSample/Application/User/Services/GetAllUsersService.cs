@@ -2,7 +2,7 @@
 using Application.User.Dtos;
 using Application.User.Services.Interfaces;
 using BaseArch.Domain.DependencyInjection;
-using BaseArch.Domain.Interfaces;
+using BaseArch.Domain.Repositories.Interfaces;
 using Domain.Entities;
 
 namespace Application.User.Services

@@ -1,5 +1,5 @@
 ﻿using BaseArch.Domain.Entities;
-using BaseArch.Domain.Interfaces;
+using BaseArch.Domain.Repositories.Interfaces;
 using BaseArch.Infrastructure.EFCore.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

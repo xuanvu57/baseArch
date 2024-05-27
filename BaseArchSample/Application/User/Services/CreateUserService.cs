@@ -3,7 +3,7 @@ using Application.User.ExternalServices.Interfaces;
 using Application.User.Services.Interfaces;
 using Application.User.Validators.Interfaces;
 using BaseArch.Domain.DependencyInjection;
-using BaseArch.Domain.Interfaces;
+using BaseArch.Domain.Repositories.Interfaces;
 using Domain.Entities;
 using Domain.Repositories.Interfaces;
 

@@ -1,4 +1,4 @@
-﻿namespace BaseArch.Domain.Interfaces
+﻿namespace BaseArch.Domain.Multilingual.Interfaces
 {
     /// <summary>
     /// Multilingual provider interface

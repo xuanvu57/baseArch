@@ -1,6 +1,7 @@
-﻿using BaseArch.Domain.DependencyInjection;
+﻿using BaseArch.Domain.BaseArchModels.Requests;
+using BaseArch.Domain.DependencyInjection;
 using BaseArch.Domain.Entities;
-using BaseArch.Domain.Interfaces;
+using BaseArch.Domain.Repositories.Interfaces;
 using BaseArch.Domain.RestApi;
 using BaseArch.Infrastructure.EFCore.Extensions;
 using Microsoft.EntityFrameworkCore;

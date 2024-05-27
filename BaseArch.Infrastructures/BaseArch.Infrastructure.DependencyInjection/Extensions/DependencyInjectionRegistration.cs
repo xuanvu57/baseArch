@@ -1,4 +1,5 @@
 ﻿using BaseArch.Domain.DependencyInjection;
+using BaseArch.Domain.DependencyInjection.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Reflection;

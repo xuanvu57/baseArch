@@ -1,5 +1,5 @@
 ﻿using BaseArch.Domain.Entities;
-using BaseArch.Domain.Interfaces;
+using BaseArch.Domain.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BaseArch.Infrastructure.EFCore.UnitOfWork
