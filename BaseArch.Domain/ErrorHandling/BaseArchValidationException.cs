@@ -1,4 +1,4 @@
-﻿namespace BaseArch.Domain.Exceptions
+﻿namespace BaseArch.Domain.ErrorHandling
 {
     /// <summary>
     /// Base Arch validation exception

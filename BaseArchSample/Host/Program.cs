@@ -1,5 +1,6 @@
 using BaseArch.Application.CorrelationId;
 using BaseArch.Application.Extensions;
+using BaseArch.Infrastructure.DefaultHttpClient.Extensions;
 using BaseArch.Infrastructure.DependencyInjection.Extensions;
 using BaseArch.Infrastructure.gRPC.Extensions;
 using BaseArch.Infrastructure.gRPC.Interceptors;
@@ -36,7 +37,7 @@ namespace Host
                     loggerConfiguration.Destructure.With(new SensitiveDataDestructuringPolicy(opt =>
                     {
                         opt.MaskValue = "xxxx";
-                        opt.Keywords = ["Method"];
+                        opt.Keywords = ["Scheme"];
                     }));
                 });
 
@@ -46,8 +47,9 @@ namespace Host
                 // Add customized services
                 builder.Services.AddGrpcServices(option =>
                 {
-                    option.Interceptors.Add<GrpcRequestResponseLoggingInterceptor>();
+                    option.Interceptors.Add<GrpcServiceLoggingInterceptor>();
                 });
+                builder.Services.AddDefaultHttpClient();
                 builder.Services.AddServicesForRestApi();
                 builder.Services.AddRestApiVersioning(2);
                 builder.Services.AddSwagger();

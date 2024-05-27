@@ -1,5 +1,4 @@
-﻿using BaseArch.Domain.Constants;
-using BaseArch.Domain.Exceptions;
+﻿using BaseArch.Domain.ErrorHandling;
 using BaseArch.Domain.StandardMessages;
 using BaseArch.Domain.StandardMessages.Interfaces;
 using Microsoft.AspNetCore.Diagnostics;

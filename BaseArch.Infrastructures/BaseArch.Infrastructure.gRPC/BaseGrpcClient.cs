@@ -1,13 +1,16 @@
-﻿using Grpc.Net.Client;
+﻿using BaseArch.Infrastructure.gRPC.Interceptors;
+using Grpc.Core.Interceptors;
+using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BaseArch.Infrastructure.gRPC
 {
-    public abstract class BaseGrpcClient(IConfiguration configuration)
+    public abstract class BaseGrpcClient(IConfiguration configuration, IServiceProvider serviceProvider)
     {
-        protected GrpcChannel CreateChannelFromConfigureKey(string appConfigKey)
+        protected GrpcChannel CreateChannelFromConfigureKey(string uriConfigKey)
         {
-            var uri = configuration.GetValue<string>(appConfigKey) ?? "";
+            var uri = configuration.GetValue<string>(uriConfigKey) ?? "";
 
             return CreateChannelFromUri(uri);
         }
@@ -20,7 +23,25 @@ namespace BaseArch.Infrastructure.gRPC
             {
                 httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             }
-            return GrpcChannel.ForAddress(uriAddress, new GrpcChannelOptions { HttpHandler = httpHandler });
+            var channel = GrpcChannel.ForAddress(uriAddress, new GrpcChannelOptions { HttpHandler = httpHandler });
+
+            return channel;
+        }
+
+        protected TClient CreateGrpcClient<TClient>(GrpcChannel channel, params Interceptor[] clientInterceptors) where TClient : class
+        {
+            var grpcClientLoggingInterceptor = ActivatorUtilities.CreateInstance(serviceProvider, typeof(GrpcClientLoggingInterceptor));
+
+            var invoker = channel.Intercept((Interceptor)grpcClientLoggingInterceptor);
+
+            if (clientInterceptors.Length > 0)
+            {
+                invoker.Intercept(clientInterceptors);
+            }
+
+            var client = ActivatorUtilities.CreateInstance(serviceProvider, typeof(TClient), invoker);
+
+            return (TClient)client;
         }
     }
 }

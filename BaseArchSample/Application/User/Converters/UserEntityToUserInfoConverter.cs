@@ -2,8 +2,7 @@
 using Application.User.Dtos;
 using AutoMapper;
 using BaseArch.Application.AutoMapper.Extensions;
-using BaseArch.Domain.Attributes;
-using BaseArch.Domain.Enums;
+using BaseArch.Domain.DependencyInjection;
 using Domain.Entities;
 
 namespace Application.User.Converters

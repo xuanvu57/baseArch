@@ -1,4 +1,4 @@
-﻿namespace BaseArch.Domain.Constants
+﻿namespace BaseArch.Domain.RestApi
 {
     /// <summary>
     /// Order of sorting

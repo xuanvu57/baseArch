@@ -1,4 +1,4 @@
-﻿using BaseArch.Domain.Models;
+﻿using BaseArch.Domain.RestApi;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Reflection;

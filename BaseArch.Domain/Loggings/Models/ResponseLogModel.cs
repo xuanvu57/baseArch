@@ -1,4 +1,4 @@
-﻿namespace BaseArch.Domain.Models
+﻿namespace BaseArch.Domain.Loggings.Models
 {
     /// <summary>
     /// Response model for logging

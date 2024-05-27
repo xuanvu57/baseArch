@@ -36,8 +36,7 @@ namespace BaseArch.Application.FluentValidation.Extensions
         private static IEnumerable<Assembly> GetAssembliesHasAbstractValidator()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(assembly => Array.Exists(
-                    assembly.GetTypes(),
+                .Where(assembly => assembly.ExportedTypes.Any(
                     type => type.BaseType != null
                     && type.BaseType.IsGenericType
                     && type.BaseType.GetGenericTypeDefinition() == typeof(AbstractValidator<>)));

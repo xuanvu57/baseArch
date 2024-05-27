@@ -2,8 +2,7 @@
 using Application.User.ExternalServices.Interfaces;
 using Application.User.Services.Interfaces;
 using Application.User.Validators.Interfaces;
-using BaseArch.Domain.Attributes;
-using BaseArch.Domain.Enums;
+using BaseArch.Domain.DependencyInjection;
 using BaseArch.Domain.Interfaces;
 using Domain.Entities;
 using Domain.Repositories.Interfaces;
@@ -11,7 +10,7 @@ using Domain.Repositories.Interfaces;
 namespace Application.User.Services
 {
     [DIService(DIServiceLifetime.Scoped)]
-    internal class CreateUserService(IUnitOfWork unitOfWork, ICreateUserValidator validator, IGreetingClient greetingClient) : ICreateUserService
+    internal class CreateUserService(IUnitOfWork unitOfWork, ICreateUserValidator validator, IGreetingClient greetingClient, IGreetingClientOther greetingClientOther) : ICreateUserService
     {
         private readonly IUserRepository userRepository = unitOfWork.GetRepository<IUserRepository>();
 
@@ -29,8 +28,10 @@ namespace Application.User.Services
             await userRepository.Create(user).ConfigureAwait(false);
             await unitOfWork.SaveChangesAndCommit().ConfigureAwait(false);
 
-            var responseFromGrpcService = await greetingClient.TryToSayHello($"{user.FirstName} {user.LastName}");
-            if (string.IsNullOrEmpty(responseFromGrpcService))
+            var responseFromGreetingClient = await greetingClient.TryToSayHello($"{user.FirstName} {user.LastName}");
+            var responseFromGreetingClientOther = await greetingClientOther.TryToSayHello($"{user.FirstName} {user.LastName}");
+            if (string.IsNullOrEmpty(responseFromGreetingClient) ||
+                string.IsNullOrEmpty(responseFromGreetingClientOther))
             {
                 return Guid.Empty;
             }

@@ -1,5 +1,4 @@
-﻿using BaseArch.Domain.Attributes;
-using BaseArch.Domain.Enums;
+﻿using BaseArch.Domain.DependencyInjection;
 using BaseArch.Infrastructure.EFCore.Repositories;
 using Domain.Entities;
 using Domain.Repositories.Interfaces;

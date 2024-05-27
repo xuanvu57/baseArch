@@ -1,6 +1,4 @@
-﻿using BaseArch.Domain.Enums;
-
-namespace BaseArch.Domain.Attributes
+﻿namespace BaseArch.Domain.DependencyInjection
 {
     /// <summary>
     /// This service or component will be injected automatically

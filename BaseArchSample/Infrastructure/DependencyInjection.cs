@@ -1,4 +1,4 @@
-﻿using BaseArch.Domain.Interfaces;
+﻿using BaseArch.Domain.DependencyInjection;
 using BaseArch.Infrastructure.StaticMultilingualProvider.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

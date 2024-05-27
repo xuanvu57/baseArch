@@ -1,8 +1,7 @@
 ﻿using Application.User.Dtos.Requests;
 using Application.User.Validators.Interfaces;
-using BaseArch.Domain.Attributes;
-using BaseArch.Domain.Enums;
-using BaseArch.Domain.Exceptions;
+using BaseArch.Domain.DependencyInjection;
+using BaseArch.Domain.ErrorHandling;
 using BaseArch.Domain.Interfaces;
 using Domain.Constants;
 using Domain.MultilingualProviders.Interfaces;

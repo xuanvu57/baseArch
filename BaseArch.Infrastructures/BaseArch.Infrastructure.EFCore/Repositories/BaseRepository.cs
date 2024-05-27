@@ -1,9 +1,7 @@
-﻿using BaseArch.Domain.Attributes;
-using BaseArch.Domain.Constants;
+﻿using BaseArch.Domain.DependencyInjection;
 using BaseArch.Domain.Entities;
-using BaseArch.Domain.Enums;
 using BaseArch.Domain.Interfaces;
-using BaseArch.Domain.Models;
+using BaseArch.Domain.RestApi;
 using BaseArch.Infrastructure.EFCore.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;

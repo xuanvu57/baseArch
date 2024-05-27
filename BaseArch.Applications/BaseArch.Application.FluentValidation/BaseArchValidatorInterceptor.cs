@@ -1,6 +1,5 @@
-﻿using BaseArch.Domain.Attributes;
-using BaseArch.Domain.Enums;
-using BaseArch.Domain.Exceptions;
+﻿using BaseArch.Domain.DependencyInjection;
+using BaseArch.Domain.ErrorHandling;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using FluentValidation.Results;

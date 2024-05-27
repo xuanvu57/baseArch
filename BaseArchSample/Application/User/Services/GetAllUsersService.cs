@@ -1,8 +1,7 @@
 ﻿using Application.User.Converters.Interfaces;
 using Application.User.Dtos;
 using Application.User.Services.Interfaces;
-using BaseArch.Domain.Attributes;
-using BaseArch.Domain.Enums;
+using BaseArch.Domain.DependencyInjection;
 using BaseArch.Domain.Interfaces;
 using Domain.Entities;
 

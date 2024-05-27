@@ -1,4 +1,4 @@
-﻿namespace BaseArch.Domain.Constants
+﻿namespace BaseArch.Domain.ErrorHandling
 {
     /// <summary>
     /// Constants for problem details

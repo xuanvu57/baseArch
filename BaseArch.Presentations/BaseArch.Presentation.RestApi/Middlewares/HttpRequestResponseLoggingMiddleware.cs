@@ -1,4 +1,5 @@
-﻿using BaseArch.Domain.Models;
+﻿using BaseArch.Domain.Loggings;
+using BaseArch.Domain.Loggings.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -11,11 +12,6 @@ namespace BaseArch.Presentation.RestApi.Middlewares
     /// <param name="next"><see cref="RequestDelegate"/></param>
     public class HttpRequestResponseLoggingMiddleware(RequestDelegate next)
     {
-        /// <summary>
-        /// Message template format for logging
-        /// </summary>
-        private const string messageTemplateFormat = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
-
         /// <summary>
         /// The Request paths will be ignored for logging
         /// </summary>
@@ -97,7 +93,7 @@ namespace BaseArch.Presentation.RestApi.Middlewares
         /// <param name="requestResponseLogModel"><see cref="RequestResponseLogModel"/></param>
         private static void WriteRequestResponseLog(ILogger<HttpRequestResponseLoggingMiddleware> logger, RequestResponseLogModel requestResponseLogModel)
         {
-            logger.LogInformation(messageTemplateFormat,
+            logger.LogInformation(LogMessageTemplate.HttpRequestResponseLoggingMiddleware,
                 requestResponseLogModel.RequestLogModel.Method,
                 requestResponseLogModel.RequestLogModel.Path,
                 requestResponseLogModel.ResponseLogModel.Status,

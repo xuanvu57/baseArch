@@ -1,4 +1,5 @@
-﻿using BaseArch.Domain.Models;
+﻿using BaseArch.Domain.Loggings;
+using BaseArch.Domain.Loggings.Models;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Microsoft.AspNetCore.Http;
@@ -11,17 +12,15 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
     /// Interceptor to log the request and response for gRPC request
     /// </summary>
     /// <param name="logger"></param>
-    public class GrpcRequestResponseLoggingInterceptor(ILogger<GrpcRequestResponseLoggingInterceptor> logger) : Interceptor
+    public class GrpcServiceLoggingInterceptor(ILogger<GrpcServiceLoggingInterceptor> logger) : Interceptor
     {
-        /// <summary>
-        /// Message template format for logging
-        /// </summary>
-        private const string messageTemplateFormat = "Grpc {GrpcMethod} {GrpcServiceMethod} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
-
         /// <inheritdoc />
         public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request, ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
         {
-            var responseBodyText = request.ToString() ?? "";
+            var responseBodyText = "";
+            var httpContext = context.GetHttpContext();
+            var requestLog = ExtractFromRequest(httpContext, request);
+
             try
             {
                 var response = await continuation(request, context);
@@ -30,8 +29,6 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
             }
             finally
             {
-                var httpContext = context.GetHttpContext();
-                var requestLog = ExtractFromRequest(httpContext, request);
                 var responseLog = ExtractFromResponse(httpContext, responseBodyText);
 
                 var requestResponseLogModel = new RequestResponseLogModel()
@@ -49,9 +46,10 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
         /// </summary>
         /// <param name="logger"><see cref="ILogger"/></param>
         /// <param name="requestResponseLogModel"><see cref="RequestResponseLogModel"/></param>
-        private static void WriteRequestResponseLog(ILogger<GrpcRequestResponseLoggingInterceptor> logger, RequestResponseLogModel requestResponseLogModel, ServerCallContext context)
+        /// <param name="context"><see cref="ServerCallContext"/></param>
+        private static void WriteRequestResponseLog(ILogger<GrpcServiceLoggingInterceptor> logger, RequestResponseLogModel requestResponseLogModel, ServerCallContext context)
         {
-            logger.LogInformation(messageTemplateFormat,
+            logger.LogInformation(LogMessageTemplate.GrpcServiceLoggingInterceptor,
                 MethodType.Unary,
                 context.Method,
                 requestResponseLogModel.ResponseLogModel.Status,

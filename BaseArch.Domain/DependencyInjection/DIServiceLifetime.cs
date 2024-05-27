@@ -1,4 +1,4 @@
-﻿namespace BaseArch.Domain.Enums
+﻿namespace BaseArch.Domain.DependencyInjection
 {
     /// <summary>
     /// Enum of service lifetime for dependency injection

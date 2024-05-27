@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace BaseArch.Domain.Interfaces
+namespace BaseArch.Domain.DependencyInjection
 {
     /// <summary>
     /// Dependency injection contract

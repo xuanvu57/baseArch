@@ -1,4 +1,4 @@
-﻿using BaseArch.Domain.Models;
+﻿using BaseArch.Domain.RestApi;
 using System.Linq.Expressions;
 
 namespace BaseArch.Domain.Interfaces

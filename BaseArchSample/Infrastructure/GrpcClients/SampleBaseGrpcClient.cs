@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.GrpcClients
 {
-    public class SampleBaseGrpcClient(IConfiguration configuration) : BaseGrpcClient(configuration)
+    public abstract class SampleBaseGrpcClient(IConfiguration configuration, IServiceProvider serviceProvider) : BaseGrpcClient(configuration, serviceProvider)
     {
         private const string appConfigKey = "Services:BaseArchSample:Url";
 

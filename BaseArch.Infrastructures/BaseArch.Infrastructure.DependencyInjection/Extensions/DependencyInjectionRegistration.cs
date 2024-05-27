@@ -1,5 +1,4 @@
-﻿using BaseArch.Domain.Attributes;
-using BaseArch.Domain.Interfaces;
+﻿using BaseArch.Domain.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
@@ -35,15 +34,15 @@ namespace BaseArch.Infrastructure.DependencyInjection.Extensions
 
             services.Scan(scrutor =>
                 scrutor.FromAssembliesOf(diServiceTypes)
-                .AddClasses(c => c.Where(type => type.GetCustomAttribute<DIServiceAttribute>()?.Lifetime == Domain.Enums.DIServiceLifetime.Singleton))
+                .AddClasses(c => c.Where(type => type.GetCustomAttribute<DIServiceAttribute>()?.Lifetime == DIServiceLifetime.Singleton))
                 .AsImplementedInterfaces()
                 .WithSingletonLifetime()
 
-                .AddClasses(c => c.Where(type => type.GetCustomAttribute<DIServiceAttribute>()?.Lifetime == Domain.Enums.DIServiceLifetime.Scoped))
+                .AddClasses(c => c.Where(type => type.GetCustomAttribute<DIServiceAttribute>()?.Lifetime == DIServiceLifetime.Scoped))
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
 
-                .AddClasses(c => c.Where(type => type.GetCustomAttribute<DIServiceAttribute>()?.Lifetime == Domain.Enums.DIServiceLifetime.Transient))
+                .AddClasses(c => c.Where(type => type.GetCustomAttribute<DIServiceAttribute>()?.Lifetime == DIServiceLifetime.Transient))
                 .AsImplementedInterfaces()
                 .WithTransientLifetime()
             );
@@ -76,7 +75,7 @@ namespace BaseArch.Infrastructure.DependencyInjection.Extensions
         private static List<Type> GetDIServiceTypes()
         {
             var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(assembly => assembly.GetTypes())
+                .SelectMany(assembly => assembly.ExportedTypes)
                 .Where(type => type.IsClass && type.CustomAttributes.Any(a => a.AttributeType == typeof(DIServiceAttribute)))
                 .ToList();
 
@@ -90,7 +89,7 @@ namespace BaseArch.Infrastructure.DependencyInjection.Extensions
         private static List<Type> GetAdditionalDependencyInjectionTypes()
         {
             var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(assembly => assembly.GetTypes())
+                .SelectMany(assembly => assembly.ExportedTypes)
                 .Where(type => type.IsAssignableTo(typeof(IDependencyInjection)) && type.IsClass && !type.IsAbstract)
                 .ToList();
 
