@@ -31,8 +31,11 @@ namespace BaseArch.Infrastructure.gRPC
         protected TClient CreateGrpcClient<TClient>(GrpcChannel channel, params Interceptor[] clientInterceptors) where TClient : class
         {
             var grpcClientLoggingInterceptor = ActivatorUtilities.CreateInstance(serviceProvider, typeof(GrpcClientLoggingInterceptor));
+            var grpcClientCorrelationIdInterceptor = ActivatorUtilities.CreateInstance(serviceProvider, typeof(GrpcClientCorrelationIdInterceptor));
 
-            var invoker = channel.Intercept((Interceptor)grpcClientLoggingInterceptor);
+            var invoker = channel
+                .Intercept((Interceptor)grpcClientCorrelationIdInterceptor)
+                .Intercept((Interceptor)grpcClientLoggingInterceptor);
 
             if (clientInterceptors.Length > 0)
             {

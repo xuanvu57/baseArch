@@ -15,6 +15,7 @@ namespace BaseArch.Infrastructure.DefaultHttpClient.Extensions
         public static void AddDefaultHttpClient(this IServiceCollection services, string[] clientNames, Type[] delegatingHandlerTypes)
         {
             services.AddTransient<HttpClientLoggingDelegatingHandler>();
+            services.AddTransient<HttpClientCorrelationIdDelegatingHandler>();
             foreach (var type in delegatingHandlerTypes)
             {
                 services.AddTransient(type);
@@ -29,6 +30,7 @@ namespace BaseArch.Infrastructure.DefaultHttpClient.Extensions
 
                     });
 
+                httpClientBuilder.AddHttpMessageHandler<HttpClientCorrelationIdDelegatingHandler>();
                 httpClientBuilder.AddHttpMessageHandler<HttpClientLoggingDelegatingHandler>();
 
                 foreach (var type in delegatingHandlerTypes)
