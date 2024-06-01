@@ -11,6 +11,10 @@ You are also able to add the Pagination model to the response
 Responses.From<TResponse>(TResponse yourResponseData, PaginationResponseModel pagination);
 ```
 
+Note:
+
+> If some properties are null then they will be ignored in Json when the response return to client
+
 ## Correlation id
 
 1. GuidCorrelationIdProvider
@@ -124,3 +128,20 @@ The exception will be logged as the following template so that it can be filtere
 ```
 logger.LogError(exception, "Unhandle exception occurred: {UnhandleExceptionMessage}", exception.Message);
 ```
+
+## Logging model
+
+This define the log's structure and it will be used in middlewares or interceptor for logging the `Request` and `Response` automatically
+
+It also define the log message template for specific cases, such as:
+
+- `HttpRequestResponseLoggingMiddleware`
+- `HttpClientLoggingDelegatingHandler`
+- `GrpcServiceLoggingInterceptor`
+- `GrpcClientLoggingInterceptor`
+
+## Repository and UnitOfWork
+
+Define the interfaces for `Base respository` and `Unit of work`
+
+They will be implemented from the Repository and Unit of work in the infrastructure projects
