@@ -140,7 +140,7 @@ It also define the log message template for specific cases, such as:
 - `GrpcServiceLoggingInterceptor`
 - `GrpcClientLoggingInterceptor`
 
-## Repository and UnitOfWork
+## Repository and Unit of Work
 
 Define the interfaces for `Base respository` and `Unit of work`
 
