@@ -1,7 +1,9 @@
 ﻿using Application.User.Dtos.Requests;
 using Application.User.Services.Interfaces;
 using Asp.Versioning;
+using BaseArch.Application.Models.Responses;
 using BaseArch.Presentation.RestApi;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -18,14 +20,18 @@ namespace Presentation.Users.Controllers
         //[SwaggerOperation(Summary = "This is summary for action", Description = "This is summary in detail for action")]
         //[MapToApiVersion("1")]
         [HttpPost]
-        public async Task<Guid> Create([FromBody] CreateUserRequest request)
+
+        public async Task<IResult> Create([FromBody] CreateUserRequest request)
         {
             ArgumentNullException.ThrowIfNull(request);
 
             var test = configuration.GetValue<string>("Configuration:FromEnvironment");
             logger.LogInformation("[Controller] It start to create user {firstname} {lastname} with {Test}", request.FirstName, request.LastName, test);
 
-            return await userService.CreateUser(request);
+            var id = await userService.CreateUser(request);
+
+            var response = Responses.From<Guid>(id);
+            return Results.Ok(response);
         }
     }
 }

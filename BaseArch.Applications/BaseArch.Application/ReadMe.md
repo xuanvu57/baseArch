@@ -1,4 +1,16 @@
-﻿
+﻿## Response
+You are always able to structure your response as a standard format by
+
+```
+Responses.From<TResponse>(TResponse yourResponseData);
+```
+
+You are also able to add the Pagination model to the response
+
+```
+Responses.From<TResponse>(TResponse yourResponseData, PaginationResponseModel pagination);
+```
+
 ## Correlation id
 
 1. GuidCorrelationIdProvider

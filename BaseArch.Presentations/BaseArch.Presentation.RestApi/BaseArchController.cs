@@ -6,7 +6,7 @@ namespace BaseArch.Presentation.RestApi
     /// Base controller
     /// </summary>
     [ApiController]
-    public class BaseArchController : ControllerBase
+    public abstract class BaseArchController : ControllerBase
     {
     }
 }

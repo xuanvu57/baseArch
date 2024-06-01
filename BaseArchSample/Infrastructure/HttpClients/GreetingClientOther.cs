@@ -1,5 +1,6 @@
 ﻿using Application.User.Dtos;
 using Application.User.ExternalServices.Interfaces;
+using BaseArch.Application.Models.Responses;
 using BaseArch.Domain.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -18,9 +19,9 @@ namespace Infrastructure.HttpClients
 
             var responseContent = await response.Content.ReadAsStringAsync();
 
-            var users = Deserialize<IEnumerable<UserInfo>>(responseContent);
+            var responseModel = Deserialize<ResponseModel<IEnumerable<UserInfo>>>(responseContent);
 
-            var user = users?.FirstOrDefault(u => u.FullName == fullName);
+            var user = responseModel?.Data?.FirstOrDefault(u => u.FullName == fullName);
 
             logger.LogInformation($"[HttpClient] ApiService server response with: {user}");
 
