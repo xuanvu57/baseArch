@@ -1,16 +1,24 @@
 ﻿using Application.Repositories.Interfaces;
+using Application.User.Dtos.Messages;
 using Application.User.Dtos.Requests;
 using Application.User.ExternalServices.Interfaces;
 using Application.User.Services.Interfaces;
 using Application.User.Validators.Interfaces;
+using BaseArch.Application.MessageQueues.Interfaces;
 using BaseArch.Application.Repositories.Interfaces;
 using BaseArch.Domain.DependencyInjection;
+using CaseExtensions;
 using Domain.Entities;
 
 namespace Application.User.Services
 {
     [DIService(DIServiceLifetime.Scoped)]
-    internal class CreateUserService(IUnitOfWork unitOfWork, ICreateUserValidator validator, IGreetingClient greetingClient, IGreetingClientOther greetingClientOther) : ICreateUserService
+    internal class CreateUserService(IUnitOfWork unitOfWork,
+        ICreateUserValidator validator,
+        IGreetingClient greetingClient,
+        IGreetingClientOther greetingClientOther,
+        IPublisher publisher,
+        ISender sender) : ICreateUserService
     {
         private readonly IUserRepository userRepository = unitOfWork.GetRepository<IUserRepository>();
 
@@ -35,6 +43,13 @@ namespace Application.User.Services
             {
                 return Guid.Empty;
             }
+
+            await publisher.Publish(new UserCreatedPublishedMessage(user.Id));
+
+            await publisher.Publish(new UserCreatedCustomizeMessage(Guid.NewGuid(), user.Id));
+
+            await sender.Send(new UserCreatedSentMessage(user.Id, $"{user.FirstName} {user.LastName}"), $"queue:{typeof(UserCreatedSentMessage).Name.ToKebabCase()}");
+
             return user.Id;
         }
     }

@@ -38,6 +38,8 @@ namespace BaseArch.Infrastructure.DefaultHttpClient.Extensions
                     httpClientBuilder.AddHttpMessageHandler(() => (DelegatingHandler)ActivatorUtilities.CreateInstance(services.BuildServiceProvider(), type));
                 }
             }
+
+            services.AddHttpContextAccessor();
         }
     }
 }

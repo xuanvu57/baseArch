@@ -50,7 +50,6 @@ namespace Host
                     option.Interceptors.Add<GrpcServiceLoggingInterceptor>();
                 });
                 builder.Services.AddDefaultHttpClient();
-                builder.Services.AddServicesForRestApi();
                 builder.Services.AddRestApiVersioning(2);
                 builder.Services.AddSwagger();
                 builder.Services.AddCorrelationIdServices<GuidCorrelationIdProvider>();

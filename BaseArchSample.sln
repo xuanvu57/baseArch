@@ -47,13 +47,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseArch.Infrastructure.Ser
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{CDAABA4C-A13B-47FE-9951-F35EFA3DB931}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseArch.Application.MediatR", "BaseArch.Applications\BaseArch.Application.MediatR\BaseArch.Application.MediatR.csproj", "{FEDD34C6-824A-4BA4-BE37-FB95FC222431}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseArch.Application.MediatR", "BaseArch.Applications\BaseArch.Application.MediatR\BaseArch.Application.MediatR.csproj", "{FEDD34C6-824A-4BA4-BE37-FB95FC222431}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shares", "Shares", "{8D3B5921-A8AB-4D11-85ED-E6CB46650B7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseArchSample.Shares.gRPC", "BaseArchSample\Shares\BaseArchSample.Shares.gRPC\BaseArchSample.Shares.gRPC.csproj", "{93333EB5-3AD4-4E75-9B4E-2B79BD236D1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseArchSample.Shares.gRPC", "BaseArchSample\Shares\BaseArchSample.Shares.gRPC\BaseArchSample.Shares.gRPC.csproj", "{93333EB5-3AD4-4E75-9B4E-2B79BD236D1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseArch.Infrastructure.gRPC", "BaseArch.Infrastructures\BaseArch.Infrastructure.gRPC\BaseArch.Infrastructure.gRPC.csproj", "{296FEBC5-4FFB-4AC5-ABCA-D9EE9CB8341C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseArch.Infrastructure.gRPC", "BaseArch.Infrastructures\BaseArch.Infrastructure.gRPC\BaseArch.Infrastructure.gRPC.csproj", "{296FEBC5-4FFB-4AC5-ABCA-D9EE9CB8341C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseArch.Infrastructure.MassTransit", "BaseArch.Infrastructures\BaseArch.Infrastructure.MassTransit\BaseArch.Infrastructure.MassTransit.csproj", "{EFE426A2-64D9-450D-AE7A-AAF5951DDFDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -145,6 +147,10 @@ Global
 		{296FEBC5-4FFB-4AC5-ABCA-D9EE9CB8341C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{296FEBC5-4FFB-4AC5-ABCA-D9EE9CB8341C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{296FEBC5-4FFB-4AC5-ABCA-D9EE9CB8341C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFE426A2-64D9-450D-AE7A-AAF5951DDFDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFE426A2-64D9-450D-AE7A-AAF5951DDFDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFE426A2-64D9-450D-AE7A-AAF5951DDFDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFE426A2-64D9-450D-AE7A-AAF5951DDFDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,6 +176,7 @@ Global
 		{8D3B5921-A8AB-4D11-85ED-E6CB46650B7B} = {9444318B-A5E1-47EC-A87A-987D81C54F0B}
 		{93333EB5-3AD4-4E75-9B4E-2B79BD236D1A} = {8D3B5921-A8AB-4D11-85ED-E6CB46650B7B}
 		{296FEBC5-4FFB-4AC5-ABCA-D9EE9CB8341C} = {9B09A6DE-5435-48D8-B519-B55AEED5FE31}
+		{EFE426A2-64D9-450D-AE7A-AAF5951DDFDB} = {9B09A6DE-5435-48D8-B519-B55AEED5FE31}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {823F0681-1885-4084-B08B-59027153C012}

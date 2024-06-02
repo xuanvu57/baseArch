@@ -14,6 +14,7 @@
     <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.DependencyInjection\BaseArch.Infrastructure.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.EFCore\BaseArch.Infrastructure.EFCore.csproj" />
     <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.gRPC\BaseArch.Infrastructure.gRPC.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.MassTransit\BaseArch.Infrastructure.MassTransit.csproj" />
     <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.Serilog\BaseArch.Infrastructure.Serilog.csproj" />
     <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.StaticMultilingualProvider\BaseArch.Infrastructure.StaticMultilingualProvider.csproj" />
     <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure\BaseArch.Infrastructure.csproj" />

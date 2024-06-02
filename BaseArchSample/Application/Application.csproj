@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CaseExtensions" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\BaseArch.Applications\BaseArch.Application.AutoMapper\BaseArch.Application.AutoMapper.csproj" />
     <ProjectReference Include="..\..\BaseArch.Applications\BaseArch.Application.FluentValidation\BaseArch.Application.FluentValidation.csproj" />
     <ProjectReference Include="..\..\BaseArch.Applications\BaseArch.Application\BaseArch.Application.csproj" />

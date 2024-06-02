@@ -1,4 +1,5 @@
 ﻿using BaseArch.Domain.DependencyInjection.Interfaces;
+using BaseArch.Infrastructure.MassTransit.Registrations;
 using BaseArch.Infrastructure.StaticMultilingualProvider.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -18,6 +19,8 @@ namespace Infrastructure
             });
 
             services.AddStaticMultilingualProviders(["en-US", "vi-VN"]);
+
+            services.RegisterMassTransit();
         }
     }
 }
