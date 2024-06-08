@@ -1,7 +1,7 @@
 ﻿using BaseArch.Infrastructure.Serilog.Middlewares;
 using Microsoft.AspNetCore.Builder;
 
-namespace BaseArch.Infrastructure.Serilog.Extensions
+namespace BaseArch.Infrastructure.Serilog.Registrations
 {
     /// <summary>
     /// Extension methods for <see cref="WebApplication"/> to register middlewares

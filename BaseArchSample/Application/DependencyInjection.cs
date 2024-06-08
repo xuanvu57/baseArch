@@ -1,6 +1,6 @@
 ﻿using BaseArch.Application.ExceptionHandlers;
 using BaseArch.Application.Extensions;
-using BaseArch.Application.FluentValidation.Extensions;
+using BaseArch.Application.FluentValidation.Registrations;
 using BaseArch.Domain.DependencyInjection.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 

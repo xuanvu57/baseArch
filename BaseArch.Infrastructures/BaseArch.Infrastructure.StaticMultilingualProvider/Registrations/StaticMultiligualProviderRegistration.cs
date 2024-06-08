@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BaseArch.Infrastructure.StaticMultilingualProvider.Extensions
+namespace BaseArch.Infrastructure.StaticMultilingualProvider.Registrations
 {
     /// <summary>
     /// Extension methods to register localization services

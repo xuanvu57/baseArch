@@ -3,7 +3,7 @@ using Grpc.AspNetCore.Server;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BaseArch.Infrastructure.gRPC.Extensions
+namespace BaseArch.Infrastructure.gRPC.Registrations
 {
     /// <summary>
     /// Extension methods to register gRPC service

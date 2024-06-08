@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace BaseArch.Application.FluentValidation.Extensions
+namespace BaseArch.Application.FluentValidation.Registrations
 {
     /// <summary>
     /// Extension methods for <see cref="IServiceCollection"/> to register FluentValidation

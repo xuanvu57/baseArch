@@ -1,4 +1,4 @@
-﻿using BaseArch.Infrastructure.DefaultHttpClient.Extensions;
+﻿using BaseArch.Infrastructure.DefaultHttpClient.Registrations;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 

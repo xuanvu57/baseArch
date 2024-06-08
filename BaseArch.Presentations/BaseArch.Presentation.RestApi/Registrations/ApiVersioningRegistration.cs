@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace BaseArch.Presentation.RestApi.Extensions
+namespace BaseArch.Presentation.RestApi.Registrations
 {
     /// <summary>
     /// The extension methods to register Api versioning

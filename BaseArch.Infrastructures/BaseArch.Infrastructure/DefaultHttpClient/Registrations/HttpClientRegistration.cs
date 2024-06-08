@@ -1,7 +1,7 @@
 ﻿using BaseArch.Infrastructure.DefaultHttpClient.DelegatingHandlers;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BaseArch.Infrastructure.DefaultHttpClient.Extensions
+namespace BaseArch.Infrastructure.DefaultHttpClient.Registrations
 {
     public static class HttpClientRegistration
     {

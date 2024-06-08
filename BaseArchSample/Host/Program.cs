@@ -1,13 +1,13 @@
 using BaseArch.Application.CorrelationId;
 using BaseArch.Application.Extensions;
-using BaseArch.Infrastructure.DefaultHttpClient.Extensions;
-using BaseArch.Infrastructure.DependencyInjection.Extensions;
-using BaseArch.Infrastructure.gRPC.Extensions;
+using BaseArch.Infrastructure.DefaultHttpClient.Registrations;
+using BaseArch.Infrastructure.DependencyInjection.Registrations;
+using BaseArch.Infrastructure.gRPC.Registrations;
 using BaseArch.Infrastructure.gRPC.Interceptors;
 using BaseArch.Infrastructure.Serilog.DestructingPolicies;
-using BaseArch.Infrastructure.Serilog.Extensions;
-using BaseArch.Infrastructure.StaticMultilingualProvider.Extensions;
-using BaseArch.Presentation.RestApi.Extensions;
+using BaseArch.Infrastructure.Serilog.Registrations;
+using BaseArch.Infrastructure.StaticMultilingualProvider.Registrations;
+using BaseArch.Presentation.RestApi.Registrations;
 using Serilog;
 
 namespace Host

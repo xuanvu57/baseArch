@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 
-namespace BaseArch.Infrastructure.DependencyInjection.Extensions
+namespace BaseArch.Infrastructure.DependencyInjection.Registrations
 {
     /// <summary>
     /// Extension methods for <see cref="IServiceCollection"/> to register Dependency Injection automatically

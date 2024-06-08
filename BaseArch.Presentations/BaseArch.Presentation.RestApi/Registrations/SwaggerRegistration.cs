@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace BaseArch.Presentation.RestApi.Extensions
+namespace BaseArch.Presentation.RestApi.Registrations
 {
     /// <summary>
     /// Extension methods to register swagger

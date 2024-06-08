@@ -1,7 +1,7 @@
 ﻿using BaseArch.Presentation.RestApi.Middlewares;
 using Microsoft.AspNetCore.Builder;
 
-namespace BaseArch.Presentation.RestApi.Extensions
+namespace BaseArch.Presentation.RestApi.Registrations
 {
     /// <summary>
     /// Extension methods for <see cref="WebApplication"/> to use <see cref="CorrelationIdMiddleware"/>
