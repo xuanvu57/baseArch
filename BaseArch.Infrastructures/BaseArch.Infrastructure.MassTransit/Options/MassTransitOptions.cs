@@ -1,9 +1,10 @@
 ﻿namespace BaseArch.Infrastructure.MassTransit.Options
 {
-    public record MessageQueuesOptions
+    public record MassTransitOptions
     {
-        public bool InMemoryQueue { get; init; }
+        public InMemoryQueueOptions? InMemoryQueue { get; init; }
         public RabbitMqOptions? RabbitMq { get; init; }
+        public EndPointFormatterOptions? EndPointFormatter { get; init; }
         public RetryOptions? Retry { get; init; }
     }
 }

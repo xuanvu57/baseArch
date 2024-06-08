@@ -18,11 +18,15 @@
         /// <summary>
         /// Grpc service logging interceptor
         /// </summary>
-        public const string GrpcServiceLoggingInterceptor = "GrpcService {GrpcTyp} {GrpcServiceMethod} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
+        public const string GrpcServiceLoggingInterceptor = "GrpcService {GrpcType} {GrpcServiceMethod} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
 
         /// <summary>
         /// Grpc client logging interceptor
         /// </summary>
         public const string GrpcClientLoggingInterceptor = "GrpcClient {GrpcType} {GrpcServiceMethod} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
+
+        public const string QueueConsumer = "QueueConsumer {Consumer} completed with {@EventMessageLogModel}";
+
+        public const string QueueProducer = "QueueProducer {Producer} completed with {@EventMessageLogModel}";
     }
 }

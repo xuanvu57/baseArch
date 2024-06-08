@@ -4,6 +4,7 @@ using BaseArch.Infrastructure.MassTransit.Options;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using static BaseArch.Infrastructure.MassTransit.Options.MassTransitConstants;
 
 namespace BaseArch.Infrastructure.MassTransit.Registrations
 {
@@ -11,33 +12,34 @@ namespace BaseArch.Infrastructure.MassTransit.Registrations
     {
         public static void RegisterMassTransit(this IServiceCollection services)
         {
-            services.AddOptions<MessageQueuesOptions>()
-                .BindConfiguration("MessageQueues")
+            services.AddOptions<MassTransitOptions>()
+                .BindConfiguration(MassTransitConstants.MassTransitSection)
                 .ValidateOnStart();
 
-            var messageQueuesOptions = services.BuildServiceProvider().GetRequiredService<IOptions<MessageQueuesOptions>>();
-            if (messageQueuesOptions.Value.InMemoryQueue)
+            var messageQueuesOptions = services.BuildServiceProvider().GetRequiredService<IOptions<MassTransitOptions>>();
+            if (messageQueuesOptions.Value.InMemoryQueue is not null && messageQueuesOptions.Value.InMemoryQueue.Enable)
             {
-                RegisterMassTransitWithInMemmoryQueue(services, messageQueuesOptions.Value.Retry);
+                RegisterMassTransitWithInMemmoryQueue(services, messageQueuesOptions);
             }
-            else if (messageQueuesOptions.Value.RabbitMq != null)
+            else if (messageQueuesOptions.Value.RabbitMq is not null && messageQueuesOptions.Value.RabbitMq.Enable)
             {
-                RegisterMassTransitWithRabbitMq(services, messageQueuesOptions.Value.RabbitMq, messageQueuesOptions.Value.Retry);
+                RegisterMassTransitWithRabbitMq(services, messageQueuesOptions);
             }
         }
 
-        private static void RegisterMassTransitWithInMemmoryQueue(IServiceCollection services, RetryOptions? retryOptions)
+        private static void RegisterMassTransitWithInMemmoryQueue(IServiceCollection services, IOptions<MassTransitOptions> messageQueuesOptions)
         {
+            var retryOptions = messageQueuesOptions.Value.Retry;
             services.AddMassTransit(x =>
             {
-                x.AddConsumers(GetAllGenericConsumerTypes());
-                x.AddConsumers(GetAllConsumerTypes());
+                x.AddConsumers(CreateAllGenericConsumerTypes());
+                x.AddConsumers(GetAllCustomizedConsumerTypes());
 
                 x.UsingInMemory((context, configure) =>
                 {
                     configure.ConfigureEndpoints(
                         context,
-                        new KebabCaseEndpointNameFormatter(false));
+                        GetEndpointNameFormatter(messageQueuesOptions.Value.EndPointFormatter));
 
                     if (retryOptions != null)
                     {
@@ -50,12 +52,14 @@ namespace BaseArch.Infrastructure.MassTransit.Registrations
             });
         }
 
-        private static void RegisterMassTransitWithRabbitMq(IServiceCollection services, RabbitMqOptions rabbitMqOptions, RetryOptions? retryOptions)
+        private static void RegisterMassTransitWithRabbitMq(IServiceCollection services, IOptions<MassTransitOptions> messageQueuesOptions)
         {
+            var rabbitMqOptions = messageQueuesOptions.Value.RabbitMq!;
+            var retryOptions = messageQueuesOptions.Value.Retry;
             services.AddMassTransit(x =>
             {
-                x.AddConsumers(GetAllGenericConsumerTypes());
-                x.AddConsumers(GetAllConsumerTypes());
+                x.AddConsumers(CreateAllGenericConsumerTypes());
+                x.AddConsumers(GetAllCustomizedConsumerTypes());
 
                 x.UsingRabbitMq((context, configure) =>
                 {
@@ -65,7 +69,7 @@ namespace BaseArch.Infrastructure.MassTransit.Registrations
                         c.Password(rabbitMqOptions.Password);
                     });
                     configure.ConfigureEndpoints(context,
-                        new KebabCaseEndpointNameFormatter(false));
+                        GetEndpointNameFormatter(messageQueuesOptions.Value.EndPointFormatter));
 
                     if (retryOptions != null)
                     {
@@ -78,7 +82,17 @@ namespace BaseArch.Infrastructure.MassTransit.Registrations
             });
         }
 
-        private static Type[] GetAllGenericConsumerTypes()
+        private static IEndpointNameFormatter GetEndpointNameFormatter(EndPointFormatterOptions? endPointFormatterOptions)
+        {
+            return endPointFormatterOptions?.EndPointFormatterCase switch
+            {
+                EndPointFormatterCaseEnums.SnakeCase => new SnakeCaseEndpointNameFormatter(endPointFormatterOptions.Prefix, false),
+                EndPointFormatterCaseEnums.KebabCase => new KebabCaseEndpointNameFormatter(endPointFormatterOptions.Prefix, false),
+                _ => new KebabCaseEndpointNameFormatter("", false)
+            };
+        }
+
+        private static Type[] CreateAllGenericConsumerTypes()
         {
             var messageTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a => a.ExportedTypes)
@@ -96,15 +110,15 @@ namespace BaseArch.Infrastructure.MassTransit.Registrations
             return consumerTypes.ToArray();
         }
 
-        private static Type[] GetAllConsumerTypes()
+        private static Type[] GetAllCustomizedConsumerTypes()
         {
             return AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a => a.ExportedTypes)
                 .Where(type =>
-                    !type.IsGenericType &&
-                    !type.IsAbstract &&
-                    !type.FullName!.Contains("MassTransit") &&
-                    type.IsAssignableTo(typeof(IConsumer)))
+                    type.BaseType != null &&
+                    type.BaseType.IsGenericType &&
+                    type.BaseType.GetGenericTypeDefinition() == typeof(DefaultConsumer<>) &&
+                    type.FullName != typeof(Consumer<>).FullName)
                 .ToArray();
         }
     }

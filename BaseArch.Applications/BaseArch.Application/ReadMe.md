@@ -145,3 +145,60 @@ It also define the log message template for specific cases, such as:
 Define the interfaces for `Base respository` and `Unit of work`
 
 They will be implemented from the Repository and Unit of work in the infrastructure projects
+
+## Message queue
+
+You message to add one of our queue package, such as:
+
+- BaseArch.Infrastructure.MassTransit
+
+It build an automatic configuration to register and consume the event message which will be published or sent from your producer
+
+Create your message that inherits from `BaseEventMessage`
+
+```
+public record YourMessage(string MessageData) : BaseEventMessage<Guid>(Guid.NewGuid());
+```
+
+Then you inject `IPublisher` or `ISender` to publish or send your message
+
+Finally, you create the handlers to handle the message without creating any consumer
+
+```
+[DIService(DIServiceLifetime.Scoped)]
+public class YourMessageHandler() : IEventMessageHandler<YourMessage>
+```
+
+### Customize your consumers
+
+In some special cases, you would like to do a specific action or modify your consumer, you can create your own consumer instead of the auto consumers
+
+First of all, your message is implemented from `IEventMessage`
+
+```
+public record UserCreatedCustomizeMessage(Guid MessageId) : IEventMessage<Guid>;
+```
+
+Then, your consumer is inherited from `DefaultConsumer`
+
+- For example 1: you would like to create a batch consumer with MassTransit
+
+```
+public class YourBatchConsumer(IEventMessageHandler<YourMessage> messageHandler) : DefaultConsumer<Batch<YourMessage>>
+```
+
+- For example 2: you would like to create your consumer definition with MassTransit
+
+```
+public class YourCustomizedConsumerDefinition : ConsumerDefinition<YourCustomizedConsumer>
+```
+ 
+- For example 3: you simply would like to create "real" multi consumers (in the same host) to consume the same message (instead of calling multi handlers from one auto consumer)
+
+```
+To be updated
+```
+
+Reference
+> https://masstransit.io/documentation/concepts/consumers#batch-consumers
+> https://masstransit.io/documentation/concepts/consumers#definitions

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace Application.User.MessageHandlers
 {
     [DIService(DIServiceLifetime.Scoped)]
-    public class UserCreateSentHandler(ILogger<UserCreateSentHandler> logger) : IMessageHandler<UserCreatedSentMessage>
+    public class UserCreateSentHandler(ILogger<UserCreateSentHandler> logger) : IEventMessageHandler<UserCreatedSentMessage>
     {
         public async Task Handle(UserCreatedSentMessage message)
         {
