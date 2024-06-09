@@ -8,7 +8,7 @@ namespace BaseArch.Infrastructure.DefaultHttpClient
     {
         protected HttpClient CreateHttpClientFromConfigKey(string uriConfigKey)
         {
-            var uri = configuration.GetValue<string>(uriConfigKey) ?? "";
+            var uri = configuration[uriConfigKey] ?? "";
 
             return CreateHttpClientFromUri(uri);
         }
@@ -28,11 +28,11 @@ namespace BaseArch.Infrastructure.DefaultHttpClient
 
         protected static T? Deserialize<T>(string content)
         {
-            var options = new JsonSerializerOptions
+            var jsonSerializerOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
-            var TObject = JsonSerializer.Deserialize<T>(content, options);
+            var TObject = JsonSerializer.Deserialize<T>(content, jsonSerializerOptions);
 
             return TObject;
         }

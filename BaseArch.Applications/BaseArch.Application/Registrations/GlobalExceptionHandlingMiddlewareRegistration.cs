@@ -1,7 +1,7 @@
-﻿using BaseArch.Application.ExceptionHandlers;
+﻿using BaseArch.Application.Middlewares;
 using Microsoft.AspNetCore.Builder;
 
-namespace BaseArch.Application.Extensions
+namespace BaseArch.Application.Registrations
 {
     /// <summary>
     /// Extension to register the global exception handler
@@ -12,7 +12,7 @@ namespace BaseArch.Application.Extensions
         /// Use the global unhandled exception
         /// </summary>
         /// <param name="app"><see cref="WebApplication"/></param>
-        public static void UserGlobalExceptionHandlingMiddlewareRegistration(this WebApplication app)
+        public static void UserGlobalExceptionHandlingMiddleware(this WebApplication app)
         {
             app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
         }

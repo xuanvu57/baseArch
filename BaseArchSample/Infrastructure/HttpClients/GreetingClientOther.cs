@@ -13,19 +13,27 @@ namespace Infrastructure.HttpClients
     {
         public async Task<string> TryToSayHello(string fullName)
         {
-            var httpClient = CreateHttpClientFromConfigKey();
+            try
+            {
+                var httpClient = CreateHttpClientFromConfigKey();
 
-            var response = await httpClient.GetAsync("/api/v1/Users/GetAllUsers");
+                var response = await httpClient.GetAsync("/api/v1/Users/GetAllUsers");
 
-            var responseContent = await response.Content.ReadAsStringAsync();
+                var responseContent = await response.Content.ReadAsStringAsync();
 
-            var responseModel = Deserialize<ResponseModel<IEnumerable<UserInfo>>>(responseContent);
+                var responseModel = Deserialize<ResponseModel<IEnumerable<UserInfo>>>(responseContent);
 
-            var user = responseModel?.Data?.FirstOrDefault(u => u.FullName == fullName);
+                var user = responseModel?.Data?.FirstOrDefault(u => u.FullName == fullName);
 
-            logger.LogInformation($"[HttpClient] ApiService server response with: {user}");
+                logger.LogInformation($"[HttpClient] ApiService server response with: {user}");
 
-            return await Task.FromResult($"{user?.FullName}");
+                return await Task.FromResult($"{user?.FullName}");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+                return await Task.FromResult(fullName);
+            }
         }
     }
 }

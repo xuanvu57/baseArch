@@ -10,7 +10,7 @@ namespace BaseArch.Infrastructure.gRPC
     {
         protected GrpcChannel CreateChannelFromConfigureKey(string uriConfigKey)
         {
-            var uri = configuration.GetValue<string>(uriConfigKey) ?? "";
+            var uri = configuration[uriConfigKey] ?? "";
 
             return CreateChannelFromUri(uri);
         }

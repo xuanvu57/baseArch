@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace BaseArch.Application.ExceptionHandlers
+namespace BaseArch.Application.Middlewares
 {
     /// <summary>
     /// Middleware for global exception handler to handle the unhandle exceptions
@@ -15,11 +15,11 @@ namespace BaseArch.Application.ExceptionHandlers
         /// </summary>
         /// <param name="context"><see cref="HttpContext"/></param>
         /// <returns><see cref="Task"/></returns>
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext httpContext)
         {
             try
             {
-                await next(context);
+                await next(httpContext);
             }
             catch (Exception exception)
             {

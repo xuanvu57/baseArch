@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BaseArch.Application.Extensions
+namespace BaseArch.Application.Registrations
 {
     /// <summary>
     /// Register business exception handler

@@ -9,19 +9,23 @@ namespace BaseArch.Infrastructure.DefaultHttpClient.DelegatingHandlers
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var requestLogModel = await ExtractFromRequest(request);
-
-            var response = await base.SendAsync(request, cancellationToken);
-            response.EnsureSuccessStatusCode();
-
-            var responseLogModel = await ExtractFromResponse(response);
-            var requestResponseLogModel = new RequestResponseLogModel()
+            HttpResponseMessage response = null;
+            try
             {
-                RequestLogModel = requestLogModel,
-                ResponseLogModel = responseLogModel
-            };
+                response = await base.SendAsync(request, cancellationToken);
+                response.EnsureSuccessStatusCode();
+            }
+            finally
+            {
+                var responseLogModel = await ExtractFromResponse(response);
+                var requestResponseLogModel = new RequestResponseLogModel()
+                {
+                    RequestLogModel = requestLogModel,
+                    ResponseLogModel = responseLogModel
+                };
 
-            WriteRequestResponseLog(logger, requestResponseLogModel);
-
+                WriteRequestResponseLog(logger, requestResponseLogModel);
+            }
             return response;
         }
 

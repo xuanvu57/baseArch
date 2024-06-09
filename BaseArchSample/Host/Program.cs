@@ -1,9 +1,9 @@
 using BaseArch.Application.CorrelationId;
-using BaseArch.Application.Extensions;
+using BaseArch.Application.Registrations;
 using BaseArch.Infrastructure.DefaultHttpClient.Registrations;
 using BaseArch.Infrastructure.DependencyInjection.Registrations;
-using BaseArch.Infrastructure.gRPC.Registrations;
 using BaseArch.Infrastructure.gRPC.Interceptors;
+using BaseArch.Infrastructure.gRPC.Registrations;
 using BaseArch.Infrastructure.Serilog.DestructingPolicies;
 using BaseArch.Infrastructure.Serilog.Registrations;
 using BaseArch.Infrastructure.StaticMultilingualProvider.Registrations;
@@ -62,7 +62,7 @@ namespace Host
                 // Configure the HTTP request pipeline.
                 app.UseCorrelationIdMiddleware();                           //Presentation
                 app.UseCustomizedSerilogLogContextMiddleware();             //Infra
-                app.UserGlobalExceptionHandlingMiddlewareRegistration();    //Application
+                app.UserGlobalExceptionHandlingMiddleware();                //Application
                 app.UseStaticMultilingualProviders();                       //Infra
                 app.UseHttpRequestResponseLoggingMiddleware();              //Presentation
                 app.UseSerilogRequestLogging();
@@ -73,12 +73,13 @@ namespace Host
                     app.UseSwaggerMiddleware();
                 }
                 app.UseHttpsRedirection();
+                app.UserAuthMiddleware();                                   //Application
                 app.UseAuthorization();
 
                 app.MapControllers();
                 app.AutoMapGprcServices();
 
-                Log.Information("Server is ready!");
+                Log.Information($"Server is ready at {builder.Configuration["Kestrel:Endpoints:Http:Url"]} ...");
                 app.Run();
             }
             catch (Exception ex)

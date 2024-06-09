@@ -2,7 +2,7 @@
 using BaseArch.Application.CorrelationId.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BaseArch.Application.Extensions
+namespace BaseArch.Application.Registrations
 {
     /// <summary>
     /// Extension methods for <see cref="IServiceCollection"/> to register correlation id
