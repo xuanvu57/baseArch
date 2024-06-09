@@ -1,6 +1,7 @@
 ﻿using Application.User.ExternalServices.Interfaces;
 using BaseArch.Domain.DependencyInjection;
 using BaseArchSample.Shares.gRPC;
+using Infrastructure.GrpcClients.Base;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 

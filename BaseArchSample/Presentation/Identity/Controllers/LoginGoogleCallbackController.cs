@@ -1,5 +1,4 @@
 ﻿using Application.Identity.Dtos.Requests;
-using Application.Identity.Services.Interfaces;
 using Asp.Versioning;
 using BaseArch.Application.Models.Responses;
 using BaseArch.Presentation.RestApi;
@@ -13,17 +12,12 @@ namespace Presentation.Identity.Controllers
     [Route(IdentityUriResource.Uri)]
     [ControllerName(IdentityUriResource.ControllerName)]
     [ApiVersion("1")]
-    public class RefreshTokenController(IRefreshTokenService refreshTokenService) : BaseArchController
+    public class LoginGoogleCallbackController() : BaseArchController
     {
-        [HttpPost]
-        public IResult RefreshToken([FromBody] RefreshTokenRequest request)
+        [HttpGet]
+        public IResult LoginGoogleCallback([FromQuery] LoginGoogleCallbackRequest request)
         {
-            var token = refreshTokenService.Refresh(request);
-
-            if (token is null)
-                return Results.Unauthorized();
-            else
-                return Results.Ok(Responses.From(token));
+            return Results.Ok(Responses.From(request));
         }
     }
 }

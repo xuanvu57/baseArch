@@ -30,7 +30,7 @@ namespace BaseArch.Infrastructure.DefaultHttpClient
         {
             var jsonSerializerOptions = new JsonSerializerOptions
             {
-                PropertyNameCaseInsensitive = true
+                PropertyNameCaseInsensitive = true,
             };
             var TObject = JsonSerializer.Deserialize<T>(content, jsonSerializerOptions);
 

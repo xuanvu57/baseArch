@@ -1,4 +1,4 @@
-﻿using Application.Identity.Dtos;
+﻿using Application.Identity.Dtos.Requests;
 using Application.Identity.Dtos.Responses;
 
 namespace Application.Identity.Services.Interfaces

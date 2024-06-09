@@ -5,11 +5,10 @@ using System.Security.Cryptography;
 namespace BaseArch.Application.Encryptions
 {
     [DIService(DIServiceLifetime.Singleton)]
-    public class AesEncryptor : IEncryptor
+    public class AesEncryptionProvider : IEncryptionProvider
     {
         public string Name { get; } = "AES";
         private const int Iterations = 10000;
-        private const string Salt = "";
 
         public string Encrypt(string plainText, string secrectKey)
         {

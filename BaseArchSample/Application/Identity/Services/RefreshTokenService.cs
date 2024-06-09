@@ -1,4 +1,4 @@
-﻿using Application.Identity.Dtos;
+﻿using Application.Identity.Dtos.Requests;
 using Application.Identity.Dtos.Responses;
 using Application.Identity.Services.Interfaces;
 using BaseArch.Application.Identity.Interfaces;

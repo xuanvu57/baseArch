@@ -1,7 +1,7 @@
 ﻿using BaseArch.Infrastructure.DefaultHttpClient;
 using Microsoft.Extensions.Configuration;
 
-namespace Infrastructure.HttpClients
+namespace Infrastructure.HttpClients.Base
 {
     public abstract class SampleBaseHttpClient(IHttpClientFactory httpClientFactory, IConfiguration configuration) : BaseHttpClient(httpClientFactory, configuration)
     {

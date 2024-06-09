@@ -10,20 +10,21 @@ namespace BaseArch.Infrastructure.Identity.Registrations
     public static class IdentityRegistration
     {
         private const string JwtSection = "Identity:Jwt";
+        private const string GoogleSsoSection = "Identity:GoogleSso";
 
         public static void RegisterIdentity(this IServiceCollection services)
         {
             services.AddOptions<JwtOptions>()
                 .BindConfiguration(JwtSection)
                 .ValidateOnStart();
+            services.AddOptions<GoogleSsoOptions>()
+                .BindConfiguration(GoogleSsoSection);
 
             var jwtOptions = services.BuildServiceProvider().GetRequiredService<IOptions<JwtOptions>>();
 
             services
                 .AddAuthentication(options =>
                 {
-                    //options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    //options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
                 .AddJwtBearer(options =>

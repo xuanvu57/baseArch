@@ -2,6 +2,7 @@
 using Application.User.ExternalServices.Interfaces;
 using BaseArch.Application.Models.Responses;
 using BaseArch.Domain.DependencyInjection;
+using Infrastructure.HttpClients.Base;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 

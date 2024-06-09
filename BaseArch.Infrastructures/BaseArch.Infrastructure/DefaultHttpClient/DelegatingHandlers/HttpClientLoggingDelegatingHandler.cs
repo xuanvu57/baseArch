@@ -17,7 +17,7 @@ namespace BaseArch.Infrastructure.DefaultHttpClient.DelegatingHandlers
             }
             finally
             {
-                var responseLogModel = await ExtractFromResponse(response);
+                var responseLogModel = await ExtractFromResponse(response!);
                 var requestResponseLogModel = new RequestResponseLogModel()
                 {
                     RequestLogModel = requestLogModel,

@@ -14,7 +14,7 @@ using System.Text.Json;
 namespace BaseArch.Infrastructure.Identity.Implementations
 {
     [DIService(DIServiceLifetime.Scoped)]
-    public class TokenProvider(IOptions<JwtOptions> jwtOptions, IEncryptor encryptor) : ITokenProvider
+    public class TokenProvider(IOptions<JwtOptions> jwtOptions, IEncryptionProvider encryptor) : ITokenProvider
     {
         public string CreateAccessToken(IEnumerable<Claim> claims)
         {

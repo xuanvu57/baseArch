@@ -57,8 +57,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseArch.Infrastructure.gRP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseArch.Infrastructure.MassTransit", "BaseArch.Infrastructures\BaseArch.Infrastructure.MassTransit\BaseArch.Infrastructure.MassTransit.csproj", "{EFE426A2-64D9-450D-AE7A-AAF5951DDFDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseArch.Application.Identity", "BaseArch.Applications\BaseArch.Application.Identity\BaseArch.Application.Identity.csproj", "{F361B530-994B-4C7D-B695-0E45A99A24B2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseArch.Infrastructure.Identity", "BaseArch.Infrastructures\BaseArch.Infrastructure.Identity\BaseArch.Infrastructure.Identity.csproj", "{B5E43AAC-DF65-4455-A47B-621C90373663}"
 EndProject
 Global
@@ -155,10 +153,6 @@ Global
 		{EFE426A2-64D9-450D-AE7A-AAF5951DDFDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFE426A2-64D9-450D-AE7A-AAF5951DDFDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFE426A2-64D9-450D-AE7A-AAF5951DDFDB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F361B530-994B-4C7D-B695-0E45A99A24B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F361B530-994B-4C7D-B695-0E45A99A24B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F361B530-994B-4C7D-B695-0E45A99A24B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F361B530-994B-4C7D-B695-0E45A99A24B2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B5E43AAC-DF65-4455-A47B-621C90373663}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B5E43AAC-DF65-4455-A47B-621C90373663}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5E43AAC-DF65-4455-A47B-621C90373663}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -189,7 +183,6 @@ Global
 		{93333EB5-3AD4-4E75-9B4E-2B79BD236D1A} = {8D3B5921-A8AB-4D11-85ED-E6CB46650B7B}
 		{296FEBC5-4FFB-4AC5-ABCA-D9EE9CB8341C} = {9B09A6DE-5435-48D8-B519-B55AEED5FE31}
 		{EFE426A2-64D9-450D-AE7A-AAF5951DDFDB} = {9B09A6DE-5435-48D8-B519-B55AEED5FE31}
-		{F361B530-994B-4C7D-B695-0E45A99A24B2} = {79EA6F2B-EEBC-4E99-8F5B-D4E5435E7BD8}
 		{B5E43AAC-DF65-4455-A47B-621C90373663} = {9B09A6DE-5435-48D8-B519-B55AEED5FE31}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

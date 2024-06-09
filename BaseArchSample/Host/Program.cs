@@ -14,6 +14,8 @@ namespace Host
 {
     public static class Program
     {
+        private const string AppAllowOrigins = "_appOrigins";
+
         private static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
@@ -40,6 +42,15 @@ namespace Host
                         opt.Keywords = ["Scheme"];
                     }));
                 });
+
+                builder.Services.AddCors(options =>
+                {
+                    options.AddPolicy(name: AppAllowOrigins, policy =>
+                    {
+                        policy.SetIsOriginAllowed(x => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                    });
+                });
+
 
                 // Add services to the container.
                 builder.Services.AddControllers();
@@ -73,6 +84,7 @@ namespace Host
                     app.UseSwaggerMiddleware();
                 }
                 app.UseHttpsRedirection();
+                app.UseCors(AppAllowOrigins);
                 app.UserAuthMiddleware();                                   //Application
                 app.UseAuthorization();
 

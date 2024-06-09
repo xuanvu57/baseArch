@@ -2,7 +2,7 @@
 using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
 
-namespace Infrastructure.GrpcClients
+namespace Infrastructure.GrpcClients.Base
 {
     public abstract class SampleBaseGrpcClient(IConfiguration configuration, IServiceProvider serviceProvider) : BaseGrpcClient(configuration, serviceProvider)
     {
