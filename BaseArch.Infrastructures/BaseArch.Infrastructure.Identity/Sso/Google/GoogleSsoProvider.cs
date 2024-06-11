@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Web;
 
+//https://www.codeproject.com/Articles/5376012/Using-Google-OAuth-2-0-as-User-Sign-In-for-ASP-NET?fid=2004592&df=90&mpp=25&sort=Position&spc=Relaxed&prof=True&view=Normal&fr=6
 namespace BaseArch.Infrastructure.Identity.Sso.Google
 {
     /// <summary>
@@ -15,23 +16,20 @@ namespace BaseArch.Infrastructure.Identity.Sso.Google
     [DIService(DIServiceLifetime.Scoped)]
     public class GoogleSsoProvider(IOptions<GoogleSsoOptions> options, IHttpClientFactory httpClientFactory) : ISsoProvider
     {
-        //https://www.codeproject.com/Articles/5376012/Using-Google-OAuth-2-0-as-User-Sign-In-for-ASP-NET?fid=2004592&df=90&mpp=25&sort=Position&spc=Relaxed&prof=True&view=Normal&fr=6
-
         /// <inheritdoc/>
         public string Name { get; } = "Google";
 
         /// <inheritdoc/>
         public string GetLoginUrl()
         {
-            var clientId = options.Value.ClientId;
             var redirectUri = HttpUtility.UrlEncode($"{options.Value.RedirectUrl}");
 
             return $@"{options.Value.GoogleLoginUrl}?" +
             $"access_type=offline" +
-            $"&client_id={clientId}" +
+            $"&client_id={options.Value.ClientId}" +
             $"&redirect_uri={redirectUri}" +
             $"&response_type=code" +
-            $"&scope=email profile" +
+            $"&scope={options.Value.Scope}" +
             $"&prompt=consent";
         }
 

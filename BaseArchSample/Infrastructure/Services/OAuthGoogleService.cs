@@ -5,24 +5,25 @@ using BaseArch.Infrastructure.Identity.Sso.Google;
 using BaseArch.Infrastructure.Identity.Sso.Google.Models;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
+using System.Web;
 
 namespace Infrastructure.Services
 {
     [DIService(DIServiceLifetime.Scoped)]
     public class OAuthGoogleService(IEnumerable<ISsoProvider> ssoProviders, IOptions<GoogleSsoOptions> options, ILoginService loginService) : IOAuthGoogleService
     {
-        private readonly ISsoProvider googleSsoProvider = ssoProviders.First(x => x.Name == "Google");
+        private readonly ISsoProvider provider = ssoProviders.First(x => x.Name == "Google");
 
         public async Task<string> GetTokenAndCreateCallbackUrl(string authorizationCode)
         {
-            var jsonToken = await googleSsoProvider.GetToken(authorizationCode);
+            var jsonToken = await provider.GetToken(authorizationCode);
 
             var googleToken = JsonSerializer.Deserialize<GoogleSsoTokenModel>(jsonToken);
 
             var callbackUrl = options.Value.CallbackUrl;
             if (googleToken is not null && googleToken.IsSuccess)
             {
-                var jsonUserInfo = await googleSsoProvider.GetUserInfo(googleToken.AccessToken);
+                var jsonUserInfo = await provider.GetUserInfo(googleToken.AccessToken);
 
                 var userInfo = JsonSerializer.Deserialize<GoogleSsoUserInfoModel>(jsonUserInfo);
                 if (userInfo is not null)
@@ -30,8 +31,13 @@ namespace Infrastructure.Services
                     var token = await loginService.Login(userInfo.Email);
                     if (token is not null)
                     {
-                        callbackUrl = $"{callbackUrl}?accessToken={token.AccessToken}&refreshToken={token.RefreshToken}";
-                        callbackUrl = $"{callbackUrl}&googleAccessToken={googleToken.AccessToken}&googleRefreshToken={googleToken.RefreshToken}";
+                        var query = HttpUtility.ParseQueryString(string.Empty);
+                        query["accessToken"] = token.AccessToken;
+                        query["refreshToken"] = token.RefreshToken;
+                        query["ssoAccessToken"] = googleToken.AccessToken;
+                        query["ssoRefreshToken"] = googleToken.RefreshToken;
+
+                        callbackUrl = $"{callbackUrl}?{query}";
                     }
                 }
             }

@@ -8,34 +8,40 @@ namespace BaseArch.Infrastructure.Identity.Sso.Google.Models
     public partial record GoogleSsoUserInfoModel
     {
         /// <summary>
+        /// User id
+        /// </summary>
+        [JsonPropertyName("id")]
+        public string Id { get; init; } = string.Empty;
+
+        /// <summary>
         /// Email
         /// </summary>
         [JsonPropertyName("email")]
-        public string Email { get; init; } = "";
+        public string Email { get; init; } = string.Empty;
 
         /// <summary>
         /// Name
         /// </summary>
         [JsonPropertyName("name")]
-        public string Name { get; init; } = "";
+        public string Name { get; init; } = string.Empty;
 
         /// <summary>
         /// Url to user's avatar
         /// </summary>
         [JsonPropertyName("picture")]
-        public string Picutre { get; init; } = "";
+        public string Picutre { get; init; } = string.Empty;
 
         /// <summary>
         /// Given name
         /// </summary>
         [JsonPropertyName("given_name")]
-        public string GivenName { get; init; } = "";
+        public string GivenName { get; init; } = string.Empty;
 
         /// <summary>
         /// Family name
         /// </summary>
         [JsonPropertyName("family_name")]
-        public string FamilyName { get; init; } = "";
+        public string FamilyName { get; init; } = string.Empty;
 
         /// <summary>
         /// <see cref="GoogleSsoUserInfoModel"/>

@@ -12,12 +12,12 @@ namespace Presentation.Identity.Controllers
     [Route(IdentityUriResource.Uri)]
     [ControllerName(IdentityUriResource.ControllerName)]
     [ApiVersion("1")]
-    public class LoginGoogleCallbackController() : BaseArchController
+    public class LoginSsoCallbackController() : BaseArchController
     {
         [HttpGet]
-        public IResult LoginGoogleCallback([FromQuery] LoginGoogleCallbackRequest request)
+        public IResult LoginSsoCallback([FromQuery] LoginSsoCallbackRequest parameters)
         {
-            return Results.Ok(Responses.From(request));
+            return Results.Ok(Responses.From(parameters));
         }
     }
 }

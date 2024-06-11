@@ -1,4 +1,5 @@
 ﻿using BaseArch.Infrastructure.Identity.Jwt;
+using BaseArch.Infrastructure.Identity.Sso.Facebook;
 using BaseArch.Infrastructure.Identity.Sso.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,11 @@ namespace BaseArch.Infrastructure.Identity.Registrations
         private const string GoogleSsoSection = "Identity:GoogleSso";
 
         /// <summary>
+        /// Configuration section for Facebook Single sign-on
+        /// </summary>
+        private const string FacebookSsoSection = "Identity:FacebookSso";
+
+        /// <summary>
         /// Register identity services
         /// </summary>
         /// <param name="services"></param>
@@ -32,8 +38,12 @@ namespace BaseArch.Infrastructure.Identity.Registrations
             services.AddOptions<JwtOptions>()
                 .BindConfiguration(JwtSection)
                 .ValidateOnStart();
+
             services.AddOptions<GoogleSsoOptions>()
                 .BindConfiguration(GoogleSsoSection);
+
+            services.AddOptions<FacebookSsoOptions>()
+                .BindConfiguration(FacebookSsoSection);
 
             var jwtOptions = services.BuildServiceProvider().GetRequiredService<IOptions<JwtOptions>>();
 

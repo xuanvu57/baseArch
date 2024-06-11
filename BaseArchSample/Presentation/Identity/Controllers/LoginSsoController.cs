@@ -11,12 +11,12 @@ namespace Presentation.Identity.Controllers
     [Route(IdentityUriResource.Uri)]
     [ControllerName(IdentityUriResource.ControllerName)]
     [ApiVersion("1")]
-    public class LoginGoogleController(IEnumerable<ISsoProvider> ssoProviders) : BaseArchController
+    public class LoginSsoController(IEnumerable<ISsoProvider> ssoProviders) : BaseArchController
     {
         [HttpGet]
-        public IResult LoginGoogle()
+        public IResult LoginSso([FromQuery] string ssoProvider)
         {
-            var loginUrl = ssoProviders.First(x => x.Name == "Google").GetLoginUrl();
+            var loginUrl = ssoProviders.First(x => x.Name.Equals(ssoProvider, StringComparison.CurrentCultureIgnoreCase)).GetLoginUrl();
 
             return Results.Redirect(loginUrl, true);
         }
