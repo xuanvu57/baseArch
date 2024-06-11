@@ -7,11 +7,25 @@ using System.Text;
 
 namespace BaseArch.Infrastructure.Identity.Registrations
 {
+    /// <summary>
+    /// Extention to register identity services
+    /// </summary>
     public static class IdentityRegistration
     {
+        /// <summary>
+        /// Configuration section for Jwt
+        /// </summary>
         private const string JwtSection = "Identity:Jwt";
+
+        /// <summary>
+        /// Configuration section for Google Single sign-on
+        /// </summary>
         private const string GoogleSsoSection = "Identity:GoogleSso";
 
+        /// <summary>
+        /// Register identity services
+        /// </summary>
+        /// <param name="services"></param>
         public static void RegisterIdentity(this IServiceCollection services)
         {
             services.AddOptions<JwtOptions>()

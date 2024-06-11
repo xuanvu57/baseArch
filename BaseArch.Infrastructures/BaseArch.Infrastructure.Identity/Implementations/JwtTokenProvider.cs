@@ -13,9 +13,15 @@ using System.Text.Json;
 
 namespace BaseArch.Infrastructure.Identity.Implementations
 {
+    /// <summary>
+    /// Jwt token provider
+    /// </summary>
+    /// <param name="jwtOptions"></param>
+    /// <param name="encryptor"></param>
     [DIService(DIServiceLifetime.Scoped)]
-    public class TokenProvider(IOptions<JwtOptions> jwtOptions, IEncryptionProvider encryptor) : ITokenProvider
+    public class JwtTokenProvider(IOptions<JwtOptions> jwtOptions, IEncryptionProvider encryptor) : ITokenProvider
     {
+        /// <inheritdoc/>
         public string CreateAccessToken(IEnumerable<Claim> claims)
         {
             var token = CreateJwtToken(claims);
@@ -24,7 +30,8 @@ namespace BaseArch.Infrastructure.Identity.Implementations
             return tokenHandler.WriteToken(token);
         }
 
-        public (string newAccessToken, string newRefreshToken) CreateAccessTokenFromRefreshToken(string refreshToken, string accessToken)
+        /// <inheritdoc/>
+        public (string newAccessToken, string newRefreshToken) RenewAccessTokenFromRefreshToken(string refreshToken, string accessToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             if (!tokenHandler.CanReadToken(accessToken))
@@ -36,7 +43,7 @@ namespace BaseArch.Infrastructure.Identity.Implementations
                 return ("", "");
 
             var rawRefreshToken = encryptor.Decrypt(refreshToken, jwtOptions.Value.SecrectKey);
-            var refreshTokenModel = JsonSerializer.Deserialize<RefreshTokenModel>(rawRefreshToken);
+            var refreshTokenModel = JsonSerializer.Deserialize<JwtRefreshTokenModel>(rawRefreshToken);
 
             if (refreshTokenModel is null ||
                 refreshTokenModel.ExpiredAt < DateTimeOffset.UtcNow ||
@@ -49,6 +56,7 @@ namespace BaseArch.Infrastructure.Identity.Implementations
             return (newAccessToken, newRefreshToken);
         }
 
+        /// <inheritdoc/>
         public string CreateRefreshToken(string nameIdentifierClaimValue)
         {
             var randomNumber = new byte[32];
@@ -58,7 +66,7 @@ namespace BaseArch.Infrastructure.Identity.Implementations
 
             var expiredAt = DateTimeOffset.UtcNow.AddMinutes(jwtOptions.Value.RefreshTokenExpirationInMinute);
 
-            var refreshTokenModel = new RefreshTokenModel()
+            var refreshTokenModel = new JwtRefreshTokenModel()
             {
                 Token = randomKey,
                 ExpiredAt = expiredAt,
@@ -68,6 +76,11 @@ namespace BaseArch.Infrastructure.Identity.Implementations
             return encryptor.Encrypt(JsonSerializer.Serialize(refreshTokenModel), jwtOptions.Value.SecrectKey);
         }
 
+        /// <summary>
+        /// Create Jwt token
+        /// </summary>
+        /// <param name="claims">List of <see cref="Claim"/></param>
+        /// <returns><<see cref="JwtSecurityToken"/>/returns>
         private JwtSecurityToken CreateJwtToken(IEnumerable<Claim> claims)
         {
             var expiration = DateTime.UtcNow.AddMinutes(jwtOptions.Value.AccessTokenExpirationInMinute);
@@ -80,6 +93,11 @@ namespace BaseArch.Infrastructure.Identity.Implementations
             );
         }
 
+        /// <summary>
+        /// Clone claim to avoid duplication
+        /// </summary>
+        /// <param name="claims">List of <see cref="Claim"/></param>
+        /// <returns>List of <see cref="Claim"/></returns>
         private IList<Claim> CloneClaim(IEnumerable<Claim> claims)
         {
             var clonedClaims = new List<Claim>();
@@ -106,6 +124,10 @@ namespace BaseArch.Infrastructure.Identity.Implementations
             return clonedClaims;
         }
 
+        /// <summary>
+        /// Create signing credentials
+        /// </summary>
+        /// <returns><see cref="SigningCredentials"/></returns>
         private SigningCredentials CreateSigningCredentials()
         {
             return new SigningCredentials(

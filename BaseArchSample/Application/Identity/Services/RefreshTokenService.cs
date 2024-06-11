@@ -11,7 +11,7 @@ namespace Application.Identity.Services
     {
         public TokenResponse Refresh(RefreshTokenRequest request)
         {
-            var tokens = tokenProvider.CreateAccessTokenFromRefreshToken(request.RefreshToken, request.AccessToken);
+            var tokens = tokenProvider.RenewAccessTokenFromRefreshToken(request.RefreshToken, request.AccessToken);
 
             if (!string.IsNullOrEmpty(tokens.newAccessToken) &&
                 !string.IsNullOrEmpty(tokens.newRefreshToken))

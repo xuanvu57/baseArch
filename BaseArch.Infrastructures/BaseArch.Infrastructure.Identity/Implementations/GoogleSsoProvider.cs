@@ -8,13 +8,20 @@ using System.Web;
 
 namespace BaseArch.Infrastructure.Identity.Implementations
 {
+    /// <summary>
+    /// Google single sign-on provider
+    /// </summary>
+    /// <param name="options"><see cref="GoogleSsoOptions"/></param>
+    /// <param name="httpClientFactory"><see cref="IHttpClientFactory"/></param>
     [DIService(DIServiceLifetime.Scoped)]
     public class GoogleSsoProvider(IOptions<GoogleSsoOptions> options, IHttpClientFactory httpClientFactory) : ISsoProvider
     {
         //https://www.codeproject.com/Articles/5376012/Using-Google-OAuth-2-0-as-User-Sign-In-for-ASP-NET?fid=2004592&df=90&mpp=25&sort=Position&spc=Relaxed&prof=True&view=Normal&fr=6
 
+        /// <inheritdoc/>
         public string Name { get; } = "Google";
 
+        /// <inheritdoc/>
         public string GetLoginUrl()
         {
             var clientId = options.Value.ClientId;
@@ -29,6 +36,7 @@ namespace BaseArch.Infrastructure.Identity.Implementations
             $"&prompt=consent";
         }
 
+        /// <inheritdoc/>
         public async Task<string> GetToken(string authorizationCode)
         {
             var data = new Dictionary<string, string>()
@@ -48,7 +56,8 @@ namespace BaseArch.Infrastructure.Identity.Implementations
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> RenewToken(string refreshToken)
+        /// <inheritdoc/>
+        public async Task<string> RenewAccessToken(string refreshToken)
         {
             var data = new Dictionary<string, string>()
             {
@@ -65,6 +74,7 @@ namespace BaseArch.Infrastructure.Identity.Implementations
             return await response.Content.ReadAsStringAsync();
         }
 
+        /// <inheritdoc/>
         public async Task<string> GetUserInfo(string accessToken)
         {
             var httpClient = httpClientFactory.CreateClient(HttpClientRegistration.DefaultClientName);
