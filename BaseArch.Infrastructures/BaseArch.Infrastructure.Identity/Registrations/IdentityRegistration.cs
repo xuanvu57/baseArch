@@ -1,4 +1,5 @@
-﻿using BaseArch.Infrastructure.Identity.Options;
+﻿using BaseArch.Infrastructure.Identity.Jwt;
+using BaseArch.Infrastructure.Identity.Sso.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

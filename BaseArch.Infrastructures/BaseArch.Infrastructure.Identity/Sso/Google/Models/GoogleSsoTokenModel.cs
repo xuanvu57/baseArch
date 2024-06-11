@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BaseArch.Infrastructure.Identity.Models.GoogleSso
+namespace BaseArch.Infrastructure.Identity.Sso.Google.Models
 {
     /// <summary>
     /// Token model from Google single sign-on

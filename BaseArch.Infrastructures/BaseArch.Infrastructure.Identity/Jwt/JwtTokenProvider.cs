@@ -1,8 +1,7 @@
 ﻿using BaseArch.Application.Encryptions.Interfaces;
 using BaseArch.Application.Identity.Interfaces;
 using BaseArch.Domain.DependencyInjection;
-using BaseArch.Infrastructure.Identity.Models;
-using BaseArch.Infrastructure.Identity.Options;
+using BaseArch.Infrastructure.Identity.Jwt.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,7 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace BaseArch.Infrastructure.Identity.Implementations
+namespace BaseArch.Infrastructure.Identity.Jwt
 {
     /// <summary>
     /// Jwt token provider

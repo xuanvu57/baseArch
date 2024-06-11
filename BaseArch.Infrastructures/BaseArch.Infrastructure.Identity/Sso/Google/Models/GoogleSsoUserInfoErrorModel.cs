@@ -1,4 +1,4 @@
-﻿namespace BaseArch.Infrastructure.Identity.Models.GoogleSso
+﻿namespace BaseArch.Infrastructure.Identity.Sso.Google.Models
 {
     /// <summary>
     /// Error model when get user information

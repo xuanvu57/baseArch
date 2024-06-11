@@ -1,4 +1,4 @@
-﻿namespace BaseArch.Infrastructure.Identity.Models
+﻿namespace BaseArch.Infrastructure.Identity.Jwt.Models
 {
     /// <summary>
     /// Jwt refresh token model before encryption

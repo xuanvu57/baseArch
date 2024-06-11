@@ -1,4 +1,4 @@
-﻿namespace BaseArch.Infrastructure.Identity.Options
+﻿namespace BaseArch.Infrastructure.Identity.Sso.Google
 {
     /// <summary>
     /// Google single sign-on option

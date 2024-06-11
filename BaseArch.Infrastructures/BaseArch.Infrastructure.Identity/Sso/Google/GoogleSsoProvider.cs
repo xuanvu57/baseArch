@@ -1,12 +1,11 @@
 ﻿using BaseArch.Application.Identity.Interfaces;
 using BaseArch.Domain.DependencyInjection;
 using BaseArch.Infrastructure.DefaultHttpClient.Registrations;
-using BaseArch.Infrastructure.Identity.Options;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Web;
 
-namespace BaseArch.Infrastructure.Identity.Implementations
+namespace BaseArch.Infrastructure.Identity.Sso.Google
 {
     /// <summary>
     /// Google single sign-on provider

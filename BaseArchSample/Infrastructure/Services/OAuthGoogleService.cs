@@ -1,8 +1,8 @@
 ﻿using Application.Identity.Services.Interfaces;
 using BaseArch.Application.Identity.Interfaces;
 using BaseArch.Domain.DependencyInjection;
-using BaseArch.Infrastructure.Identity.Models.GoogleSso;
-using BaseArch.Infrastructure.Identity.Options;
+using BaseArch.Infrastructure.Identity.Sso.Google;
+using BaseArch.Infrastructure.Identity.Sso.Google.Models;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
