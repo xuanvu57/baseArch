@@ -28,17 +28,18 @@ namespace Infrastructure.Services
                 var userInfo = JsonSerializer.Deserialize<GoogleSsoUserInfoModel>(jsonUserInfo);
                 if (userInfo is not null)
                 {
+                    var query = HttpUtility.ParseQueryString(string.Empty);
+                    query["ssoAccessToken"] = googleToken.AccessToken;
+                    query["ssoRefreshToken"] = googleToken.RefreshToken;
+
                     var token = await loginService.Login(userInfo.Email);
                     if (token is not null)
                     {
-                        var query = HttpUtility.ParseQueryString(string.Empty);
                         query["accessToken"] = token.AccessToken;
                         query["refreshToken"] = token.RefreshToken;
-                        query["ssoAccessToken"] = googleToken.AccessToken;
-                        query["ssoRefreshToken"] = googleToken.RefreshToken;
-
-                        callbackUrl = $"{callbackUrl}?{query}";
                     }
+
+                    callbackUrl = $"{callbackUrl}?{query}";
                 }
             }
 

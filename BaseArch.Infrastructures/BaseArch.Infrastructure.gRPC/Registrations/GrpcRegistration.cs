@@ -43,7 +43,7 @@ namespace BaseArch.Infrastructure.gRPC.Registrations
         private static List<Type> GetGrpcServiceTypes()
         {
             var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(assembly => assembly.ExportedTypes)
+                .SelectMany(assembly => assembly.GetTypes())
                 .Where(type => type.IsClass && !type.IsAbstract && type.CustomAttributes.Any(a => a.AttributeType == typeof(GrpcServiceAttribute)))
                 .ToList();
 

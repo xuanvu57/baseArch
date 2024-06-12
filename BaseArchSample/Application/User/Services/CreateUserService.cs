@@ -13,7 +13,7 @@ using Domain.Entities;
 namespace Application.User.Services
 {
     [DIService(DIServiceLifetime.Scoped)]
-    internal class CreateUserService(IUnitOfWork unitOfWork,
+    public class CreateUserService(IUnitOfWork unitOfWork,
         ICreateUserValidator validator,
         IGreetingClient greetingClient,
         IGreetingClientOther greetingClientOther,

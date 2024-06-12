@@ -2,7 +2,7 @@
 
 namespace Application.User.Validators.Interfaces
 {
-    internal interface ICreateUserValidator
+    public interface ICreateUserValidator
     {
         Task ValidateWithDatabaseAsync(CreateUserRequest request);
     }

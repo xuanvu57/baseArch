@@ -9,6 +9,7 @@ using BaseArch.Infrastructure.Serilog.Registrations;
 using BaseArch.Infrastructure.StaticMultilingualProvider.Registrations;
 using BaseArch.Presentation.RestApi.Registrations;
 using Serilog;
+using System.Reflection;
 
 namespace Host
 {
@@ -31,6 +32,7 @@ namespace Host
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true)
                     .AddEnvironmentVariables()
+                    .AddUserSecrets(Assembly.GetExecutingAssembly(), true, true)
                     .Build();
 
                 builder.Host.UseSerilog((context, loggerConfiguration) =>

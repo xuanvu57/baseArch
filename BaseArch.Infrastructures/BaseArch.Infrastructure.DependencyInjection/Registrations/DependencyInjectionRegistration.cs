@@ -34,7 +34,7 @@ namespace BaseArch.Infrastructure.DependencyInjection.Registrations
             var diServiceTypes = GetDIServiceTypes();
 
             services.Scan(scrutor =>
-                scrutor.FromAssembliesOf(diServiceTypes)
+                scrutor.FromTypes(diServiceTypes)
                 .AddClasses(c => c.Where(type => type.GetCustomAttribute<DIServiceAttribute>()?.Lifetime == DIServiceLifetime.Singleton))
                 .AsImplementedInterfaces()
                 .WithSingletonLifetime()
@@ -76,7 +76,7 @@ namespace BaseArch.Infrastructure.DependencyInjection.Registrations
         private static List<Type> GetDIServiceTypes()
         {
             var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(assembly => assembly.ExportedTypes)
+                .SelectMany(assembly => assembly.GetTypes())
                 .Where(type => type.IsClass && type.CustomAttributes.Any(a => a.AttributeType == typeof(DIServiceAttribute)))
                 .ToList();
 
@@ -90,7 +90,7 @@ namespace BaseArch.Infrastructure.DependencyInjection.Registrations
         private static List<Type> GetAdditionalDependencyInjectionTypes()
         {
             var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(assembly => assembly.ExportedTypes)
+                .SelectMany(assembly => assembly.GetTypes())
                 .Where(type => type.IsAssignableTo(typeof(IDependencyInjection)) && type.IsClass && !type.IsAbstract)
                 .ToList();
 

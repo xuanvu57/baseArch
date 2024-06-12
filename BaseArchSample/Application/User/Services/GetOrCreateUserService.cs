@@ -8,7 +8,7 @@ using BaseArch.Domain.DependencyInjection;
 namespace Application.User.Services
 {
     [DIService(DIServiceLifetime.Scoped)]
-    internal class GetOrCreateUserService(IUnitOfWork unitOfWork,
+    public class GetOrCreateUserService(IUnitOfWork unitOfWork,
         IUserEntityToUserInfoConverter userEntityToUserInfoConverter) : IGetOrCreateUserService
     {
         private readonly IUserRepository userRepository = unitOfWork.GetRepository<IUserRepository>();

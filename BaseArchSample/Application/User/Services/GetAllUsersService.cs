@@ -8,7 +8,7 @@ using Domain.Entities;
 namespace Application.User.Services
 {
     [DIService(DIServiceLifetime.Scoped)]
-    internal class GetAllUsersService(IUnitOfWork unitOfWork,
+    public class GetAllUsersService(IUnitOfWork unitOfWork,
         IUserEntityToUserInfoConverter userEntityToUserInfoConverter) : IGetAllUsersService
     {
         private readonly IBaseRepository<UserEntity, Guid> genericUserRepository = unitOfWork.GetVirtualRepository<UserEntity, Guid, Guid>();

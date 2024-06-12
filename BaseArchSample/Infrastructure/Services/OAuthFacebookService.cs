@@ -12,10 +12,10 @@ namespace Infrastructure.Services
     [DIService(DIServiceLifetime.Scoped)]
     public class OAuthFacebookService(IEnumerable<ISsoProvider> ssoProviders, IOptions<FacebookSsoOptions> options, ILoginService loginService) : IOAuthFacebookService
     {
-        private readonly ISsoProvider provider = ssoProviders.First(x => x.Name == "Facebook");
 
         public async Task<string> GetTokenAndCreateCallbackUrl(string code, string state, bool success)
         {
+            var provider = ssoProviders.First(x => x.Name == "Facebook");
             var callbackUrl = options.Value.CallbackUrl;
             if (success && state == options.Value.State)
             {
@@ -30,17 +30,18 @@ namespace Infrastructure.Services
                     var userInfo = JsonSerializer.Deserialize<FacebookSsoUserInfoModel>(jsonUserInfo);
                     if (userInfo is not null)
                     {
+                        var query = HttpUtility.ParseQueryString(string.Empty);
+                        query["ssoAccessToken"] = facebokToken.AccessToken;
+                        query["ssoRefreshToken"] = facebokToken.AccessToken;
+
                         var token = await loginService.Login(userInfo.Email);
                         if (token is not null)
                         {
-                            var query = HttpUtility.ParseQueryString(string.Empty);
                             query["accessToken"] = token.AccessToken;
                             query["refreshToken"] = token.RefreshToken;
-                            query["ssoAccessToken"] = facebokToken.AccessToken;
-                            query["ssoRefreshToken"] = facebokToken.AccessToken;
-
-                            callbackUrl = $"{callbackUrl}?{query}";
                         }
+
+                        callbackUrl = $"{callbackUrl}?{query}";
                     }
                 }
             }

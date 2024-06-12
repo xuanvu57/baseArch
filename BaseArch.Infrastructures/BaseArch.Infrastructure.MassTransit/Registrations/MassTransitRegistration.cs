@@ -95,11 +95,12 @@ namespace BaseArch.Infrastructure.MassTransit.Registrations
         private static Type[] CreateAllGenericConsumerTypes()
         {
             var messageTypes = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(a => a.ExportedTypes)
+                .SelectMany(assembly => assembly.GetTypes())
                 .Where(type =>
                     type.BaseType != null &&
                     type.BaseType.IsGenericType &&
                     type.BaseType.GetGenericTypeDefinition() == typeof(BaseEventMessage<>))
+                .Distinct()
                 .ToList();
 
             var consumerTypes = messageTypes.Select((messageType) =>
@@ -112,14 +113,17 @@ namespace BaseArch.Infrastructure.MassTransit.Registrations
 
         private static Type[] GetAllCustomizedConsumerTypes()
         {
-            return AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(a => a.ExportedTypes)
+            var consumerTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(assembly => assembly.GetTypes())
                 .Where(type =>
                     type.BaseType != null &&
                     type.BaseType.IsGenericType &&
                     type.BaseType.GetGenericTypeDefinition() == typeof(DefaultConsumer<>) &&
                     type.FullName != typeof(Consumer<>).FullName)
+                .Distinct()
                 .ToArray();
+
+            return consumerTypes;
         }
     }
 }

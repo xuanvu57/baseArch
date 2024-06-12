@@ -10,11 +10,8 @@ namespace BaseArch.Infrastructure.MassTransit.Implementations
     {
         public override async Task ConsumeEventMessage(ConsumeContext<TMessage> context)
         {
-            // TODO: need to do research to check why it create and inject duplidated handlers
-            var uniqueMessageHandlers = eventMessageHandlers.GroupBy(x => x.GetType()).Select(x => x.First());
-
             var tasks = new List<Task>();
-            foreach (var messageHandler in uniqueMessageHandlers)
+            foreach (var messageHandler in eventMessageHandlers)
             {
                 tasks.Add(messageHandler.Handle(context.Message));
             }

@@ -8,7 +8,7 @@ using BaseArch.Domain.DependencyInjection;
 namespace Application.User.Services
 {
     [DIService(DIServiceLifetime.Scoped)]
-    internal class GetFirstUserService(IUnitOfWork unitOfWork,
+    public class GetFirstUserService(IUnitOfWork unitOfWork,
         IUserEntityToUserInfoConverter userEntityToUserInfoConverter) : IGetFirstUserService
     {
         private readonly IUserRepository userRepository = unitOfWork.GetRepository<IUserRepository>();
