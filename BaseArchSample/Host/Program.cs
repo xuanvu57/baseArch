@@ -2,7 +2,6 @@ using BaseArch.Application.CorrelationId;
 using BaseArch.Application.Registrations;
 using BaseArch.Infrastructure.DefaultHttpClient.Registrations;
 using BaseArch.Infrastructure.DependencyInjection.Registrations;
-using BaseArch.Infrastructure.gRPC.Interceptors;
 using BaseArch.Infrastructure.gRPC.Registrations;
 using BaseArch.Infrastructure.Serilog.DestructingPolicies;
 using BaseArch.Infrastructure.Serilog.Registrations;
@@ -58,10 +57,7 @@ namespace Host
                 builder.Services.AddControllers();
 
                 // Add customized services
-                builder.Services.AddGrpcServices(option =>
-                {
-                    option.Interceptors.Add<GrpcServiceLoggingInterceptor>();
-                });
+                builder.Services.AddGrpcServices();
                 builder.Services.AddDefaultHttpClient();
                 builder.Services.AddRestApiVersioning(2);
                 builder.Services.AddSwagger();

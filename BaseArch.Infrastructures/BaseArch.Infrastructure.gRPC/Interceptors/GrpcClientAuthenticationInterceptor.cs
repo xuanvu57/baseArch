@@ -1,21 +1,29 @@
-﻿using BaseArch.Application.CorrelationId;
-using BaseArch.Application.CorrelationId.Interfaces;
-using BaseArch.Infrastructure.gRPC.Extensions;
+﻿using BaseArch.Infrastructure.gRPC.Extensions;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Http;
 
 namespace BaseArch.Infrastructure.gRPC.Interceptors
 {
-    public class GrpcClientCorrelationIdInterceptor(ICorrelationIdProvider correlationIdProvider, IOptions<CorrelationIdOptions> options) : Interceptor
+    internal class GrpcClientAuthenticationInterceptor(IHttpContextAccessor httpContextAccessor) : Interceptor
     {
+        private const string DefaultScheme = "Bearer";
+
         public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
         {
-            var correlationId = correlationIdProvider.Get();
+            if (httpContextAccessor.HttpContext is null)
+                return continuation(request, context);
 
+            var authorizationValue = httpContextAccessor.HttpContext.Request.Headers.Authorization.FirstOrDefault() ?? "";
+            if (!authorizationValue.StartsWith(DefaultScheme))
+            {
+                return continuation(request, context);
+            }
+
+            var token = authorizationValue.Replace($"{DefaultScheme} ", "");
             var metadata = new Metadata
             {
-                { options.Value.RequestHeader, correlationId }
+                { "Authorization", $"Bearer {token}" }
             };
 
             var newContext = new ClientInterceptorContext<TRequest, TResponse>(

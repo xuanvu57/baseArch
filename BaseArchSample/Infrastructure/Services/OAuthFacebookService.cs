@@ -12,10 +12,10 @@ namespace Infrastructure.Services
     [DIService(DIServiceLifetime.Scoped)]
     public class OAuthFacebookService(IEnumerable<ISsoProvider> ssoProviders, IOptions<FacebookSsoOptions> options, ILoginService loginService) : IOAuthFacebookService
     {
+        private readonly ISsoProvider provider = ssoProviders.First(x => x.Name == "Facebook");
 
         public async Task<string> GetTokenAndCreateCallbackUrl(string code, string state, bool success)
         {
-            var provider = ssoProviders.First(x => x.Name == "Facebook");
             var callbackUrl = options.Value.CallbackUrl;
             if (success && state == options.Value.State)
             {

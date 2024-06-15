@@ -26,13 +26,9 @@ namespace BaseArch.Infrastructure.DefaultHttpClient
             return JsonSerializer.Serialize(TObject);
         }
 
-        protected static T? Deserialize<T>(string content)
+        protected T? Deserialize<T>(string content)
         {
-            var jsonSerializerOptions = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            };
-            var TObject = JsonSerializer.Deserialize<T>(content, jsonSerializerOptions);
+            var TObject = JsonSerializer.Deserialize<T>(content, DefaultJsonSerializerOptions.JsonSerializerOptions);
 
             return TObject;
         }

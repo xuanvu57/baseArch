@@ -16,6 +16,7 @@ namespace BaseArch.Infrastructure.DefaultHttpClient.Registrations
         {
             services.AddTransient<HttpClientLoggingDelegatingHandler>();
             services.AddTransient<HttpClientCorrelationIdDelegatingHandler>();
+            services.AddTransient<HttpClientAuthenticationDelegatingHandler>();
             foreach (var type in delegatingHandlerTypes)
             {
                 services.AddTransient(type);
@@ -31,6 +32,7 @@ namespace BaseArch.Infrastructure.DefaultHttpClient.Registrations
                     });
 
                 httpClientBuilder.AddHttpMessageHandler<HttpClientCorrelationIdDelegatingHandler>();
+                httpClientBuilder.AddHttpMessageHandler<HttpClientAuthenticationDelegatingHandler>();
                 httpClientBuilder.AddHttpMessageHandler<HttpClientLoggingDelegatingHandler>();
 
                 foreach (var type in delegatingHandlerTypes)

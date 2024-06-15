@@ -1,4 +1,5 @@
 ﻿using BaseArch.Infrastructure.gRPC.Attributes;
+using BaseArch.Infrastructure.gRPC.Interceptors;
 using Grpc.AspNetCore.Server;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,10 +15,21 @@ namespace BaseArch.Infrastructure.gRPC.Registrations
         /// Register all gRPC service with AddGrpc() method
         /// </summary>
         /// <param name="services"><see cref="IServiceCollection"/></param>
+        public static void AddGrpcServices(this IServiceCollection services)
+        {
+            AddGrpcServices(services, option =>
+            {
+                option.Interceptors.Add<GrpcServiceLoggingInterceptor>();
+            });
+        }
+
+        /// <summary>
+        /// Register all gRPC service with AddGrpc() method
+        /// </summary>
+        /// <param name="services"><see cref="IServiceCollection"/></param>
         /// <param name="options"><see cref="GrpcServiceOptions"/></param>
         public static void AddGrpcServices(this IServiceCollection services, Action<GrpcServiceOptions> options)
         {
-            //https://github.com/grpc/grpc/blob/master/src/csharp/BUILD-INTEGRATION.md
             services.AddGrpc(options);
         }
 
@@ -40,7 +52,7 @@ namespace BaseArch.Infrastructure.gRPC.Registrations
         /// Find all gRPC services from all assemblies
         /// </summary>
         /// <returns>List of gRPC service types</returns>
-        private static List<Type> GetGrpcServiceTypes()
+        private static List<System.Type> GetGrpcServiceTypes()
         {
             var types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())

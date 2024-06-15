@@ -15,7 +15,7 @@ namespace BaseArch.Infrastructure.gRPC
             return CreateChannelFromUri(uri);
         }
 
-        protected GrpcChannel CreateChannelFromUri(string uri)
+        protected static GrpcChannel CreateChannelFromUri(string uri)
         {
             var uriAddress = new Uri(uri);
             var httpHandler = new HttpClientHandler();
@@ -32,9 +32,11 @@ namespace BaseArch.Infrastructure.gRPC
         {
             var grpcClientLoggingInterceptor = ActivatorUtilities.CreateInstance(serviceProvider, typeof(GrpcClientLoggingInterceptor));
             var grpcClientCorrelationIdInterceptor = ActivatorUtilities.CreateInstance(serviceProvider, typeof(GrpcClientCorrelationIdInterceptor));
+            var grpcClientAuthenticationInterceptor = ActivatorUtilities.CreateInstance(serviceProvider, typeof(GrpcClientAuthenticationInterceptor));
 
             var invoker = channel
                 .Intercept((Interceptor)grpcClientCorrelationIdInterceptor)
+                .Intercept((Interceptor)grpcClientAuthenticationInterceptor)
                 .Intercept((Interceptor)grpcClientLoggingInterceptor);
 
             if (clientInterceptors.Length > 0)

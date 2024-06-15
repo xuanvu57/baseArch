@@ -2,11 +2,13 @@
 using BaseArch.Infrastructure.gRPC.Attributes;
 using BaseArchSample.Shares.gRPC;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.GrpcServices
 {
     [GrpcService]
+    [Authorize]
     public class GreetingService(ILogger<GreetingService> logger, IGetAllUsersService getAllUsersService) : Greeter.GreeterBase
     {
         public override async Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
