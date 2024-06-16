@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BaseArch.Application.Identity.Interfaces;
 using System.Net.Http.Headers;
 
 namespace BaseArch.Infrastructure.DefaultHttpClient.DelegatingHandlers
 {
-    public class HttpClientAuthenticationDelegatingHandler(IHttpContextAccessor accessor) : DelegatingHandler
+    public class HttpClientAuthenticationDelegatingHandler(ITokenProvider tokenProvider) : DelegatingHandler
     {
-        private const string DefaultScheme = "Bearer";
-
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             AddAuthorizationToRequestHeader(request);
@@ -16,18 +14,15 @@ namespace BaseArch.Infrastructure.DefaultHttpClient.DelegatingHandlers
 
         private void AddAuthorizationToRequestHeader(HttpRequestMessage request)
         {
-            if (accessor.HttpContext is null)
+            if (request.Headers.Authorization is not null)
                 return;
 
-            if (request.Headers.Authorization is null)
-            {
-                var authorizationValue = accessor.HttpContext.Request.Headers.Authorization.FirstOrDefault() ?? "";
-                if (authorizationValue.StartsWith(DefaultScheme))
-                {
-                    var token = authorizationValue.Replace($"{DefaultScheme} ", "");
-                    request.Headers.Authorization = new AuthenticationHeaderValue(DefaultScheme, token);
-                }
-            }
+            var token = tokenProvider.GetAccessToken();
+
+            if (string.IsNullOrEmpty(token))
+                return;
+
+            request.Headers.Authorization = new AuthenticationHeaderValue(tokenProvider.DefaultScheme, token);
         }
     }
 }

@@ -1,29 +1,36 @@
-﻿using BaseArch.Infrastructure.gRPC.Extensions;
+﻿using BaseArch.Application.Identity.Interfaces;
+using BaseArch.Infrastructure.gRPC.Extensions;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
-using Microsoft.AspNetCore.Http;
 
 namespace BaseArch.Infrastructure.gRPC.Interceptors
 {
-    internal class GrpcClientAuthenticationInterceptor(IHttpContextAccessor httpContextAccessor) : Interceptor
+    internal class GrpcClientAuthenticationInterceptor(ITokenProvider tokenProvider) : Interceptor
     {
-        private const string DefaultScheme = "Bearer";
+        private const string AuthorizationMetadataKey = "Authorization";
 
         public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
         {
-            if (httpContextAccessor.HttpContext is null)
-                return continuation(request, context);
+            var newContext = AddAuthorizationToHeader(context);
 
-            var authorizationValue = httpContextAccessor.HttpContext.Request.Headers.Authorization.FirstOrDefault() ?? "";
-            if (!authorizationValue.StartsWith(DefaultScheme))
-            {
-                return continuation(request, context);
-            }
+            return continuation(request, newContext);
+        }
 
-            var token = authorizationValue.Replace($"{DefaultScheme} ", "");
+        private ClientInterceptorContext<TRequest, TResponse> AddAuthorizationToHeader<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context)
+            where TRequest : class
+            where TResponse : class
+        {
+            if (context.Options.Headers is not null && context.Options.Headers.Any(x => x.Key == AuthorizationMetadataKey))
+                return context;
+
+            var token = tokenProvider.GetAccessToken();
+
+            if (string.IsNullOrEmpty(token))
+                return context;
+
             var metadata = new Metadata
             {
-                { "Authorization", $"Bearer {token}" }
+                { AuthorizationMetadataKey, $"{tokenProvider.DefaultScheme} {token}" }
             };
 
             var newContext = new ClientInterceptorContext<TRequest, TResponse>(
@@ -35,7 +42,7 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
                     InterceptorExtensions.AddIfNonExistent))
                 );
 
-            return continuation(request, newContext);
+            return newContext;
         }
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Localization;
 namespace Infrastructure.MultilingualProviders
 {
     [DIService(DIServiceLifetime.Singleton)]
-    public class SampleMultilingualProvider(IStringLocalizer<Messages> localizer) : AbstractMultilingualProvider<Messages>(localizer), ISampleMultilingualProvider, IBaseArchMessageProvider
+    public class SampleMultilingualProvider(IStringLocalizer<Messages> localizer) : AbstractStaticMultilingualProvider<Messages>(localizer), ISampleMultilingualProvider, IBaseArchMessageProvider
     {
     }
 }

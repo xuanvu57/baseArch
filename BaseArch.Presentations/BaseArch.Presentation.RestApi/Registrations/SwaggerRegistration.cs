@@ -20,6 +20,7 @@ namespace BaseArch.Presentation.RestApi.Registrations
         public static void AddSwagger(this IServiceCollection services)
         {
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+
             services.AddSwaggerGen(option =>
             {
                 option.OperationFilter<CustomizedOperationFilter>();
@@ -45,7 +46,7 @@ namespace BaseArch.Presentation.RestApi.Registrations
                                 Id="Bearer"
                             }
                         },
-                        new string[]{}
+                        Array.Empty<string>()
                     }
                 });
             });

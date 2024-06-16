@@ -76,6 +76,7 @@ namespace Host
                 app.UseHttpRequestResponseLoggingMiddleware();              //Presentation
                 app.UseSerilogRequestLogging();
                 app.UseExceptionHandler();
+                app.UserAuthHandlingMiddleware();                           //Application
 
                 if (!app.Environment.IsProduction())
                 {
@@ -83,8 +84,6 @@ namespace Host
                 }
                 app.UseHttpsRedirection();
                 app.UseCors(AppAllowOrigins);
-                app.UserAuthMiddleware();                                   //Application
-                app.UseAuthorization();
 
                 app.MapControllers();
                 app.AutoMapGprcServices();

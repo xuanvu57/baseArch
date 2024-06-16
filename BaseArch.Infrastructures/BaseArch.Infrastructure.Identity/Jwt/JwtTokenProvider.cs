@@ -2,6 +2,8 @@
 using BaseArch.Application.Identity.Interfaces;
 using BaseArch.Domain.DependencyInjection;
 using BaseArch.Infrastructure.Identity.Jwt.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,8 +20,18 @@ namespace BaseArch.Infrastructure.Identity.Jwt
     /// <param name="jwtOptions"></param>
     /// <param name="encryptor"></param>
     [DIService(DIServiceLifetime.Scoped)]
-    public class JwtTokenProvider(IOptions<JwtOptions> jwtOptions, IEncryptionProvider encryptor) : ITokenProvider
+    public class JwtTokenProvider(IOptions<JwtOptions> jwtOptions, IEncryptionProvider encryptor, IHttpContextAccessor httpContextAccessor) : ITokenProvider
     {
+        /// <summary>
+        /// Current access token
+        /// </summary>
+        private string currentAccessToken = "";
+
+        /// <summary>
+        /// "Bearer" scheme
+        /// </summary>
+        public string DefaultScheme { get; } = JwtBearerDefaults.AuthenticationScheme;
+
         /// <inheritdoc/>
         public string CreateAccessToken(IEnumerable<Claim> claims)
         {
@@ -34,23 +46,36 @@ namespace BaseArch.Infrastructure.Identity.Jwt
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             if (!tokenHandler.CanReadToken(accessToken))
-                return ("", "");
+                throw new ArgumentException($"{nameof(accessToken)} is not valid", nameof(accessToken));
 
             var token = tokenHandler.ReadJwtToken(accessToken);
-            var nameIdentifier = token.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.NameId);
-            if (nameIdentifier is null)
-                return ("", "");
+            var nameIdentifierClaim = token.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.NameId);
+            if (nameIdentifierClaim is null)
+                throw new ArgumentException($"\"{nameof(JwtRegisteredClaimNames.NameId)}\" claim is not found from {nameof(accessToken)}", nameof(accessToken));
 
-            var rawRefreshToken = encryptor.Decrypt(refreshToken, jwtOptions.Value.SecrectKey);
-            var refreshTokenModel = JsonSerializer.Deserialize<JwtRefreshTokenModel>(rawRefreshToken);
+            try
+            {
+                var rawRefreshToken = encryptor.Decrypt(refreshToken, jwtOptions.Value.SecrectKey);
+                var refreshTokenModel = JsonSerializer.Deserialize<JwtRefreshTokenModel>(rawRefreshToken);
+                ArgumentNullException.ThrowIfNull(refreshTokenModel);
 
-            if (refreshTokenModel is null ||
-                refreshTokenModel.ExpiredAt < DateTimeOffset.UtcNow ||
-                refreshTokenModel.NameIdentifier != nameIdentifier.Value)
-                return ("", "");
+                if (refreshTokenModel.ExpiredAt < DateTimeOffset.UtcNow)
+                {
+                    throw new ArgumentException($"{nameof(refreshToken)} was expired", nameof(refreshToken));
+                }
+
+                if (refreshTokenModel.NameIdentifier != nameIdentifierClaim.Value)
+                {
+                    throw new ArgumentException($"\"{nameof(JwtRegisteredClaimNames.NameId)}\" claim is different between {nameof(accessToken)} and {nameof(refreshToken)}", nameof(refreshToken));
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException($"{nameof(refreshToken)} is not valid", nameof(refreshToken), ex);
+            }
 
             var newAccessToken = CreateAccessToken(CloneClaim(token.Claims));
-            var newRefreshToken = CreateRefreshToken(refreshTokenModel.NameIdentifier);
+            var newRefreshToken = CreateRefreshToken(nameIdentifierClaim.Value);
 
             return (newAccessToken, newRefreshToken);
         }
@@ -75,6 +100,23 @@ namespace BaseArch.Infrastructure.Identity.Jwt
             return encryptor.Encrypt(JsonSerializer.Serialize(refreshTokenModel), jwtOptions.Value.SecrectKey);
         }
 
+        /// <inheritdoc/>
+        public string GetAccessToken()
+        {
+            if (!string.IsNullOrEmpty(currentAccessToken))
+                return currentAccessToken;
+
+            if (httpContextAccessor.HttpContext is null)
+                return "";
+
+            var authorizationValue = httpContextAccessor.HttpContext.Request.Headers.Authorization.FirstOrDefault() ?? "";
+            if (!authorizationValue.StartsWith(DefaultScheme))
+                return "";
+
+            currentAccessToken = authorizationValue.Replace($"{DefaultScheme} ", "");
+            return currentAccessToken;
+        }
+
         /// <summary>
         /// Create Jwt token
         /// </summary>
@@ -97,7 +139,7 @@ namespace BaseArch.Infrastructure.Identity.Jwt
         /// </summary>
         /// <param name="claims">List of <see cref="Claim"/></param>
         /// <returns>List of <see cref="Claim"/></returns>
-        private IList<Claim> CloneClaim(IEnumerable<Claim> claims)
+        private static List<Claim> CloneClaim(IEnumerable<Claim> claims)
         {
             var clonedClaims = new List<Claim>();
             foreach (var claim in claims)

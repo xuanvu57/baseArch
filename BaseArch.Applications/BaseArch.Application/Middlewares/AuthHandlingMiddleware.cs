@@ -5,7 +5,7 @@ using System.Net;
 
 namespace BaseArch.Application.Middlewares
 {
-    public class AuthMiddleware(RequestDelegate next)
+    public class AuthHandlingMiddleware(RequestDelegate next)
     {
         public async Task InvokeAsync(HttpContext httpContext)
         {
@@ -23,7 +23,7 @@ namespace BaseArch.Application.Middlewares
             }
         }
 
-        private async Task UnauthorizedHandler(HttpContext httpContext)
+        private static async Task UnauthorizedHandler(HttpContext httpContext)
         {
             var problemDetails = new ValidationProblemDetails
             {
@@ -38,7 +38,7 @@ namespace BaseArch.Application.Middlewares
             await httpContext.Response.WriteAsJsonAsync(problemDetails);
         }
 
-        private async Task ForbiddenHandler(HttpContext httpContext)
+        private static async Task ForbiddenHandler(HttpContext httpContext)
         {
             var problemDetails = new ValidationProblemDetails
             {

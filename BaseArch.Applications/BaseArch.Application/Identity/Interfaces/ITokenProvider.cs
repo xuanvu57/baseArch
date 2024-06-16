@@ -8,6 +8,11 @@ namespace BaseArch.Application.Identity.Interfaces
     public interface ITokenProvider
     {
         /// <summary>
+        /// Default scheme
+        /// </summary>
+        string DefaultScheme { get; }
+
+        /// <summary>
         /// Create access token from claim
         /// </summary>
         /// <param name="claims">List of <see cref="Claim"/></param>
@@ -28,5 +33,11 @@ namespace BaseArch.Application.Identity.Interfaces
         /// <param name="nameIdentifierClaimValue">Name identifier</param>
         /// <returns>Refresh token</returns>
         string CreateRefreshToken(string nameIdentifierClaimValue);
+
+        /// <summary>
+        /// Get current access token
+        /// </summary>
+        /// <returns>Current access token</returns>
+        string GetAccessToken();
     }
 }

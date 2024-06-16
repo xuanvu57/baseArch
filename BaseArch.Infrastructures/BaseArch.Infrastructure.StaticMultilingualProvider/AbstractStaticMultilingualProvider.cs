@@ -8,7 +8,7 @@ namespace BaseArch.Infrastructure.StaticMultilingualProvider
     /// </summary>
     /// <typeparam name="TResource">Type of resource class</typeparam>
     /// <param name="localizer"><see cref="IStringLocalizer"/></param>
-    public abstract class AbstractMultilingualProvider<TResource>(IStringLocalizer<TResource> localizer) : IMultilingualProvider where TResource : class
+    public abstract class AbstractStaticMultilingualProvider<TResource>(IStringLocalizer<TResource> localizer) : IMultilingualProvider where TResource : class
     {
         /// <inheritdoc/>
         public Task<string> GetString(string stringId, params string[] values)

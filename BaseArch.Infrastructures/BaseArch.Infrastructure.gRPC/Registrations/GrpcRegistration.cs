@@ -15,22 +15,18 @@ namespace BaseArch.Infrastructure.gRPC.Registrations
         /// Register all gRPC service with AddGrpc() method
         /// </summary>
         /// <param name="services"><see cref="IServiceCollection"/></param>
-        public static void AddGrpcServices(this IServiceCollection services)
+        /// <param name="configureOptions"><see cref="GrpcServiceOptions"/></param>
+        public static void AddGrpcServices(this IServiceCollection services, Action<GrpcServiceOptions>? configureOptions = null)
         {
-            AddGrpcServices(services, option =>
+            var grpcSerivceOptions = new GrpcServiceOptions();
+
+            configureOptions ??= new Action<GrpcServiceOptions>(option =>
             {
                 option.Interceptors.Add<GrpcServiceLoggingInterceptor>();
             });
-        }
 
-        /// <summary>
-        /// Register all gRPC service with AddGrpc() method
-        /// </summary>
-        /// <param name="services"><see cref="IServiceCollection"/></param>
-        /// <param name="options"><see cref="GrpcServiceOptions"/></param>
-        public static void AddGrpcServices(this IServiceCollection services, Action<GrpcServiceOptions> options)
-        {
-            services.AddGrpc(options);
+            configureOptions.Invoke(grpcSerivceOptions);
+            services.AddGrpc(configureOptions);
         }
 
         /// <summary>
