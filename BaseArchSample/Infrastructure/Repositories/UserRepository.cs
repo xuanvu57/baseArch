@@ -1,4 +1,5 @@
 ﻿using Application.Repositories.Interfaces;
+using BaseArch.Application.Identity.Interfaces;
 using BaseArch.Domain.DependencyInjection;
 using BaseArch.Infrastructure.EFCore.Repositories;
 using Domain.Entities;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Repositories
 {
     [DIService(DIServiceLifetime.Scoped)]
-    public sealed class UserRepository(SampleDBContext dbContext) : BaseRepository<UserEntity, Guid, Guid>(dbContext), IUserRepository
+    public sealed class UserRepository(SampleDBContext dbContext, ITokenProvider tokenProvider) : BaseRepository<UserEntity, Guid, Guid>(dbContext, tokenProvider), IUserRepository
     {
         public async Task<UserEntity> GetFirstOrDefault()
         {
@@ -18,10 +19,6 @@ namespace Infrastructure.Repositories
                 new UserEntity("Default", "Default")
                 {
                     Id = Guid.NewGuid(),
-                    CreatedDatetimeUtc = DateTime.UtcNow,
-                    CreatedUserId = Guid.NewGuid(),
-                    UpdatedDatetimeUtc = DateTime.UtcNow,
-                    UpdatedUserId = Guid.NewGuid(),
                     IsDeleted = false
                 };
         }
@@ -31,8 +28,6 @@ namespace Infrastructure.Repositories
             var user = new UserEntity("Initialized First Name", "Initialized Last Name")
             {
                 Id = id,
-                CreatedUserId = Guid.NewGuid(),
-                UpdatedUserId = Guid.NewGuid()
             };
 
             await Create(user);

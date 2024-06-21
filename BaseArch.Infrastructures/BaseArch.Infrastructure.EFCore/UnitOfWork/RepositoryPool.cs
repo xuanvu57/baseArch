@@ -64,7 +64,7 @@ namespace BaseArch.Infrastructure.EFCore.UnitOfWork
 
             if (!repositoryPool.ContainsKey(keyOfRepository))
             {
-                var repository = new BaseRepository<TEntity, TKey, TUserKey>(dbContext);
+                var repository = ActivatorUtilities.CreateInstance(serviceProvider, typeof(BaseRepository<TEntity, TKey, TUserKey>), dbContext);
                 repositoryPool.Add(keyOfRepository, repository);
             }
 

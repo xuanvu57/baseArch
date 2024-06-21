@@ -1,4 +1,5 @@
-﻿using BaseArch.Application.Models;
+﻿using BaseArch.Application.Identity.Interfaces;
+using BaseArch.Application.Models;
 using BaseArch.Application.Models.Requests;
 using BaseArch.Application.Repositories.Interfaces;
 using BaseArch.Domain.DependencyInjection;
@@ -11,7 +12,7 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
 {
     /// <inheritdoc/>
     [DIService(DIServiceLifetime.Scoped)]
-    public class BaseRepository<TEntity, TKey, TUserKey>(DbContext dbContext) : IBaseRepository<TEntity, TKey> where TEntity : BaseEntity<TKey, TUserKey>
+    public class BaseRepository<TEntity, TKey, TUserKey>(DbContext dbContext, ITokenProvider tokenProvider) : IBaseRepository<TEntity, TKey> where TEntity : BaseEntity<TKey, TUserKey>
     {
         /// <summary>
         /// The DbSet of TEntity
@@ -33,13 +34,13 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<int> Count(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false)
+        public async Task<int> Count(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
         {
-            return await GetQueryable(predicate, includeDeletedRecords).CountAsync();
+            return await GetQueryable(predicate, includeDeletedRecords).CountAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<int> Count(QueryModel queryModel, bool includeDeletedRecords = false)
+        public async Task<int> Count(QueryModel queryModel, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
         {
             var queryable = GetQueryable(null, includeDeletedRecords);
 
@@ -56,43 +57,17 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
                 }
             }
 
-            return await queryable.CountAsync();
+            return await queryable.CountAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task Create(TEntity entity)
+        public async Task<IList<TEntity>> Get(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(entity);
-
-            await dbSet.AddAsync(entity);
+            return await GetQueryable(predicate, includeDeletedRecords).ToListAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task CreateMany(IEnumerable<TEntity> entities)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
-        public Task Delete(TKey key)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
-        public Task DeleteMany(IEnumerable<TKey> keys)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
-        public async Task<IList<TEntity>> Get(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false)
-        {
-            return await GetQueryable(predicate, includeDeletedRecords).ToListAsync();
-        }
-
-        /// <inheritdoc/>
-        public async Task<IList<TEntity>> Get(QueryModel queryModel, bool includeDeletedRecords = false)
+        public async Task<IList<TEntity>> Get(QueryModel queryModel, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
         {
             var queryable = GetQueryable(null, includeDeletedRecords);
 
@@ -125,28 +100,87 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
                 }
             }
 
-            return await queryable.ToListAsync();
+            return await queryable.ToListAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public async Task<TEntity?> GetById(TKey id)
+        public async Task<TEntity?> GetById(TKey id, CancellationToken cancellationToken = default)
         {
             if (id is null)
                 return null;
 
-            return await GetQueryable(e => e.Id.Equals(id)).FirstOrDefaultAsync();
+            return await GetQueryable(e => e.Id.Equals(id)).FirstOrDefaultAsync(cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task Update(TEntity entity)
+        public async Task Create(TEntity entity, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            ArgumentNullException.ThrowIfNull(entity);
+
+            var createdEntity = entity.SetCreation<TEntity>(tokenProvider.GetUserKeyValue(), DateTime.UtcNow);
+
+            await dbSet.AddAsync(createdEntity, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public Task UpdateMany(IEnumerable<TEntity> entities)
+        public async Task CreateMany(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            ArgumentNullException.ThrowIfNull(entities);
+
+            foreach (var entity in entities)
+            {
+                await Create(entity, cancellationToken);
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task Delete(TEntity entity, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(entity);
+
+            var deletedEntity = entity.SetDeletion<TEntity>(tokenProvider.GetUserKeyValue(), DateTime.UtcNow);
+
+            dbSet.Update(deletedEntity);
+
+            await Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public async Task DeleteMany(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(entities);
+
+            foreach (var entity in entities)
+            {
+                await Delete(entity, cancellationToken);
+            }
+
+            await Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public async Task Update(TEntity entity, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(entity);
+
+            var updatedEntity = entity.SetModification<TEntity>(tokenProvider.GetUserKeyValue(), DateTime.UtcNow);
+
+            dbSet.Update(updatedEntity);
+
+            await Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateMany(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(entities);
+
+            foreach (var entity in entities)
+            {
+                await Update(entity, cancellationToken);
+            }
+
+            await Task.CompletedTask;
         }
     }
 }

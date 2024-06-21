@@ -25,7 +25,7 @@ namespace BaseArch.Infrastructure.Identity.Jwt
         /// <summary>
         /// Current access token
         /// </summary>
-        private string currentAccessToken = "";
+        private string currentAccessToken = string.Empty;
 
         /// <summary>
         /// "Bearer" scheme
@@ -99,22 +99,34 @@ namespace BaseArch.Infrastructure.Identity.Jwt
 
             return encryptor.Encrypt(JsonSerializer.Serialize(refreshTokenModel), jwtOptions.Value.SecrectKey);
         }
-
-        /// <inheritdoc/>
         public string GetAccessToken()
         {
             if (!string.IsNullOrEmpty(currentAccessToken))
                 return currentAccessToken;
 
             if (httpContextAccessor.HttpContext is null)
-                return "";
+                return string.Empty;
 
             var authorizationValue = httpContextAccessor.HttpContext.Request.Headers.Authorization.FirstOrDefault() ?? "";
             if (!authorizationValue.StartsWith(DefaultScheme))
-                return "";
+                return string.Empty;
 
             currentAccessToken = authorizationValue.Replace($"{DefaultScheme} ", "");
             return currentAccessToken;
+        }
+
+        /// <inheritdoc/>
+        public string GetUserKeyValue()
+        {
+            if (httpContextAccessor.HttpContext is null || httpContextAccessor.HttpContext.User is null)
+                return string.Empty;
+
+            if (httpContextAccessor.HttpContext.User.Identity is null)
+                return string.Empty;
+
+            var nameIdentifierClaim = httpContextAccessor.HttpContext.User.FindFirst(x => x.Type == JwtRegisteredClaimNames.NameId);
+
+            return nameIdentifierClaim?.Value ?? string.Empty;
         }
 
         /// <summary>

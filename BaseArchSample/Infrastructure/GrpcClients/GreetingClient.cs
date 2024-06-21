@@ -12,14 +12,22 @@ namespace Infrastructure.GrpcClients
     {
         public async Task<string> TryToSayHello(string fullName)
         {
-            using var channel = CreateChannelFromConfigureKey();
+            try
+            {
+                using var channel = CreateChannelFromConfigureKey();
 
-            var client = CreateGrpcClient<Greeter.GreeterClient>(channel);
+                var client = CreateGrpcClient<Greeter.GreeterClient>(channel);
 
-            var reply = await client.SayHelloAsync(new HelloRequest { Name = fullName });
+                var reply = await client.SayHelloAsync(new HelloRequest { Name = fullName });
 
-            logger.LogInformation($"[GrpcClient] Grpc server response with: {reply.Message}");
-            return await Task.FromResult(reply.Message);
+                logger.LogInformation($"[GrpcClient] Grpc server response with: {reply.Message}");
+                return await Task.FromResult(reply.Message);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message);
+                return await Task.FromResult(fullName);
+            }
         }
     }
 }

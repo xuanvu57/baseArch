@@ -5,7 +5,6 @@ using Grpc.Core.Interceptors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
-using System.Net;
 
 namespace BaseArch.Infrastructure.gRPC.Interceptors
 {
@@ -30,22 +29,28 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
         {
             var responseBodyText = "";
             var requestLog = ExtractFromRequest(context, request);
+            ResponseLogModel responseLog = null;
 
             try
             {
                 var response = await responseAsync;
+
                 responseBodyText = response?.ToString() ?? "";
+                responseLog = ExtractFromResponse(context, StatusCode.OK, responseBodyText);
 
                 return response;
             }
+            catch (RpcException ex)
+            {
+                responseLog = ExtractFromResponse(context, ex.StatusCode, ex.Message);
+                throw;
+            }
             finally
             {
-                var responseLog = ExtractFromResponse(context, responseBodyText);
-
                 var requestResponseLogModel = new RequestResponseLogModel()
                 {
                     RequestLogModel = requestLog,
-                    ResponseLogModel = responseLog
+                    ResponseLogModel = responseLog!
                 };
 
                 WriteRequestResponseLog(logger, requestResponseLogModel, context);
@@ -75,7 +80,7 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
         /// <param name="context"><see cref="ClientInterceptorContext"/></param>
         /// <param name="responseBodyText">Response body in string</param>
         /// <returns><see cref="ResponseLogModel"/></returns>
-        private static ResponseLogModel ExtractFromResponse<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context, string responseBodyText)
+        private static ResponseLogModel ExtractFromResponse<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context, StatusCode statusCode, string responseBodyText)
             where TRequest : class
             where TResponse : class
         {
@@ -84,7 +89,7 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
                 ContentType = "",
                 Header = FormatHeaders(context.Options.Headers),
                 Body = responseBodyText,
-                Status = HttpStatusCode.OK.ToString(),
+                Status = statusCode.ToString(),
                 TimeUtc = DateTime.UtcNow
             };
         }

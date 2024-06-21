@@ -29,8 +29,6 @@ namespace Application.User.Services
             UserEntity user = new(request.FirstName, request.LastName)
             {
                 Id = Guid.NewGuid(),
-                CreatedUserId = Guid.NewGuid(),
-                UpdatedUserId = Guid.NewGuid()
             };
 
             await userRepository.Create(user).ConfigureAwait(false);

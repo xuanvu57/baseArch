@@ -21,30 +21,72 @@ namespace BaseArch.Domain.Entities
         /// Created user id
         /// </summary>
         [NotNull]
-        public required TUserKey CreatedUserId { get; init; }
+        public TUserKey CreatedUserId { get; private init; } = default!;
 
         /// <summary>
         /// Created date time in Utc
         /// </summary>
         [NotNull]
-        public DateTime CreatedDatetimeUtc { get; init; } = DateTime.UtcNow;
+        public DateTime CreatedDatetimeUtc { get; private init; } = DateTime.UtcNow;
 
         /// <summary>
         /// Latest updated user id
         /// </summary>
         [NotNull]
-        public required TUserKey UpdatedUserId { get; init; }
+        public TUserKey UpdatedUserId { get; private init; } = default!;
 
         /// <summary>
         /// Latest updated date time in Utc
         /// </summary>
         [NotNull]
-        public DateTime UpdatedDatetimeUtc { get; init; } = DateTime.UtcNow;
+        public DateTime UpdatedDatetimeUtc { get; private init; } = DateTime.UtcNow;
 
         /// <summary>
         /// Identify if the record is (soft) deleted
         /// </summary>
         [NotNull]
         public bool IsDeleted { get; init; } = false;
+
+        public TEntity SetCreation<TEntity>(object createdUserId, DateTime createdDatetimeUtc) where TEntity : BaseEntity<TKey, TUserKey>
+        {
+            return (TEntity)this with
+            {
+                CreatedDatetimeUtc = createdDatetimeUtc,
+                CreatedUserId = ConvertToTUserKey(createdUserId),
+                UpdatedDatetimeUtc = createdDatetimeUtc,
+                UpdatedUserId = ConvertToTUserKey(createdUserId)
+            };
+        }
+
+        public TEntity SetModification<TEntity>(object updatedUserId, DateTime updatedDatetimeUtc) where TEntity : BaseEntity<TKey, TUserKey>
+        {
+            return (TEntity)this with
+            {
+                UpdatedDatetimeUtc = updatedDatetimeUtc,
+                UpdatedUserId = ConvertToTUserKey(updatedUserId)
+            };
+        }
+
+        public TEntity SetDeletion<TEntity>(object deleteUserId, DateTime deletedDatetimeUtc) where TEntity : BaseEntity<TKey, TUserKey>
+        {
+            return (TEntity)this with
+            {
+                UpdatedDatetimeUtc = deletedDatetimeUtc,
+                UpdatedUserId = ConvertToTUserKey(deleteUserId),
+                IsDeleted = true
+            };
+        }
+
+        protected virtual TUserKey ConvertToTUserKey(object value)
+        {
+            try
+            {
+                return (TUserKey)Convert.ChangeType(value, typeof(TUserKey));
+            }
+            catch
+            {
+                return default!;
+            }
+        }
     }
 }

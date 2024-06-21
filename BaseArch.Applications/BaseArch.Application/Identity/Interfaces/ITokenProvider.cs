@@ -39,5 +39,11 @@ namespace BaseArch.Application.Identity.Interfaces
         /// </summary>
         /// <returns>Current access token</returns>
         string GetAccessToken();
+
+        /// <summary>
+        /// Get user key value from token
+        /// </summary>
+        /// <returns>user key value</returns>
+        string GetUserKeyValue();
     }
 }
