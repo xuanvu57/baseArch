@@ -19,8 +19,7 @@ namespace Infrastructure.Repositories
             return result ??
                 new UserEntity("Default", "Default")
                 {
-                    Id = Guid.NewGuid(),
-                    IsDeleted = false
+                    Id = Guid.NewGuid()
                 };
         }
 

@@ -1,4 +1,5 @@
 ﻿using BaseArch.Domain.DependencyInjection.Interfaces;
+using BaseArch.Infrastructure.EFCore.Registrations;
 using BaseArch.Infrastructure.Identity.Registrations;
 using BaseArch.Infrastructure.MassTransit.Registrations;
 using BaseArch.Infrastructure.StaticMultilingualProvider.Registrations;
@@ -12,11 +13,14 @@ namespace Infrastructure
     {
         public void Register(IServiceCollection services)
         {
-            services.AddDbContext<SampleDBContext>(options =>
+            services.RegisterEFInterceptor();
+
+            services.AddDbContext<SampleDBContext>((serviceProvider, options) =>
             {
                 options
                     .UseInMemoryDatabase("Sample")
-                    .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+                    .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                .AddInterceptors(serviceProvider.GetEFInterceptors());
             });
 
             services.AddStaticMultilingualProviders(["en-US", "vi-VN"]);

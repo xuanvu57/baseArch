@@ -16,6 +16,7 @@ namespace Application.User.Services
         public async Task<IList<UserInfo>> GetAllUsers()
         {
             var users = await genericUserRepository.Get();
+
             return users
                 .Select(user => userEntityToUserInfoConverter.Convert(user))
                 .ToList();

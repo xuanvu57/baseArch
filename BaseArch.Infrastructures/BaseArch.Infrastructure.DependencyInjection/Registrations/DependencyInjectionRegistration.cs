@@ -21,6 +21,7 @@ namespace BaseArch.Infrastructure.DependencyInjection.Registrations
             logger.LogInformation("Load assemblies....");
             EnsureToLoadAllAssemblies();
 
+            logger.LogInformation("Register services....");
             services.RegisterAdditionalDependencyInjections(logger);
             services.RegisterDIServices();
         }
@@ -100,6 +101,7 @@ namespace BaseArch.Infrastructure.DependencyInjection.Registrations
         /// <summary>
         /// Ensure to load all assemblies to memory
         /// </summary>
+        /// <param name="services"><see cref="IServiceCollection"/></param>
         private static void EnsureToLoadAllAssemblies()
         {
             var loadedAssemblyFullNames = AppDomain.CurrentDomain.GetAssemblies().Select(assembly => assembly.FullName);

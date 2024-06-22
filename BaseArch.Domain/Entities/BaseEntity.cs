@@ -41,12 +41,6 @@ namespace BaseArch.Domain.Entities
         [NotNull]
         public DateTime UpdatedDatetimeUtc { get; private init; }
 
-        /// <summary>
-        /// Identify if the record is (soft) deleted
-        /// </summary>
-        [NotNull]
-        public bool IsDeleted { get; init; } = false;
-
         public TEntity SetCreation<TEntity>(object createdUserId, DateTime createdDatetimeUtc) where TEntity : BaseEntity<TKey, TUserKey>
         {
             return (TEntity)this with
@@ -72,8 +66,7 @@ namespace BaseArch.Domain.Entities
             return (TEntity)this with
             {
                 UpdatedDatetimeUtc = deletedDatetimeUtc,
-                UpdatedUserId = ConvertToTUserKey(deleteUserId),
-                IsDeleted = true
+                UpdatedUserId = ConvertToTUserKey(deleteUserId)
             };
         }
 

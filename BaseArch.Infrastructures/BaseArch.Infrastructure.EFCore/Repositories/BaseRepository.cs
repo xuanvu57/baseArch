@@ -4,6 +4,7 @@ using BaseArch.Application.Models.Requests;
 using BaseArch.Application.Repositories.Interfaces;
 using BaseArch.Domain.DependencyInjection;
 using BaseArch.Domain.Entities;
+using BaseArch.Domain.Entities.Interfaces;
 using BaseArch.Domain.Timezones.Interfaces;
 using BaseArch.Infrastructure.EFCore.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -28,8 +29,10 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
             if (predicate is not null)
                 queryable = queryable.Where(predicate);
 
-            if (!includeDeletedRecords)
-                queryable = queryable.Where(e => !e.IsDeleted);
+            if (!includeDeletedRecords && typeof(TEntity).IsAssignableTo(typeof(ISoftDeletable)))
+            {
+                queryable = queryable.Where(e => !((ISoftDeletable)e).IsDeleted);
+            }
 
             return queryable;
         }
@@ -139,9 +142,20 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
         {
             ArgumentNullException.ThrowIfNull(entity);
 
-            var deletedEntity = entity.SetDeletion<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow());
+            if (typeof(TEntity).IsAssignableFrom(typeof(ISoftDeletable)))
+            {
+                var deletedEntity = entity.SetDeletion<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow());
 
-            dbSet.Update(deletedEntity);
+                if (dbSet.Entry(entity) is not null)
+                {
+                    dbSet.Entry(entity).State = EntityState.Detached;
+                }
+                dbSet.Remove(deletedEntity);
+            }
+            else
+            {
+                dbSet.Remove(entity);
+            }
 
             await Task.CompletedTask;
         }
@@ -166,6 +180,10 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
 
             var updatedEntity = entity.SetModification<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow());
 
+            if (dbSet.Entry(entity) is not null)
+            {
+                dbSet.Entry(entity).State = EntityState.Detached;
+            }
             dbSet.Update(updatedEntity);
 
             await Task.CompletedTask;
