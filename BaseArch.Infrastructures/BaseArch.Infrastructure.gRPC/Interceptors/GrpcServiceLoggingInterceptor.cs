@@ -1,5 +1,6 @@
 ﻿using BaseArch.Application.Loggings;
 using BaseArch.Application.Loggings.Models;
+using BaseArch.Domain.Timezones.Interfaces;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +13,7 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
     /// Interceptor to log the request and response for gRPC request
     /// </summary>
     /// <param name="logger"></param>
-    public class GrpcServiceLoggingInterceptor(ILogger<GrpcServiceLoggingInterceptor> logger) : Interceptor
+    public class GrpcServiceLoggingInterceptor(ILogger<GrpcServiceLoggingInterceptor> logger, IDateTimeProvider dateTimeProvider) : Interceptor
     {
         /// <inheritdoc />
         public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request, ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
@@ -63,7 +64,7 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
         /// <param name="httpContext"><see cref="HttpContext"/></param>
         /// <param name="responseBodyText">Response body in string</param>
         /// <returns><see cref="ResponseLogModel"/></returns>
-        private static ResponseLogModel ExtractFromResponse(HttpContext httpContext, string responseBodyText)
+        private ResponseLogModel ExtractFromResponse(HttpContext httpContext, string responseBodyText)
         {
             return new ResponseLogModel()
             {
@@ -71,7 +72,7 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
                 Header = FormatHeaders(httpContext.Response.Headers),
                 Body = responseBodyText,
                 Status = httpContext.Response.StatusCode.ToString(),
-                TimeUtc = DateTime.UtcNow
+                TimeUtc = dateTimeProvider.GetUtcNow()
             };
         }
 
@@ -81,11 +82,11 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
         /// <param name="httpContext"><see cref="HttpContext"/></param>
         /// <param name="request">grpc request</param>
         /// <returns><see cref="RequestLogModel"/></returns>
-        private static RequestLogModel ExtractFromRequest<TRequest>(HttpContext httpContext, TRequest request)
+        private RequestLogModel ExtractFromRequest<TRequest>(HttpContext httpContext, TRequest request)
         {
             return new RequestLogModel()
             {
-                TimeUtc = DateTime.UtcNow,
+                TimeUtc = dateTimeProvider.GetUtcNow(),
                 ContentType = httpContext.Request.ContentType ?? "",
                 Scheme = httpContext.Request.Scheme,
                 Method = httpContext.Request.Method,

@@ -4,6 +4,7 @@ using BaseArch.Application.Models.Requests;
 using BaseArch.Application.Repositories.Interfaces;
 using BaseArch.Domain.DependencyInjection;
 using BaseArch.Domain.Entities;
+using BaseArch.Domain.Timezones.Interfaces;
 using BaseArch.Infrastructure.EFCore.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -12,7 +13,7 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
 {
     /// <inheritdoc/>
     [DIService(DIServiceLifetime.Scoped)]
-    public class BaseRepository<TEntity, TKey, TUserKey>(DbContext dbContext, ITokenProvider tokenProvider) : IBaseRepository<TEntity, TKey> where TEntity : BaseEntity<TKey, TUserKey>
+    public class BaseRepository<TEntity, TKey, TUserKey>(DbContext dbContext, ITokenProvider tokenProvider, IDateTimeProvider dateTimeProvider) : IBaseRepository<TEntity, TKey> where TEntity : BaseEntity<TKey, TUserKey>
     {
         /// <summary>
         /// The DbSet of TEntity
@@ -117,7 +118,7 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
         {
             ArgumentNullException.ThrowIfNull(entity);
 
-            var createdEntity = entity.SetCreation<TEntity>(tokenProvider.GetUserKeyValue(), DateTime.UtcNow);
+            var createdEntity = entity.SetCreation<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow());
 
             await dbSet.AddAsync(createdEntity, cancellationToken);
         }
@@ -138,7 +139,7 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
         {
             ArgumentNullException.ThrowIfNull(entity);
 
-            var deletedEntity = entity.SetDeletion<TEntity>(tokenProvider.GetUserKeyValue(), DateTime.UtcNow);
+            var deletedEntity = entity.SetDeletion<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow());
 
             dbSet.Update(deletedEntity);
 
@@ -163,7 +164,7 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
         {
             ArgumentNullException.ThrowIfNull(entity);
 
-            var updatedEntity = entity.SetModification<TEntity>(tokenProvider.GetUserKeyValue(), DateTime.UtcNow);
+            var updatedEntity = entity.SetModification<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow());
 
             dbSet.Update(updatedEntity);
 

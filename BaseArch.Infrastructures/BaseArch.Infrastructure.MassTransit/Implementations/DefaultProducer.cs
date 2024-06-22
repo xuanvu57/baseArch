@@ -6,13 +6,13 @@ namespace BaseArch.Infrastructure.MassTransit.Implementations
 {
     public abstract class DefaultProducer(ILogger<DefaultProducer> logger)
     {
-        protected void WriteEventMessageLog<TMessage>(DateTime startedAtUtc, TMessage message) where TMessage : class
+        protected void WriteEventMessageLog<TMessage>(DateTime startedAtUtc, DateTime endedAtUtc, TMessage message) where TMessage : class
         {
             var eventMessageLogModel = new EventMessageLogModel<TMessage>()
             {
                 Message = message,
                 StartedAtUtc = startedAtUtc,
-                EndAtUtc = DateTime.UtcNow
+                EndedAtUtc = endedAtUtc
             };
 
             logger.LogInformation(LogMessageTemplate.QueueProducer, GetType().Name, eventMessageLogModel);

@@ -27,7 +27,7 @@ namespace BaseArch.Domain.Entities
         /// Created date time in Utc
         /// </summary>
         [NotNull]
-        public DateTime CreatedDatetimeUtc { get; private init; } = DateTime.UtcNow;
+        public DateTime CreatedDatetimeUtc { get; private init; }
 
         /// <summary>
         /// Latest updated user id
@@ -39,7 +39,7 @@ namespace BaseArch.Domain.Entities
         /// Latest updated date time in Utc
         /// </summary>
         [NotNull]
-        public DateTime UpdatedDatetimeUtc { get; private init; } = DateTime.UtcNow;
+        public DateTime UpdatedDatetimeUtc { get; private init; }
 
         /// <summary>
         /// Identify if the record is (soft) deleted

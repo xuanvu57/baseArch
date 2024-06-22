@@ -1,6 +1,7 @@
 ﻿using Application.Repositories.Interfaces;
 using BaseArch.Application.Identity.Interfaces;
 using BaseArch.Domain.DependencyInjection;
+using BaseArch.Domain.Timezones.Interfaces;
 using BaseArch.Infrastructure.EFCore.Repositories;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Repositories
 {
     [DIService(DIServiceLifetime.Scoped)]
-    public sealed class UserRepository(SampleDBContext dbContext, ITokenProvider tokenProvider) : BaseRepository<UserEntity, Guid, Guid>(dbContext, tokenProvider), IUserRepository
+    public sealed class UserRepository(SampleDBContext dbContext, ITokenProvider tokenProvider, IDateTimeProvider dateTimeProvider) : BaseRepository<UserEntity, Guid, Guid>(dbContext, tokenProvider, dateTimeProvider), IUserRepository
     {
         public async Task<UserEntity> GetFirstOrDefault()
         {

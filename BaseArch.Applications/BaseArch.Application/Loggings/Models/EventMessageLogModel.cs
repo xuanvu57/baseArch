@@ -6,6 +6,6 @@
 
         public required DateTime StartedAtUtc { get; init; }
 
-        public required DateTime EndAtUtc { get; init; }
+        public required DateTime EndedAtUtc { get; init; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BaseArch.Application.Loggings;
 using BaseArch.Application.Loggings.Models;
+using BaseArch.Domain.Timezones.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -28,7 +29,7 @@ namespace BaseArch.Presentation.RestApi.Middlewares
         /// <param name="httpContext"><see cref="HttpContext"/></param>
         /// <param name="logger"><see cref="ILogger"/></param>
         /// <returns><see cref="Task"/></returns>
-        public async Task Invoke(HttpContext httpContext, ILogger<HttpRequestResponseLoggingMiddleware> logger)
+        public async Task Invoke(HttpContext httpContext, ILogger<HttpRequestResponseLoggingMiddleware> logger, IDateTimeProvider dateTimeProvider)
         {
             if (IgnoreForLogging(httpContext))
             {
@@ -36,7 +37,7 @@ namespace BaseArch.Presentation.RestApi.Middlewares
                 return;
             }
 
-            var request = await ExtractFromRequest(httpContext);
+            var request = await ExtractFromRequest(httpContext, dateTimeProvider);
 
             var originalResponseBody = httpContext.Response.Body;
             using var newResponseBody = new MemoryStream();
@@ -54,7 +55,7 @@ namespace BaseArch.Presentation.RestApi.Middlewares
                 newResponseBody.Seek(0, SeekOrigin.Begin);
                 await newResponseBody.CopyToAsync(originalResponseBody);
 
-                var response = ExtractFromResponse(httpContext, responseBodyText);
+                var response = ExtractFromResponse(httpContext, dateTimeProvider, responseBodyText);
 
                 var requestResponseLogModel = new RequestResponseLogModel()
                 {
@@ -105,12 +106,13 @@ namespace BaseArch.Presentation.RestApi.Middlewares
         /// Extract data from <see cref="HttpRequest"/>
         /// </summary>
         /// <param name="httpContext"><see cref="HttpContext"/></param>
+        /// <param name="dateTimeProvider"><see cref="IDateTimeProvider"/></param>
         /// <returns><see cref="RequestLogModel"/></returns>
-        private static async Task<RequestLogModel> ExtractFromRequest(HttpContext httpContext)
+        private static async Task<RequestLogModel> ExtractFromRequest(HttpContext httpContext, IDateTimeProvider dateTimeProvider)
         {
             return new RequestLogModel()
             {
-                TimeUtc = DateTime.UtcNow,
+                TimeUtc = dateTimeProvider.GetUtcNow(),
                 ContentType = httpContext.Request.ContentType ?? "",
                 Scheme = httpContext.Request.Scheme,
                 Method = httpContext.Request.Method,
@@ -125,9 +127,10 @@ namespace BaseArch.Presentation.RestApi.Middlewares
         /// Extract data from <see cref="HttpResponse"/>
         /// </summary>
         /// <param name="httpContext"><see cref="HttpContext"/></param>
+        /// <param name="dateTimeProvider"><see cref="IDateTimeProvider"/></param>
         /// <param name="responseBodyText">Response body in string</param>
         /// <returns><see cref="ResponseLogModel"/></returns>
-        private static ResponseLogModel ExtractFromResponse(HttpContext httpContext, string responseBodyText)
+        private static ResponseLogModel ExtractFromResponse(HttpContext httpContext, IDateTimeProvider dateTimeProvider, string responseBodyText)
         {
             return new ResponseLogModel()
             {
@@ -135,7 +138,7 @@ namespace BaseArch.Presentation.RestApi.Middlewares
                 Header = FormatHeaders(httpContext.Response.Headers),
                 Body = responseBodyText,
                 Status = httpContext.Response.StatusCode.ToString(),
-                TimeUtc = DateTime.UtcNow
+                TimeUtc = dateTimeProvider.GetUtcNow()
             };
         }
 

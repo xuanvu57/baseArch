@@ -1,5 +1,6 @@
 ﻿using BaseArch.Application.Loggings;
 using BaseArch.Application.Loggings.Models;
+using BaseArch.Domain.Timezones.Interfaces;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Microsoft.AspNetCore.Http;
@@ -8,7 +9,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace BaseArch.Infrastructure.gRPC.Interceptors
 {
-    public class GrpcClientLoggingInterceptor(ILogger<GrpcClientLoggingInterceptor> logger) : Interceptor
+    public class GrpcClientLoggingInterceptor(ILogger<GrpcClientLoggingInterceptor> logger, IDateTimeProvider dateTimeProvider) : Interceptor
     {
         /// <inheritdoc/>
         public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
@@ -29,7 +30,7 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
         {
             var responseBodyText = "";
             var requestLog = ExtractFromRequest(context, request);
-            ResponseLogModel responseLog = null;
+            ResponseLogModel? responseLog = null;
 
             try
             {
@@ -38,7 +39,7 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
                 responseBodyText = response?.ToString() ?? "";
                 responseLog = ExtractFromResponse(context, StatusCode.OK, responseBodyText);
 
-                return response;
+                return response!;
             }
             catch (RpcException ex)
             {
@@ -80,7 +81,7 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
         /// <param name="context"><see cref="ClientInterceptorContext"/></param>
         /// <param name="responseBodyText">Response body in string</param>
         /// <returns><see cref="ResponseLogModel"/></returns>
-        private static ResponseLogModel ExtractFromResponse<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context, StatusCode statusCode, string responseBodyText)
+        private ResponseLogModel ExtractFromResponse<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context, StatusCode statusCode, string responseBodyText)
             where TRequest : class
             where TResponse : class
         {
@@ -90,7 +91,7 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
                 Header = FormatHeaders(context.Options.Headers),
                 Body = responseBodyText,
                 Status = statusCode.ToString(),
-                TimeUtc = DateTime.UtcNow
+                TimeUtc = dateTimeProvider.GetUtcNow()
             };
         }
 
@@ -100,13 +101,13 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
         /// <param name="context"><see cref="ClientInterceptorContext"/></param>
         /// <param name="request">grpc request</param>
         /// <returns><see cref="RequestLogModel"/></returns>
-        private static RequestLogModel ExtractFromRequest<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context, TRequest request)
+        private RequestLogModel ExtractFromRequest<TRequest, TResponse>(ClientInterceptorContext<TRequest, TResponse> context, TRequest request)
             where TRequest : class
             where TResponse : class
         {
             return new RequestLogModel()
             {
-                TimeUtc = DateTime.UtcNow,
+                TimeUtc = dateTimeProvider.GetUtcNow(),
                 ContentType = "",
                 Scheme = "",
                 Method = context.Method.Name,

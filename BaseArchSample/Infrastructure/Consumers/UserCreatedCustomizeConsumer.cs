@@ -1,5 +1,6 @@
 ﻿using Application.User.Dtos.Messages;
 using BaseArch.Application.MessageQueues.Interfaces;
+using BaseArch.Domain.Timezones.Interfaces;
 using BaseArch.Infrastructure.MassTransit.Implementations;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -8,7 +9,8 @@ namespace Infrastructure.Consumers
 {
     public class UserCreatedCustomizeConsumer(
         ILogger<UserCreatedCustomizeConsumer> logger,
-        IEventMessageHandler<UserCreatedCustomizeMessage> messageHandler) : DefaultConsumer<Batch<UserCreatedCustomizeMessage>>(logger)
+        IDateTimeProvider dateTimeProvider,
+        IEventMessageHandler<UserCreatedCustomizeMessage> messageHandler) : DefaultConsumer<Batch<UserCreatedCustomizeMessage>>(logger, dateTimeProvider)
     {
         public override async Task ConsumeEventMessage(ConsumeContext<Batch<UserCreatedCustomizeMessage>> context)
         {

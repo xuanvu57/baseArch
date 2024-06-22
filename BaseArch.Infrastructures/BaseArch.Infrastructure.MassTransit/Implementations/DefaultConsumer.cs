@@ -1,17 +1,18 @@
 ﻿using BaseArch.Application.Loggings;
 using BaseArch.Application.Loggings.Models;
+using BaseArch.Domain.Timezones.Interfaces;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
 namespace BaseArch.Infrastructure.MassTransit.Implementations
 {
-    public abstract class DefaultConsumer<TMessage>(ILogger<DefaultConsumer<TMessage>> logger) : IConsumer<TMessage> where TMessage : class
+    public abstract class DefaultConsumer<TMessage>(ILogger<DefaultConsumer<TMessage>> logger, IDateTimeProvider dateTimeProvider) : IConsumer<TMessage> where TMessage : class
     {
         public abstract Task ConsumeEventMessage(ConsumeContext<TMessage> context);
 
         public async Task Consume(ConsumeContext<TMessage> context)
         {
-            var startedAtUtc = DateTime.UtcNow;
+            var startedAtUtc = dateTimeProvider.GetUtcNow();
 
             try
             {
@@ -29,7 +30,7 @@ namespace BaseArch.Infrastructure.MassTransit.Implementations
             {
                 Message = message,
                 StartedAtUtc = startedAtUtc,
-                EndAtUtc = DateTime.UtcNow
+                EndedAtUtc = dateTimeProvider.GetUtcNow()
             };
 
             logger.LogInformation(LogMessageTemplate.QueueConsumer, GetType().Name, eventMessageLogModel);

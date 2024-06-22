@@ -1,6 +1,7 @@
 ﻿using BaseArch.Application.Encryptions.Interfaces;
 using BaseArch.Application.Identity.Interfaces;
 using BaseArch.Domain.DependencyInjection;
+using BaseArch.Domain.Timezones.Interfaces;
 using BaseArch.Infrastructure.Identity.Jwt.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +21,7 @@ namespace BaseArch.Infrastructure.Identity.Jwt
     /// <param name="jwtOptions"></param>
     /// <param name="encryptor"></param>
     [DIService(DIServiceLifetime.Scoped)]
-    public class JwtTokenProvider(IOptions<JwtOptions> jwtOptions, IEncryptionProvider encryptor, IHttpContextAccessor httpContextAccessor) : ITokenProvider
+    public class JwtTokenProvider(IOptions<JwtOptions> jwtOptions, IEncryptionProvider encryptor, IHttpContextAccessor httpContextAccessor, IDateTimeProvider dateTimeProvider) : ITokenProvider
     {
         /// <summary>
         /// Current access token
@@ -136,7 +137,7 @@ namespace BaseArch.Infrastructure.Identity.Jwt
         /// <returns><<see cref="JwtSecurityToken"/>/returns>
         private JwtSecurityToken CreateJwtToken(IEnumerable<Claim> claims)
         {
-            var expiration = DateTime.UtcNow.AddMinutes(jwtOptions.Value.AccessTokenExpirationInMinute);
+            var expiration = dateTimeProvider.GetUtcNow().AddMinutes(jwtOptions.Value.AccessTokenExpirationInMinute);
             return new JwtSecurityToken(
                issuer: jwtOptions.Value.ValidIssuer,
                audience: jwtOptions.Value.ValidAudience,

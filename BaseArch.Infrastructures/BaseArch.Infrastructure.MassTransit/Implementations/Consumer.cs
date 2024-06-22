@@ -1,4 +1,5 @@
 ﻿using BaseArch.Application.MessageQueues.Interfaces;
+using BaseArch.Domain.Timezones.Interfaces;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -6,7 +7,8 @@ namespace BaseArch.Infrastructure.MassTransit.Implementations
 {
     public class Consumer<TMessage>(
         ILogger<Consumer<TMessage>> logger,
-        IEnumerable<IEventMessageHandler<TMessage>> eventMessageHandlers) : DefaultConsumer<TMessage>(logger) where TMessage : class
+        IDateTimeProvider dateTimeProvider,
+        IEnumerable<IEventMessageHandler<TMessage>> eventMessageHandlers) : DefaultConsumer<TMessage>(logger, dateTimeProvider) where TMessage : class
     {
         public override async Task ConsumeEventMessage(ConsumeContext<TMessage> context)
         {

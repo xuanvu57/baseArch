@@ -1,5 +1,6 @@
 ﻿using BaseArch.Application.MessageQueues.Interfaces;
 using BaseArch.Domain.DependencyInjection;
+using BaseArch.Domain.Timezones.Interfaces;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -8,11 +9,12 @@ namespace BaseArch.Infrastructure.MassTransit.Implementations
     [DIService(DIServiceLifetime.Scoped)]
     public class Sender(
         ILogger<Sender> logger,
-        ISendEndpointProvider sendEndpointProvider) : DefaultProducer(logger), ISender
+        ISendEndpointProvider sendEndpointProvider,
+        IDateTimeProvider dateTimeProvider) : DefaultProducer(logger), ISender
     {
         public async Task Send<TMessage>(TMessage message, string uri, CancellationToken cancellationToken = default) where TMessage : class
         {
-            var startedAtUtc = DateTime.UtcNow;
+            var startedAtUtc = dateTimeProvider.GetUtcNow();
 
             try
             {
@@ -22,7 +24,8 @@ namespace BaseArch.Infrastructure.MassTransit.Implementations
             }
             finally
             {
-                WriteEventMessageLog(startedAtUtc, message);
+                var endedAtUtc = dateTimeProvider.GetUtcNow();
+                WriteEventMessageLog(startedAtUtc, endedAtUtc, message);
             }
         }
     }

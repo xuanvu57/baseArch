@@ -1,15 +1,16 @@
 ﻿using BaseArch.Application.Loggings;
 using BaseArch.Application.Loggings.Models;
+using BaseArch.Domain.Timezones.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace BaseArch.Infrastructure.DefaultHttpClient.DelegatingHandlers
 {
-    public class HttpClientLoggingDelegatingHandler(ILogger<HttpClientLoggingDelegatingHandler> logger) : DelegatingHandler
+    public class HttpClientLoggingDelegatingHandler(ILogger<HttpClientLoggingDelegatingHandler> logger, IDateTimeProvider dateTimeProvider) : DelegatingHandler
     {
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var requestLogModel = await ExtractFromRequest(request);
-            HttpResponseMessage response = null;
+            HttpResponseMessage? response = null;
             try
             {
                 response = await base.SendAsync(request, cancellationToken);
@@ -49,11 +50,11 @@ namespace BaseArch.Infrastructure.DefaultHttpClient.DelegatingHandlers
         /// </summary>
         /// <param name="request"><see cref="HttpRequestMessage"/></param>
         /// <returns><see cref="RequestLogModel"/></returns>
-        private static async Task<RequestLogModel> ExtractFromRequest(HttpRequestMessage request)
+        private async Task<RequestLogModel> ExtractFromRequest(HttpRequestMessage request)
         {
             return new RequestLogModel()
             {
-                TimeUtc = DateTime.UtcNow,
+                TimeUtc = dateTimeProvider.GetUtcNow(),
                 ContentType = "",
                 Scheme = request.RequestUri?.Scheme ?? "",
                 Method = request.Method.Method,
@@ -69,7 +70,7 @@ namespace BaseArch.Infrastructure.DefaultHttpClient.DelegatingHandlers
         /// </summary>
         /// <param name="response"><see cref="HttpResponseMessage"/></param>
         /// <returns><see cref="ResponseLogModel"/></returns>
-        private static async Task<ResponseLogModel> ExtractFromResponse(HttpResponseMessage response)
+        private async Task<ResponseLogModel> ExtractFromResponse(HttpResponseMessage response)
         {
             return new ResponseLogModel()
             {
@@ -77,7 +78,7 @@ namespace BaseArch.Infrastructure.DefaultHttpClient.DelegatingHandlers
                 Header = FormatHeaders(response.Headers.Where(header => header.Value.Any())),
                 Body = await response.Content.ReadAsStringAsync(),
                 Status = response.StatusCode.ToString(),
-                TimeUtc = DateTime.UtcNow,
+                TimeUtc = dateTimeProvider.GetUtcNow(),
             };
         }
 
