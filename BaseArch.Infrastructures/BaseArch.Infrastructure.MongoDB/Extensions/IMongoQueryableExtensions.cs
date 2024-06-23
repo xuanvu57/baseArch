@@ -1,13 +1,10 @@
 ﻿using BaseArch.Application.Models.Requests;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver.Linq;
 using System.Linq.Expressions;
 
-namespace BaseArch.Infrastructure.EFCore.Extensions
+namespace BaseArch.Infrastructure.MongoDB.Extensions
 {
-    /// <summary>
-    /// The extension methods for IQueryable
-    /// </summary>
-    internal static class IQueryableExtensions
+    internal static class IMongoQueryableExtensions
     {
         /// <summary>
         /// Create sort query for a property by ascending
@@ -15,8 +12,8 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
         /// <typeparam name="TEntity">Type of entity</typeparam>
         /// <param name="source">Soure queryable</param>
         /// <param name="property">Property to sort</param>
-        /// <returns><see cref="IOrderedQueryable"/></returns>
-        public static IOrderedQueryable<TEntity> CustomizedOrderBy<TEntity>(this IQueryable<TEntity> source, string property)
+        /// <returns><see cref="IOrderedMongoQueryable"/></returns>
+        public static IOrderedMongoQueryable<TEntity> CustomizedOrderBy<TEntity>(this IMongoQueryable<TEntity> source, string property)
         {
             return ApplyOrder(source, property, "OrderBy");
         }
@@ -27,8 +24,8 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
         /// <typeparam name="TEntity">Type of entity</typeparam>
         /// <param name="source">Soure queryable</param>
         /// <param name="property">Property to sort</param>
-        /// <returns><see cref="IOrderedQueryable"/></returns>
-        public static IOrderedQueryable<TEntity> CustomizedOrderByDescending<TEntity>(this IQueryable<TEntity> source, string property)
+        /// <returns><see cref="IOrderedMongoQueryable"/></returns>
+        public static IOrderedMongoQueryable<TEntity> CustomizedOrderByDescending<TEntity>(this IMongoQueryable<TEntity> source, string property)
         {
             return ApplyOrder(source, property, "OrderByDescending");
         }
@@ -39,8 +36,8 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
         /// <typeparam name="TEntity">Type of entity</typeparam>
         /// <param name="source">Soure ordered queryable</param>
         /// <param name="property">Property to sort</param>
-        /// <returns><see cref="IOrderedQueryable"/></returns>
-        public static IOrderedQueryable<TEntity> CustomizedThenBy<TEntity>(this IOrderedQueryable<TEntity> source, string property)
+        /// <returns><see cref="IOrderedMongoQueryable"/></returns>
+        public static IOrderedMongoQueryable<TEntity> CustomizedThenBy<TEntity>(this IOrderedMongoQueryable<TEntity> source, string property)
         {
             return ApplyOrder(source, property, "ThenBy");
         }
@@ -51,34 +48,39 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
         /// <typeparam name="TEntity">Type of entity</typeparam>
         /// <param name="source">Soure ordered queryable</param>
         /// <param name="property">Property to sort</param>
-        /// <returns><see cref="IOrderedQueryable"/></returns>
-        public static IOrderedQueryable<TEntity> CustomizedThenByDescending<TEntity>(this IOrderedQueryable<TEntity> source, string property)
+        /// <returns><see cref="IOrderedMongoQueryable"/></returns>
+        public static IOrderedMongoQueryable<TEntity> CustomizedThenByDescending<TEntity>(this IOrderedMongoQueryable<TEntity> source, string property)
         {
             return ApplyOrder(source, property, "ThenByDescending");
         }
 
         /// <summary>
-        /// Generate the function expression for filter (LIKE) with OR condition
+        /// Generate the function expression for filter (Equals with lower case) with OR condition
         /// </summary>
         /// <typeparam name="TEntity">Type of entity</typeparam>
         /// <param name="source">Source queryable</param>
         /// <param name="properties">List of properties to filter</param>
         /// <param name="value">Value to search</param>
-        /// <returns><see cref="IQueryable"/></returns>
-        public static IQueryable<TEntity> GenerateORFilterExpression<TEntity>(this IQueryable<TEntity> source, IEnumerable<string> properties, object value)
+        /// <returns><see cref="IMongoQueryable"/></returns>
+        public static IMongoQueryable<TEntity> GenerateORFilterExpression<TEntity>(this IMongoQueryable<TEntity> source, IEnumerable<string> properties, object value)
         {
             Expression? finalExpression = null;
             var parameterExpression = Expression.Parameter(typeof(TEntity), "e");
-            var valueExpression = Expression.Constant($"%{value}%");
+            var valueExpression = Expression.Constant($"{value?.ToString()?.ToLower()}");
 
             foreach (var propertyName in properties)
             {
                 var nameProperty = Expression.Property(parameterExpression, propertyName);
 
-                var executedExpression = Expression.Call(typeof(DbFunctionsExtensions), nameof(DbFunctionsExtensions.Like), null,
-                    Expression.Constant(EF.Functions), nameProperty, valueExpression);
+                var methodInfo = typeof(string).GetMethod("ToLower", Type.EmptyTypes);
+                if (methodInfo is not null)
+                {
+                    var toLowerExpression = Expression.Call(nameProperty, methodInfo);
 
-                finalExpression = finalExpression == null ? executedExpression : Expression.OrElse(finalExpression, executedExpression);
+                    var executedExpression = Expression.Equal(toLowerExpression, valueExpression);
+
+                    finalExpression = finalExpression == null ? executedExpression : Expression.OrElse(finalExpression, executedExpression);
+                }
             }
 
             var expression = Expression.Lambda<Func<TEntity, bool>>(finalExpression!, parameterExpression);
@@ -87,13 +89,13 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
         }
 
         /// <summary>
-        /// Generate the function expression for filter (LIKE) with AND condition
+        /// Generate the function expression for filter (Equals with lower case) with AND condition
         /// </summary>
         /// <typeparam name="TEntity">Type of entity</typeparam>
         /// <param name="source">Source queryable</param>
         /// <param name="filters"><see cref="FilterQueryModel"/></param>
-        /// <returns><see cref="IQueryable"/></returns>
-        public static IQueryable<TEntity> GenerateANDFilterExpression<TEntity>(this IQueryable<TEntity> source, IEnumerable<FilterQueryModel> filters)
+        /// <returns><see cref="IMongoQueryable"/></returns>
+        public static IMongoQueryable<TEntity> GenerateANDFilterExpression<TEntity>(this IMongoQueryable<TEntity> source, IEnumerable<FilterQueryModel> filters)
         {
             Expression? finalExpression = null;
             var parameterExpression = Expression.Parameter(typeof(TEntity), "e");
@@ -101,12 +103,17 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
             foreach (var filter in filters)
             {
                 var nameProperty = Expression.Property(parameterExpression, filter.FieldName);
-                var valueExpression = Expression.Constant($"%{filter.SearchText}%");
+                var valueExpression = Expression.Constant($"{filter.SearchText.ToLower()}");
 
-                var executedExpression = Expression.Call(typeof(DbFunctionsExtensions), nameof(DbFunctionsExtensions.Like), null,
-                    Expression.Constant(EF.Functions), nameProperty, valueExpression);
+                var methodInfo = typeof(string).GetMethod("ToLower", Type.EmptyTypes);
+                if (methodInfo is not null)
+                {
+                    var toLowerExpression = Expression.Call(nameProperty, methodInfo);
 
-                finalExpression = finalExpression == null ? executedExpression : Expression.AndAlso(finalExpression, executedExpression);
+                    var executedExpression = Expression.Equal(toLowerExpression, valueExpression);
+
+                    finalExpression = finalExpression == null ? executedExpression : Expression.AndAlso(finalExpression, executedExpression);
+                }
             }
 
             var expression = Expression.Lambda<Func<TEntity, bool>>(finalExpression!, parameterExpression);
@@ -121,8 +128,8 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
         /// <param name="source">Source queriable</param>
         /// <param name="property">Property to sort</param>
         /// <param name="methodName">Method name to express the lambda</param>
-        /// <returns><see cref="IOrderedQueryable"/></returns>
-        private static IOrderedQueryable<TEntity> ApplyOrder<TEntity>(IQueryable<TEntity> source, string property, string methodName)
+        /// <returns><see cref="IOrderedMongoQueryable"/></returns>
+        private static IOrderedMongoQueryable<TEntity> ApplyOrder<TEntity>(IMongoQueryable<TEntity> source, string property, string methodName)
         {
             var props = property.Split('.');
             var type = typeof(TEntity);
@@ -147,9 +154,9 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
                 && method.GetParameters().Length == 2).MakeGenericMethod(typeof(TEntity), type).Invoke(null, new object[] { source, lambda });
 
             if (result == null)
-                return source.Order();
+                return (IOrderedMongoQueryable<TEntity>)source.Order();
 
-            return (IOrderedQueryable<TEntity>)result;
+            return (IOrderedMongoQueryable<TEntity>)result;
         }
     }
 }

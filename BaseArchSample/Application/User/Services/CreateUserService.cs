@@ -2,6 +2,7 @@
 using Application.User.Dtos.Messages;
 using Application.User.Dtos.Requests;
 using Application.User.ExternalServices.Interfaces;
+using Application.User.Repositories.Interfaces;
 using Application.User.Services.Interfaces;
 using Application.User.Validators.Interfaces;
 using BaseArch.Application.MessageQueues.Interfaces;
@@ -14,6 +15,7 @@ namespace Application.User.Services
 {
     [DIService(DIServiceLifetime.Scoped)]
     public class CreateUserService(IUnitOfWork unitOfWork,
+        IUserMongoDbRepository userMongoDbRepository,
         ICreateUserValidator validator,
         IGreetingClient greetingClient,
         IGreetingClientOther greetingClientOther,
@@ -33,6 +35,7 @@ namespace Application.User.Services
 
             await userRepository.Create(user).ConfigureAwait(false);
             await unitOfWork.SaveChangesAndCommit().ConfigureAwait(false);
+            //await userMongoDbRepository.Create(user).ConfigureAwait(false);
 
             var responseFromGreetingClient = await greetingClient.TryToSayHello($"{user.FirstName} {user.LastName}");
             var responseFromGreetingClientOther = await greetingClientOther.TryToSayHello($"{user.FirstName} {user.LastName}");

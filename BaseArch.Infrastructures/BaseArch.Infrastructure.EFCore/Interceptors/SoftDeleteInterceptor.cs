@@ -13,6 +13,28 @@ namespace BaseArch.Infrastructure.EFCore.Interceptors
                 return base.SavingChangesAsync(eventData, result, cancellationToken);
             }
 
+            ChangeStateForSoftDeletableEntities(eventData);
+
+            return base.SavingChangesAsync(eventData, result, cancellationToken);
+        }
+
+        public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
+        {
+            if (eventData.Context is null)
+            {
+                return base.SavingChanges(eventData, result);
+            }
+
+            ChangeStateForSoftDeletableEntities(eventData);
+
+            return base.SavingChanges(eventData, result);
+        }
+
+        private static void ChangeStateForSoftDeletableEntities(DbContextEventData eventData)
+        {
+            if (eventData.Context is null)
+                return;
+
             var entries = eventData.Context
                 .ChangeTracker
                 .Entries<ISoftDeletable>()
@@ -23,13 +45,6 @@ namespace BaseArch.Infrastructure.EFCore.Interceptors
                 entry.State = EntityState.Modified;
                 entry.Entity.IsDeleted = true;
             }
-
-            return base.SavingChangesAsync(eventData, result, cancellationToken);
-        }
-
-        public override ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
-        {
-            return base.SavedChangesAsync(eventData, result, cancellationToken);
         }
     }
 }

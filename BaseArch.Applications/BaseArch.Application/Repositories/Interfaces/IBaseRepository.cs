@@ -11,14 +11,6 @@ namespace BaseArch.Application.Repositories.Interfaces
     public interface IBaseRepository<TEntity, TKey>
     {
         /// <summary>
-        /// Get IQueryable for the data set
-        /// </summary>
-        /// <param name="predicate">Default predication</param>
-        /// <param name="includeDeletedRecords">Default exclusion for soft-deleted records; otherwise set to be True</param>
-        /// <returns><see cref="IQueryable{TEntity}"/></returns>
-        IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false);
-
-        /// <summary>
         /// Create new record
         /// </summary>
         /// <param name="entity">Entity to create</param>

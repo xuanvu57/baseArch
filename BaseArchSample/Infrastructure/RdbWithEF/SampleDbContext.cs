@@ -1,9 +1,9 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure
+namespace Infrastructure.RdbWithEF
 {
-    public class SampleDBContext(DbContextOptions options) : DbContext(options)
+    public class SampleDbContext(DbContextOptions options) : DbContext(options)
     {
         public DbSet<UserEntity> Users { get; set; }
 

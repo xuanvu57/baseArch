@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.gRPC\BaseArch.Infrastructure.gRPC.csproj" />
     <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.Identity\BaseArch.Infrastructure.Identity.csproj" />
     <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.MassTransit\BaseArch.Infrastructure.MassTransit.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.MongoDB\BaseArch.Infrastructure.MongoDB.csproj" />
     <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.Serilog\BaseArch.Infrastructure.Serilog.csproj" />
     <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.StaticMultilingualProvider\BaseArch.Infrastructure.StaticMultilingualProvider.csproj" />
     <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.StaticTimezonesProvider\BaseArch.Infrastructure.StaticTimezonesProvider.csproj" />

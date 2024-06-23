@@ -2,29 +2,27 @@
 using BaseArch.Application.Models;
 using BaseArch.Application.Models.Requests;
 using BaseArch.Application.Repositories.Interfaces;
-using BaseArch.Domain.DependencyInjection;
 using BaseArch.Domain.Entities;
 using BaseArch.Domain.Entities.Interfaces;
 using BaseArch.Domain.Timezones.Interfaces;
-using BaseArch.Infrastructure.EFCore.Extensions;
-using Microsoft.EntityFrameworkCore;
+using BaseArch.Infrastructure.MongoDb.DBContext.Interfaces;
+using BaseArch.Infrastructure.MongoDB.Extensions;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using System.Linq.Expressions;
 
-namespace BaseArch.Infrastructure.EFCore.Repositories
+namespace BaseArch.Infrastructure.MongoDB.Repositories
 {
-    /// <inheritdoc/>
-    [DIService(DIServiceLifetime.Scoped)]
-    public class BaseRepository<TEntity, TKey, TUserKey>(DbContext dbContext, ITokenProvider tokenProvider, IDateTimeProvider dateTimeProvider) : IBaseRepository<TEntity, TKey> where TEntity : BaseEntity<TKey, TUserKey>
+    public class BaseRepository<TEntity, TKey, TUserKey>(IMongoDbContext mongoDbContext, ITokenProvider tokenProvider, IDateTimeProvider dateTimeProvider) : IBaseRepository<TEntity, TKey> where TEntity : BaseEntity<TKey, TUserKey>
     {
         /// <summary>
-        /// The DbSet of TEntity
+        /// Collection of TEntity
         /// </summary>
-        protected readonly DbSet<TEntity> dbSet = dbContext.Set<TEntity>();
+        protected readonly IMongoCollection<TEntity> collection = mongoDbContext.Database.GetCollection<TEntity>(typeof(TEntity).Name);
 
-        /// <inheritdoc/>
-        public IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false)
+        private IMongoQueryable<TEntity> GetMongoQueryable(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false)
         {
-            var queryable = dbSet.AsQueryable();
+            var queryable = collection.AsQueryable();
 
             if (predicate is not null)
                 queryable = queryable.Where(predicate);
@@ -37,16 +35,14 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
             return queryable;
         }
 
-        /// <inheritdoc/>
         public async Task<int> Count(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
         {
-            return await GetQueryable(predicate, includeDeletedRecords).CountAsync(cancellationToken);
+            return await GetMongoQueryable(predicate, includeDeletedRecords).CountAsync(cancellationToken);
         }
 
-        /// <inheritdoc/>
         public async Task<int> Count(QueryModel queryModel, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
         {
-            var queryable = GetQueryable(null, includeDeletedRecords);
+            var queryable = GetMongoQueryable(null, includeDeletedRecords);
 
             if (queryModel is not null)
             {
@@ -64,16 +60,14 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
             return await queryable.CountAsync(cancellationToken);
         }
 
-        /// <inheritdoc/>
         public async Task<IList<TEntity>> Get(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
         {
-            return await GetQueryable(predicate, includeDeletedRecords).ToListAsync(cancellationToken);
+            return await GetMongoQueryable(predicate, includeDeletedRecords).ToListAsync(cancellationToken);
         }
 
-        /// <inheritdoc/>
         public async Task<IList<TEntity>> Get(QueryModel queryModel, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
         {
-            var queryable = GetQueryable(null, includeDeletedRecords);
+            var queryable = GetMongoQueryable(null, includeDeletedRecords);
 
             if (queryModel is not null)
             {
@@ -107,60 +101,55 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
             return await queryable.ToListAsync(cancellationToken);
         }
 
-        /// <inheritdoc/>
         public async Task<TEntity?> GetById(TKey id, CancellationToken cancellationToken = default)
         {
             if (id is null)
                 return null;
 
-            return await GetQueryable(e => e.Id.Equals(id)).FirstOrDefaultAsync(cancellationToken);
+            return await GetMongoQueryable(e => e.Id.Equals(id)).FirstOrDefaultAsync(cancellationToken);
         }
 
-        /// <inheritdoc/>
         public async Task Create(TEntity entity, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
             var createdEntity = entity.SetCreation<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow());
 
-            await dbSet.AddAsync(createdEntity, cancellationToken);
+            await collection.InsertOneAsync(createdEntity, null, cancellationToken);
         }
 
-        /// <inheritdoc/>
         public async Task CreateMany(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(entities);
 
-            foreach (var entity in entities)
-            {
-                await Create(entity, cancellationToken);
-            }
+            var createdEntities = entities.Select(e => e.SetCreation<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow()));
+
+            await collection.InsertManyAsync(createdEntities, null, cancellationToken);
         }
 
-        /// <inheritdoc/>
         public async Task Delete(TEntity entity, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(entity);
+
+            var filter = FilterDefinition(x => x.Id.Equals(entity.Id), false);
 
             if (typeof(TEntity).IsAssignableFrom(typeof(ISoftDeletable)))
             {
                 var deletedEntity = entity.SetDeletion<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow());
 
-                if (dbSet.Entry(entity) is not null)
-                {
-                    dbSet.Entry(entity).State = EntityState.Detached;
-                }
-                dbSet.Remove(deletedEntity);
+                var updateFilter = Builders<TEntity>.Update
+                    .Set(x => x.UpdatedDatetimeUtc, deletedEntity.UpdatedDatetimeUtc)
+                    .Set(x => x.UpdatedUserId, deletedEntity.UpdatedUserId)
+                    .Set(x => ((ISoftDeletable)x).IsDeleted, true);
+
+                await collection.UpdateOneAsync(filter, updateFilter, cancellationToken: cancellationToken);
             }
             else
             {
-                dbSet.Remove(entity);
+                await collection.DeleteOneAsync(filter, cancellationToken);
             }
-
-            await Task.CompletedTask;
         }
 
-        /// <inheritdoc/>
         public async Task DeleteMany(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(entities);
@@ -169,27 +158,19 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
             {
                 await Delete(entity, cancellationToken);
             }
-
-            await Task.CompletedTask;
         }
 
-        /// <inheritdoc/>
         public async Task Update(TEntity entity, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
             var updatedEntity = entity.SetModification<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow());
 
-            if (dbSet.Entry(entity) is not null)
-            {
-                dbSet.Entry(entity).State = EntityState.Detached;
-            }
-            dbSet.Update(updatedEntity);
+            var filter = FilterDefinition(x => x.Id.Equals(entity.Id), false);
 
-            await Task.CompletedTask;
+            await collection.ReplaceOneAsync(filter, updatedEntity, cancellationToken: cancellationToken);
         }
 
-        /// <inheritdoc/>
         public async Task UpdateMany(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(entities);
@@ -198,8 +179,23 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
             {
                 await Update(entity, cancellationToken);
             }
-
-            await Task.CompletedTask;
         }
+
+        protected FilterDefinition<TEntity> FilterDefinition(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false)
+        {
+            var filterBuilder = Builders<TEntity>.Filter;
+            var filterDefinition = filterBuilder.Empty;
+
+            if (!includeDeletedRecords && typeof(TEntity).IsAssignableTo(typeof(ISoftDeletable)))
+            {
+                filterDefinition &= filterBuilder.Where(e => !((ISoftDeletable)e).IsDeleted);
+            }
+
+            if (predicate is not null)
+                filterDefinition &= filterBuilder.Where(predicate);
+
+            return filterDefinition;
+        }
+
     }
 }

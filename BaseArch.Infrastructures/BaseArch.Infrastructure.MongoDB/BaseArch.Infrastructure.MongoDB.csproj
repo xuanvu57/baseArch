@@ -8,4 +8,12 @@
 	<RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.26.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BaseArch.Applications\BaseArch.Application\BaseArch.Application.csproj" />
+  </ItemGroup>
+
 </Project>
