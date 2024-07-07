@@ -4,7 +4,7 @@ using BaseArch.Infrastructure.EFCore.UnitOfWork;
 namespace Infrastructure.RdbWithEF
 {
     [DIService(DIServiceLifetime.Scoped)]
-    public class SampleUnitOfWork(IServiceProvider serviceProvider, SampleDbContext dbContext) : UnitOfWork(serviceProvider, dbContext)
+    public class SampleEfUnitOfWork(IServiceProvider serviceProvider, SampleEfDbContext dbContext) : UnitOfWork(serviceProvider, dbContext)
     {
     }
 }

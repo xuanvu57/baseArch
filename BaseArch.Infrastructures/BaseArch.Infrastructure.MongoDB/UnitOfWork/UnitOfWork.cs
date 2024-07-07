@@ -1,15 +1,14 @@
 ﻿using BaseArch.Application.Repositories.Interfaces;
 using BaseArch.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+using BaseArch.Infrastructure.MongoDB.DbContext.Interfaces;
 using static BaseArch.Application.Repositories.Enums.DatabaseTypeEnums;
 
-namespace BaseArch.Infrastructure.EFCore.UnitOfWork
+namespace BaseArch.Infrastructure.MongoDB.UnitOfWork
 {
-    /// <inheritdoc/>
-    public abstract class UnitOfWork(IServiceProvider serviceProvider, DbContext dbContext, DatabaseType databaseType = DatabaseType.GeneralEfDb) : IUnitOfWork
+    public abstract class UnitOfWork(IServiceProvider serviceProvider, IMongoDbContext dbContext) : IUnitOfWork
     {
         /// <inheritdoc/>
-        public DatabaseType DatabaseType { get; init; } = databaseType;
+        public DatabaseType DatabaseType { get; init; } = DatabaseType.MongoDb;
 
         /// <summary>
         /// identify if object disposed
@@ -33,20 +32,16 @@ namespace BaseArch.Infrastructure.EFCore.UnitOfWork
             return repositoryPool.CreateRepository<TEntity, TKey, TUserKey>();
         }
 
-        /// <inheritdoc/>
         public async Task<int> SaveChangesAndCommit()
         {
-            using var transaction = await dbContext.Database.BeginTransactionAsync();
             try
             {
-                var numberOfEffectedRows = await dbContext.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                return numberOfEffectedRows;
+                await dbContext.CommitAsync();
+                return 0;
             }
             catch
             {
-                await transaction.RollbackAsync();
+                await dbContext.RollbackAsync();
                 throw;
             }
         }

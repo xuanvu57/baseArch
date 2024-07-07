@@ -1,4 +1,5 @@
 ﻿using BaseArch.Domain.Entities;
+using static BaseArch.Application.Repositories.Enums.DatabaseTypeEnums;
 
 namespace BaseArch.Application.Repositories.Interfaces
 {
@@ -7,6 +8,11 @@ namespace BaseArch.Application.Repositories.Interfaces
     /// </summary>
     public interface IUnitOfWork : IDisposable
     {
+        /// <summary>
+        /// Type of database
+        /// </summary>
+        public DatabaseType DatabaseType { get; init; }
+
         /// <summary>
         /// Get an undefined repository as base repository
         /// </summary>

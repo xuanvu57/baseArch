@@ -2,7 +2,7 @@
 using BaseArch.Application.Identity.Interfaces;
 using BaseArch.Domain.DependencyInjection;
 using BaseArch.Domain.Timezones.Interfaces;
-using BaseArch.Infrastructure.MongoDb.DBContext.Interfaces;
+using BaseArch.Infrastructure.MongoDB.DbContext.Interfaces;
 using BaseArch.Infrastructure.MongoDB.Repositories;
 using Domain.Entities;
 

@@ -18,7 +18,7 @@ namespace Infrastructure
         {
             services.RegisterEFInterceptor();
 
-            services.AddDbContext<SampleDbContext>((serviceProvider, options) =>
+            services.AddDbContext<SampleEfDbContext>((serviceProvider, options) =>
             {
                 options
                     .UseInMemoryDatabase("Sample")
@@ -30,6 +30,7 @@ namespace Infrastructure
             {
                 configure.ConnectionString = "mongodb://root:aA123456@localhost:27017";
                 configure.DatabaseName = "dbtest";
+                configure.AutoTransaction = false;
             });
 
             services.AddStaticMultilingualProviders(["en-US", "vi-VN"]);

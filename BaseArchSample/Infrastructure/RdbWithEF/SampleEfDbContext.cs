@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.RdbWithEF
 {
-    public class SampleDbContext(DbContextOptions options) : DbContext(options)
+    public class SampleEfDbContext(DbContextOptions options) : DbContext(options)
     {
         public DbSet<UserEntity> Users { get; set; }
 

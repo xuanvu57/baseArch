@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Repositories
 {
     [DIService(DIServiceLifetime.Scoped)]
-    public sealed class UserRepository(SampleDbContext dbContext, ITokenProvider tokenProvider, IDateTimeProvider dateTimeProvider)
+    public sealed class UserRepository(SampleEfDbContext dbContext, ITokenProvider tokenProvider, IDateTimeProvider dateTimeProvider)
         : BaseRepository<UserEntity, Guid, Guid>(dbContext, tokenProvider, dateTimeProvider), IUserRepository
     {
         public async Task<UserEntity> GetFirstOrDefault()

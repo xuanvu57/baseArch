@@ -5,7 +5,7 @@ using BaseArch.Application.Repositories.Interfaces;
 using BaseArch.Domain.Entities;
 using BaseArch.Domain.Entities.Interfaces;
 using BaseArch.Domain.Timezones.Interfaces;
-using BaseArch.Infrastructure.MongoDb.DBContext.Interfaces;
+using BaseArch.Infrastructure.MongoDB.DbContext.Interfaces;
 using BaseArch.Infrastructure.MongoDB.Extensions;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -20,26 +20,13 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
         /// </summary>
         protected readonly IMongoCollection<TEntity> collection = mongoDbContext.Database.GetCollection<TEntity>(typeof(TEntity).Name);
 
-        private IMongoQueryable<TEntity> GetMongoQueryable(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false)
-        {
-            var queryable = collection.AsQueryable();
-
-            if (predicate is not null)
-                queryable = queryable.Where(predicate);
-
-            if (!includeDeletedRecords && typeof(TEntity).IsAssignableTo(typeof(ISoftDeletable)))
-            {
-                queryable = queryable.Where(e => !((ISoftDeletable)e).IsDeleted);
-            }
-
-            return queryable;
-        }
-
+        /// <inheritdoc/>
         public async Task<int> Count(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
         {
             return await GetMongoQueryable(predicate, includeDeletedRecords).CountAsync(cancellationToken);
         }
 
+        /// <inheritdoc/>
         public async Task<int> Count(QueryModel queryModel, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
         {
             var queryable = GetMongoQueryable(null, includeDeletedRecords);
@@ -60,11 +47,13 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
             return await queryable.CountAsync(cancellationToken);
         }
 
+        /// <inheritdoc/>
         public async Task<IList<TEntity>> Get(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
         {
             return await GetMongoQueryable(predicate, includeDeletedRecords).ToListAsync(cancellationToken);
         }
 
+        /// <inheritdoc/>
         public async Task<IList<TEntity>> Get(QueryModel queryModel, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
         {
             var queryable = GetMongoQueryable(null, includeDeletedRecords);
@@ -101,6 +90,7 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
             return await queryable.ToListAsync(cancellationToken);
         }
 
+        /// <inheritdoc/>
         public async Task<TEntity?> GetById(TKey id, CancellationToken cancellationToken = default)
         {
             if (id is null)
@@ -109,24 +99,33 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
             return await GetMongoQueryable(e => e.Id.Equals(id)).FirstOrDefaultAsync(cancellationToken);
         }
 
+        /// <inheritdoc/>
         public async Task Create(TEntity entity, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
             var createdEntity = entity.SetCreation<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow());
 
-            await collection.InsertOneAsync(createdEntity, null, cancellationToken);
+            if (mongoDbContext.SessionHandle is null)
+                await collection.InsertOneAsync(createdEntity, null, cancellationToken);
+            else
+                await collection.InsertOneAsync(mongoDbContext.SessionHandle, createdEntity, null, cancellationToken);
         }
 
+        /// <inheritdoc/>
         public async Task CreateMany(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(entities);
 
             var createdEntities = entities.Select(e => e.SetCreation<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow()));
 
-            await collection.InsertManyAsync(createdEntities, null, cancellationToken);
+            if (mongoDbContext.SessionHandle is null)
+                await collection.InsertManyAsync(createdEntities, null, cancellationToken);
+            else
+                await collection.InsertManyAsync(mongoDbContext.SessionHandle, createdEntities, null, cancellationToken);
         }
 
+        /// <inheritdoc/>
         public async Task Delete(TEntity entity, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(entity);
@@ -142,14 +141,21 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
                     .Set(x => x.UpdatedUserId, deletedEntity.UpdatedUserId)
                     .Set(x => ((ISoftDeletable)x).IsDeleted, true);
 
-                await collection.UpdateOneAsync(filter, updateFilter, cancellationToken: cancellationToken);
+                if (mongoDbContext.SessionHandle is null)
+                    await collection.UpdateOneAsync(filter, updateFilter, cancellationToken: cancellationToken);
+                else
+                    await collection.UpdateOneAsync(mongoDbContext.SessionHandle, filter, updateFilter, cancellationToken: cancellationToken);
             }
             else
             {
-                await collection.DeleteOneAsync(filter, cancellationToken);
+                if (mongoDbContext.SessionHandle is null)
+                    await collection.DeleteOneAsync(filter, cancellationToken: cancellationToken);
+                else
+                    await collection.DeleteOneAsync(mongoDbContext.SessionHandle, filter, cancellationToken: cancellationToken);
             }
         }
 
+        /// <inheritdoc/>
         public async Task DeleteMany(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(entities);
@@ -160,6 +166,7 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
             }
         }
 
+        /// <inheritdoc/>
         public async Task Update(TEntity entity, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(entity);
@@ -168,9 +175,13 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
 
             var filter = FilterDefinition(x => x.Id.Equals(entity.Id), false);
 
-            await collection.ReplaceOneAsync(filter, updatedEntity, cancellationToken: cancellationToken);
+            if (mongoDbContext.SessionHandle is null)
+                await collection.ReplaceOneAsync(filter, updatedEntity, cancellationToken: cancellationToken);
+            else
+                await collection.ReplaceOneAsync(mongoDbContext.SessionHandle, filter, updatedEntity, cancellationToken: cancellationToken);
         }
 
+        /// <inheritdoc/>
         public async Task UpdateMany(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(entities);
@@ -179,6 +190,21 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
             {
                 await Update(entity, cancellationToken);
             }
+        }
+
+        protected IMongoQueryable<TEntity> GetMongoQueryable(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false)
+        {
+            var queryable = collection.AsQueryable();
+
+            if (predicate is not null)
+                queryable = queryable.Where(predicate);
+
+            if (!includeDeletedRecords && typeof(TEntity).IsAssignableTo(typeof(ISoftDeletable)))
+            {
+                queryable = queryable.Where(e => !((ISoftDeletable)e).IsDeleted);
+            }
+
+            return queryable;
         }
 
         protected FilterDefinition<TEntity> FilterDefinition(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false)
@@ -196,6 +222,5 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
 
             return filterDefinition;
         }
-
     }
 }

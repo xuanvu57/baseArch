@@ -22,22 +22,6 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
         protected readonly DbSet<TEntity> dbSet = dbContext.Set<TEntity>();
 
         /// <inheritdoc/>
-        public IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false)
-        {
-            var queryable = dbSet.AsQueryable();
-
-            if (predicate is not null)
-                queryable = queryable.Where(predicate);
-
-            if (!includeDeletedRecords && typeof(TEntity).IsAssignableTo(typeof(ISoftDeletable)))
-            {
-                queryable = queryable.Where(e => !((ISoftDeletable)e).IsDeleted);
-            }
-
-            return queryable;
-        }
-
-        /// <inheritdoc/>
         public async Task<int> Count(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
         {
             return await GetQueryable(predicate, includeDeletedRecords).CountAsync(cancellationToken);
@@ -200,6 +184,21 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
             }
 
             await Task.CompletedTask;
+        }
+
+        protected IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false)
+        {
+            var queryable = dbSet.AsQueryable();
+
+            if (predicate is not null)
+                queryable = queryable.Where(predicate);
+
+            if (!includeDeletedRecords && typeof(TEntity).IsAssignableTo(typeof(ISoftDeletable)))
+            {
+                queryable = queryable.Where(e => !((ISoftDeletable)e).IsDeleted);
+            }
+
+            return queryable;
         }
     }
 }

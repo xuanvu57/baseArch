@@ -10,46 +10,76 @@ using BaseArch.Application.Repositories.Interfaces;
 using BaseArch.Domain.DependencyInjection;
 using CaseExtensions;
 using Domain.Entities;
+using static BaseArch.Application.Repositories.Enums.DatabaseTypeEnums;
 
 namespace Application.User.Services
 {
     [DIService(DIServiceLifetime.Scoped)]
-    public class CreateUserService(IUnitOfWork unitOfWork,
-        IUserMongoDbRepository userMongoDbRepository,
-        ICreateUserValidator validator,
-        IGreetingClient greetingClient,
-        IGreetingClientOther greetingClientOther,
-        IPublisher publisher,
-        ISender sender) : ICreateUserService
+    public class CreateUserService : ICreateUserService
     {
-        private readonly IUserRepository userRepository = unitOfWork.GetRepository<IUserRepository>();
+        private readonly IUnitOfWork _efUnitOfWork;
+        private readonly IUnitOfWork _mongoDbUnitOfWork;
+        private readonly IUserRepository _userRepository;
+        private readonly IUserMongoDbRepository _userMongoDbRepository;
+        private readonly IBaseRepository<UserEntity, Guid> _genericUserRepository;
+        private readonly ICreateUserValidator _validator;
+        private readonly IGreetingClient _greetingClient;
+        private readonly IGreetingClientOther _greetingClientOther;
+        private readonly IPublisher _publisher;
+        private readonly ISender _sender;
+
+        public CreateUserService(IEnumerable<IUnitOfWork> unitOfWorks,
+            ICreateUserValidator validator,
+            IGreetingClient greetingClient,
+            IGreetingClientOther greetingClientOther,
+            IPublisher publisher,
+            ISender sender)
+        {
+            _efUnitOfWork = unitOfWorks.First(x => x.DatabaseType == DatabaseType.GeneralEfDb);
+            _mongoDbUnitOfWork = unitOfWorks.First(x => x.DatabaseType == DatabaseType.MongoDb);
+
+            _userRepository = _efUnitOfWork.GetRepository<IUserRepository>();
+            _genericUserRepository = _efUnitOfWork.GetVirtualRepository<UserEntity, Guid, Guid>();
+
+            _userMongoDbRepository = _mongoDbUnitOfWork.GetRepository<IUserMongoDbRepository>();
+
+            _validator = validator;
+            _greetingClient = greetingClient;
+            _greetingClientOther = greetingClientOther;
+            _publisher = publisher;
+            _sender = sender;
+        }
 
         public async Task<Guid> CreateUser(CreateUserRequest request)
         {
-            await validator.ValidateWithDatabaseAsync(request);
+            await _validator.ValidateWithDatabaseAsync(request);
 
             UserEntity user = new(request.FirstName, request.LastName)
             {
                 Id = Guid.NewGuid(),
             };
 
-            await userRepository.Create(user).ConfigureAwait(false);
-            await unitOfWork.SaveChangesAndCommit().ConfigureAwait(false);
-            //await userMongoDbRepository.Create(user).ConfigureAwait(false);
+            await _userRepository.Create(user).ConfigureAwait(false);
+            await _efUnitOfWork.SaveChangesAndCommit().ConfigureAwait(false);
+            await _userMongoDbRepository.Create(user).ConfigureAwait(false);
+            await _mongoDbUnitOfWork.SaveChangesAndCommit().ConfigureAwait(false);
 
-            var responseFromGreetingClient = await greetingClient.TryToSayHello($"{user.FirstName} {user.LastName}");
-            var responseFromGreetingClientOther = await greetingClientOther.TryToSayHello($"{user.FirstName} {user.LastName}");
+            var count = await _genericUserRepository.Count().ConfigureAwait(false);
+            count = await _userMongoDbRepository.Count().ConfigureAwait(false);
+
+            var responseFromGreetingClient = await _greetingClient.TryToSayHello($"{user.FirstName} {user.LastName}");
+            var responseFromGreetingClientOther = await _greetingClientOther.TryToSayHello($"{user.FirstName} {user.LastName}");
             if (string.IsNullOrEmpty(responseFromGreetingClient) ||
                 string.IsNullOrEmpty(responseFromGreetingClientOther))
             {
                 return Guid.Empty;
             }
 
-            await publisher.Publish(new UserCreatedPublishedMessage(user.Id));
+            await _publisher.Publish(new UserCreatedPublishedMessage(user.Id));
 
-            await publisher.Publish(new UserCreatedCustomizeMessage(Guid.NewGuid(), user.Id));
+            await _publisher.Publish(new UserCreatedCustomizeMessage(Guid.NewGuid(), user.Id));
 
-            await sender.Send(new UserCreatedSentMessage(user.Id, $"{user.FirstName} {user.LastName}"), $"queue:{typeof(UserCreatedSentMessage).Name.ToKebabCase()}");
+            await _sender.Send(new UserCreatedSentMessage(user.Id, $"{user.FirstName} {user.LastName}"), $"queue:{typeof(UserCreatedSentMessage).Name.ToKebabCase()}");
 
             return user.Id;
         }

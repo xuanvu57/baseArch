@@ -1,4 +1,4 @@
-﻿using BaseArch.Infrastructure.MongoDb.DBContext.Interfaces;
+﻿using BaseArch.Infrastructure.MongoDB.DbContext.Interfaces;
 using BaseArch.Infrastructure.MongoDB.Options;
 using Microsoft.Extensions.DependencyInjection;
 
