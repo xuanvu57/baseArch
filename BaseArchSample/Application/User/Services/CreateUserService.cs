@@ -21,7 +21,6 @@ namespace Application.User.Services
         private readonly IUnitOfWork _mongoDbUnitOfWork;
         private readonly IUserRepository _userRepository;
         private readonly IUserMongoDbRepository _userMongoDbRepository;
-        private readonly IBaseRepository<UserEntity, Guid> _genericUserRepository;
         private readonly ICreateUserValidator _validator;
         private readonly IGreetingClient _greetingClient;
         private readonly IGreetingClientOther _greetingClientOther;
@@ -39,7 +38,6 @@ namespace Application.User.Services
             _mongoDbUnitOfWork = unitOfWorks.First(x => x.DatabaseType == DatabaseType.MongoDb);
 
             _userRepository = _efUnitOfWork.GetRepository<IUserRepository>();
-            _genericUserRepository = _efUnitOfWork.GetVirtualRepository<UserEntity, Guid, Guid>();
 
             _userMongoDbRepository = _mongoDbUnitOfWork.GetRepository<IUserMongoDbRepository>();
 
@@ -61,11 +59,13 @@ namespace Application.User.Services
 
             await _userRepository.Create(user).ConfigureAwait(false);
             await _efUnitOfWork.SaveChangesAndCommit().ConfigureAwait(false);
-            await _userMongoDbRepository.Create(user).ConfigureAwait(false);
-            await _mongoDbUnitOfWork.SaveChangesAndCommit().ConfigureAwait(false);
 
-            var count = await _genericUserRepository.Count().ConfigureAwait(false);
-            count = await _userMongoDbRepository.Count().ConfigureAwait(false);
+            var count = await _userMongoDbRepository.Count().ConfigureAwait(false);
+            if (count == 0)
+            {
+                await _userMongoDbRepository.Create(user).ConfigureAwait(false);
+                await _mongoDbUnitOfWork.SaveChangesAndCommit().ConfigureAwait(false);
+            }
 
             var responseFromGreetingClient = await _greetingClient.TryToSayHello($"{user.FirstName} {user.LastName}");
             var responseFromGreetingClientOther = await _greetingClientOther.TryToSayHello($"{user.FirstName} {user.LastName}");
