@@ -5,6 +5,9 @@ using MongoDB.Driver;
 
 namespace BaseArch.Infrastructure.MongoDB.DbContext
 {
+    /// <summary>
+    /// The abstract MongoDb context
+    /// </summary>
     public abstract class MongoDbContext : IMongoDbContext
     {
         /// <summary>
@@ -12,16 +15,31 @@ namespace BaseArch.Infrastructure.MongoDB.DbContext
         /// </summary>
         private bool _disposed = false;
 
+        /// <summary>
+        /// Session handler for tranction
+        /// </summary>
         private IClientSessionHandle? _sessionHandle;
 
+        /// <summary>
+        /// Options for <see cref="MongoDbOptions"/>
+        /// </summary>
         private readonly IOptions<MongoDbOptions> _options;
 
+        /// <summary>
+        /// Mongo client
+        /// </summary>
         private MongoClient Client { get; init; }
 
+        /// <inheritdoc/>
         public IMongoDatabase Database { get; }
 
+        /// <inheritdoc/>
         public IClientSessionHandle? SessionHandle { get { return GetSessionHandler(); } }
 
+        /// <summary>
+        /// Contructor
+        /// </summary>
+        /// <param name="options">Options for <see cref="MongoDbOptions"/></param>
         protected MongoDbContext(IOptions<MongoDbOptions> options)
         {
             _options = options;
@@ -30,6 +48,10 @@ namespace BaseArch.Infrastructure.MongoDB.DbContext
             Database = Client.GetDatabase(options.Value.DatabaseName);
         }
 
+        /// <summary>
+        /// Get session handler
+        /// </summary>
+        /// <returns></returns>
         private IClientSessionHandle? GetSessionHandler()
         {
             if (!_options.Value.AutoTransaction)
@@ -43,6 +65,7 @@ namespace BaseArch.Infrastructure.MongoDB.DbContext
             return _sessionHandle;
         }
 
+        /// <inheritdoc/>
         public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
             if (!_options.Value.AutoTransaction)
@@ -54,6 +77,7 @@ namespace BaseArch.Infrastructure.MongoDB.DbContext
                 _sessionHandle.StartTransaction();
         }
 
+        /// <inheritdoc/>
         public async Task CommitAsync(CancellationToken cancellationToken = default)
         {
             if (_sessionHandle is not null)
@@ -62,6 +86,7 @@ namespace BaseArch.Infrastructure.MongoDB.DbContext
             }
         }
 
+        /// <inheritdoc/>
         public async Task RollbackAsync(CancellationToken cancellationToken = default)
         {
             if (_sessionHandle is not null)

@@ -26,7 +26,7 @@ namespace BaseArch.Infrastructure.Identity.Jwt
         /// <summary>
         /// Current access token
         /// </summary>
-        private string currentAccessToken = string.Empty;
+        private string _currentAccessToken = string.Empty;
 
         /// <summary>
         /// "Bearer" scheme
@@ -102,8 +102,8 @@ namespace BaseArch.Infrastructure.Identity.Jwt
         }
         public string GetAccessToken()
         {
-            if (!string.IsNullOrEmpty(currentAccessToken))
-                return currentAccessToken;
+            if (!string.IsNullOrEmpty(_currentAccessToken))
+                return _currentAccessToken;
 
             if (httpContextAccessor.HttpContext is null)
                 return string.Empty;
@@ -112,8 +112,8 @@ namespace BaseArch.Infrastructure.Identity.Jwt
             if (!authorizationValue.StartsWith(DefaultScheme))
                 return string.Empty;
 
-            currentAccessToken = authorizationValue.Replace($"{DefaultScheme} ", "");
-            return currentAccessToken;
+            _currentAccessToken = authorizationValue.Replace($"{DefaultScheme} ", "");
+            return _currentAccessToken;
         }
 
         /// <inheritdoc/>

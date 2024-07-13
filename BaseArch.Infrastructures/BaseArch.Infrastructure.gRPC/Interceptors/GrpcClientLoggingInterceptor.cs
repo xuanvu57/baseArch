@@ -9,6 +9,11 @@ using Microsoft.Extensions.Primitives;
 
 namespace BaseArch.Infrastructure.gRPC.Interceptors
 {
+    /// <summary>
+    /// Interceptor to log the request and response for Grpc client
+    /// </summary>
+    /// <param name="logger"><see cref="ILogger"/></param>
+    /// <param name="dateTimeProvider"><see cref="IDateTimeProvider"/></param>
     public class GrpcClientLoggingInterceptor(ILogger<GrpcClientLoggingInterceptor> logger, IDateTimeProvider dateTimeProvider) : Interceptor
     {
         /// <inheritdoc/>
@@ -24,11 +29,19 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
                 call.Dispose);
         }
 
+        /// <summary>
+        /// Handle response to extract data
+        /// </summary>
+        /// <typeparam name="TRequest">Type of request</typeparam>
+        /// <typeparam name="TResponse">Type of response</typeparam>
+        /// <param name="request">Request</param>
+        /// <param name="responseAsync">Response</param>
+        /// <param name="context"><see cref="ClientInterceptorContext{TRequest, TResponse}"/></param>
+        /// <returns>Response</returns>
         private async Task<TResponse> HandleResponse<TRequest, TResponse>(TRequest request, Task<TResponse> responseAsync, ClientInterceptorContext<TRequest, TResponse> context)
             where TRequest : class
             where TResponse : class
         {
-            var responseBodyText = "";
             var requestLog = ExtractFromRequest(context, request);
             ResponseLogModel? responseLog = null;
 
@@ -36,7 +49,7 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
             {
                 var response = await responseAsync;
 
-                responseBodyText = response?.ToString() ?? "";
+                var responseBodyText = response?.ToString() ?? "";
                 responseLog = ExtractFromResponse(context, StatusCode.OK, responseBodyText);
 
                 return response!;
@@ -67,7 +80,7 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
             where TRequest : class
             where TResponse : class
         {
-            logger.LogInformation(LogMessageTemplate.GrpcClientLoggingInterceptor,
+            logger.LogInformation(LogMessageTemplate.GrpcClientLogTemplate,
                 MethodType.Unary,
                 context.Method.Name,
                 requestResponseLogModel.ResponseLogModel.Status,

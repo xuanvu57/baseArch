@@ -2,8 +2,12 @@
 
 namespace BaseArch.Infrastructure.DefaultHttpClient
 {
+    /// <summary>
+    /// Default json serializer options
+    /// </summary>
     internal static class DefaultJsonSerializerOptions
     {
+        /// <see cref="JsonDocumentOptions"/>
         static public JsonSerializerOptions JsonSerializerOptions
         {
             get

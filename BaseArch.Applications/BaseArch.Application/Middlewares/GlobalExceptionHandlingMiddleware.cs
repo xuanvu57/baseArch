@@ -11,7 +11,7 @@ namespace BaseArch.Application.Middlewares
     public class GlobalExceptionHandlingMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlingMiddleware> logger)
     {
         /// <summary>
-        /// Handle the middleware
+        /// Handle the exceptions if any
         /// </summary>
         /// <param name="context"><see cref="HttpContext"/></param>
         /// <returns><see cref="Task"/></returns>

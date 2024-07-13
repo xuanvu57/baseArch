@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace BaseArch.Application.Registrations
 {
     /// <summary>
-    /// Register business exception handler
+    /// Extension to register business exception handler
     /// </summary>
     public static class BusinessExceptionHandlerRegistration
     {

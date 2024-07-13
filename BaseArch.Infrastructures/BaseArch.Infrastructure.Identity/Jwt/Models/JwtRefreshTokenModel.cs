@@ -3,7 +3,7 @@
     /// <summary>
     /// Jwt refresh token model before encryption
     /// </summary>
-    internal record JwtRefreshTokenModel
+    internal sealed record JwtRefreshTokenModel
     {
         /// <summary>
         /// Token as a sign key

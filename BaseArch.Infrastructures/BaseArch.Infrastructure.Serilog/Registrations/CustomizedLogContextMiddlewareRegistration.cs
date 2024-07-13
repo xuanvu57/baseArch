@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Builder;
 namespace BaseArch.Infrastructure.Serilog.Registrations
 {
     /// <summary>
-    /// Extension methods for <see cref="WebApplication"/> to register middlewares
+    /// Extension to register middlewares
     /// </summary>
     public static class CustomizedLogContextMiddlewareRegistration
     {

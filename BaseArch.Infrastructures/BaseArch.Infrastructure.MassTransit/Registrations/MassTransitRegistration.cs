@@ -1,19 +1,27 @@
 ﻿using BaseArch.Application.MessageQueues;
+using BaseArch.Infrastructure.MassTransit.Contants;
 using BaseArch.Infrastructure.MassTransit.Implementations;
 using BaseArch.Infrastructure.MassTransit.Options;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using static BaseArch.Infrastructure.MassTransit.Options.MassTransitConstants;
+using static BaseArch.Infrastructure.MassTransit.Contants.MassTransitConsts;
 
 namespace BaseArch.Infrastructure.MassTransit.Registrations
 {
+    /// <summary>
+    /// Extension to register MassTransit
+    /// </summary>
     public static class MassTransitRegistration
     {
+        /// <summary>
+        /// Register MassTransit service
+        /// </summary>
+        /// <param name="services"><see cref="IServiceCollection"/></param>
         public static void RegisterMassTransit(this IServiceCollection services)
         {
             services.AddOptions<MassTransitOptions>()
-                .BindConfiguration(MassTransitConstants.MassTransitSection)
+                .BindConfiguration(MassTransitConsts.MassTransitSection)
                 .ValidateOnStart();
 
             var messageQueuesOptions = services.BuildServiceProvider().GetRequiredService<IOptions<MassTransitOptions>>();
@@ -27,12 +35,17 @@ namespace BaseArch.Infrastructure.MassTransit.Registrations
             }
         }
 
+        /// <summary>
+        /// Register MassTransit with In-Memory queue
+        /// </summary>
+        /// <param name="services"><see cref="IServiceCollection"/></param>
+        /// <param name="messageQueuesOptions">Options for <see cref="MassTransitOptions"/></param>
         private static void RegisterMassTransitWithInMemmoryQueue(IServiceCollection services, IOptions<MassTransitOptions> messageQueuesOptions)
         {
             var retryOptions = messageQueuesOptions.Value.Retry;
             services.AddMassTransit(x =>
             {
-                x.AddConsumers(CreateAllGenericConsumerTypes());
+                x.AddConsumers(GetAllGenericConsumerTypes());
                 x.AddConsumers(GetAllCustomizedConsumerTypes());
 
                 x.UsingInMemory((context, configure) =>
@@ -52,13 +65,18 @@ namespace BaseArch.Infrastructure.MassTransit.Registrations
             });
         }
 
+        /// <summary>
+        /// Register MassTransit with RabbitMq
+        /// </summary>
+        /// <param name="services"><see cref="IServiceCollection"/></param>
+        /// <param name="messageQueuesOptions">Options for <see cref="MassTransitOptions"/></param>
         private static void RegisterMassTransitWithRabbitMq(IServiceCollection services, IOptions<MassTransitOptions> messageQueuesOptions)
         {
             var rabbitMqOptions = messageQueuesOptions.Value.RabbitMq!;
             var retryOptions = messageQueuesOptions.Value.Retry;
             services.AddMassTransit(x =>
             {
-                x.AddConsumers(CreateAllGenericConsumerTypes());
+                x.AddConsumers(GetAllGenericConsumerTypes());
                 x.AddConsumers(GetAllCustomizedConsumerTypes());
 
                 x.UsingRabbitMq((context, configure) =>
@@ -82,6 +100,11 @@ namespace BaseArch.Infrastructure.MassTransit.Registrations
             });
         }
 
+        /// <summary>
+        /// Get <see cref="IEndpointNameFormatter"/>
+        /// </summary>
+        /// <param name="endPointFormatterOptions"><see cref="EndPointFormatterOptions"/></param>
+        /// <returns><see cref="IEndpointNameFormatter"/></returns>
         private static IEndpointNameFormatter GetEndpointNameFormatter(EndPointFormatterOptions? endPointFormatterOptions)
         {
             return endPointFormatterOptions?.EndPointFormatterCase switch
@@ -92,7 +115,11 @@ namespace BaseArch.Infrastructure.MassTransit.Registrations
             };
         }
 
-        private static Type[] CreateAllGenericConsumerTypes()
+        /// <summary>
+        /// Scan and create generic types for auto consumer
+        /// </summary>
+        /// <returns>List of <see cref="Type"/></returns>
+        private static Type[] GetAllGenericConsumerTypes()
         {
             var messageTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())
@@ -111,6 +138,10 @@ namespace BaseArch.Infrastructure.MassTransit.Registrations
             return consumerTypes.ToArray();
         }
 
+        /// <summary>
+        /// Scan and get all customized consumer types
+        /// </summary>
+        /// <returns>List of <see cref="Type"/></returns>
         private static Type[] GetAllCustomizedConsumerTypes()
         {
             var consumerTypes = AppDomain.CurrentDomain.GetAssemblies()

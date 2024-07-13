@@ -16,7 +16,7 @@ namespace Infrastructure
     {
         public void Register(IServiceCollection services)
         {
-            services.RegisterEFInterceptor();
+            services.AddEFInterceptor();
 
             services.AddDbContext<SampleEfDbContext>((serviceProvider, options) =>
             {

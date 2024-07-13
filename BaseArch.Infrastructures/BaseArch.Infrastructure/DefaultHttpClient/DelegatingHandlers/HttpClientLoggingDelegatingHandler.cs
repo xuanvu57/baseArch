@@ -5,8 +5,14 @@ using Microsoft.Extensions.Logging;
 
 namespace BaseArch.Infrastructure.DefaultHttpClient.DelegatingHandlers
 {
+    /// <summary>
+    /// Delegating handler to log the request and response
+    /// </summary>
+    /// <param name="logger"><see cref="ILogger"/></param>
+    /// <param name="dateTimeProvider"><see cref="IDateTimeProvider"/></param>
     public class HttpClientLoggingDelegatingHandler(ILogger<HttpClientLoggingDelegatingHandler> logger, IDateTimeProvider dateTimeProvider) : DelegatingHandler
     {
+        /// <inheritdoc/>
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var requestLogModel = await ExtractFromRequest(request);
@@ -37,7 +43,7 @@ namespace BaseArch.Infrastructure.DefaultHttpClient.DelegatingHandlers
         /// <param name="requestResponseLogModel"><see cref="RequestResponseLogModel"/></param>
         private static void WriteRequestResponseLog(ILogger<HttpClientLoggingDelegatingHandler> logger, RequestResponseLogModel requestResponseLogModel)
         {
-            logger.LogInformation(LogMessageTemplate.HttpClientLoggingDelegatingHandler,
+            logger.LogInformation(LogMessageTemplate.HttpClientLogTemplate,
                 requestResponseLogModel.RequestLogModel.Method,
                 requestResponseLogModel.RequestLogModel.Path,
                 requestResponseLogModel.ResponseLogModel.Status,

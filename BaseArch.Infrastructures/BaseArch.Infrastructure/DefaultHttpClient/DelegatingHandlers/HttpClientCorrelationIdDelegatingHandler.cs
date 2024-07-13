@@ -6,8 +6,13 @@ using Microsoft.Extensions.Options;
 
 namespace BaseArch.Infrastructure.DefaultHttpClient.DelegatingHandlers
 {
+    /// <summary>
+    /// Delegating handler to add correlation id to request
+    /// </summary>
+    /// <param name="accessor"></param>
     public class HttpClientCorrelationIdDelegatingHandler(IHttpContextAccessor accessor) : DelegatingHandler
     {
+        /// <inheritdoc/>
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             AddCorrelationIdToRequestHeader(request);
@@ -15,6 +20,10 @@ namespace BaseArch.Infrastructure.DefaultHttpClient.DelegatingHandlers
             return await base.SendAsync(request, cancellationToken);
         }
 
+        /// <summary>
+        /// Add correlation id to request header
+        /// </summary>
+        /// <param name="request"><see cref="HttpRequestMessage"/></param>
         private void AddCorrelationIdToRequestHeader(HttpRequestMessage request)
         {
             if (accessor.HttpContext is null)

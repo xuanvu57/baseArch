@@ -10,7 +10,7 @@ using Microsoft.Extensions.Primitives;
 namespace BaseArch.Infrastructure.gRPC.Interceptors
 {
     /// <summary>
-    /// Interceptor to log the request and response for gRPC request
+    /// Interceptor to log the request and response for gRPC service
     /// </summary>
     /// <param name="logger"></param>
     public class GrpcServiceLoggingInterceptor(ILogger<GrpcServiceLoggingInterceptor> logger, IDateTimeProvider dateTimeProvider) : Interceptor
@@ -50,7 +50,7 @@ namespace BaseArch.Infrastructure.gRPC.Interceptors
         /// <param name="context"><see cref="ServerCallContext"/></param>
         private static void WriteRequestResponseLog(ILogger<GrpcServiceLoggingInterceptor> logger, RequestResponseLogModel requestResponseLogModel, ServerCallContext context)
         {
-            logger.LogInformation(LogMessageTemplate.GrpcServiceLoggingInterceptor,
+            logger.LogInformation(LogMessageTemplate.GrpcServiceLogTemplate,
                 MethodType.Unary,
                 context.Method,
                 requestResponseLogModel.ResponseLogModel.Status,

@@ -5,8 +5,17 @@ using System.Net;
 
 namespace BaseArch.Application.Middlewares
 {
+    /// <summary>
+    /// Middleware to handle responses from unauthenticated and unauthorized problems
+    /// </summary>
+    /// <param name="next"><see cref="RequestDelegate"/></param>
     public class AuthHandlingMiddleware(RequestDelegate next)
     {
+        /// <summary>
+        /// Handle the response by status code
+        /// </summary>
+        /// <param name="httpContext"><see cref="HttpContent"/></param>
+        /// <returns><see cref="Task"/></returns>
         public async Task InvokeAsync(HttpContext httpContext)
         {
             await next(httpContext);
@@ -23,6 +32,11 @@ namespace BaseArch.Application.Middlewares
             }
         }
 
+        /// <summary>
+        /// Handle unauthorizied problem
+        /// </summary>
+        /// <param name="httpContext"><see cref="HttpContent"/></param>
+        /// <returns><see cref="Task"/></returns>
         private static async Task UnauthorizedHandler(HttpContext httpContext)
         {
             var problemDetails = new ValidationProblemDetails
@@ -38,6 +52,11 @@ namespace BaseArch.Application.Middlewares
             await httpContext.Response.WriteAsJsonAsync(problemDetails);
         }
 
+        /// <summary>
+        /// Handle unauthenticated problem
+        /// </summary>
+        /// <param name="httpContext"><see cref="HttpContent"/></param>
+        /// <returns><see cref="Task"/></returns>
         private static async Task ForbiddenHandler(HttpContext httpContext)
         {
             var problemDetails = new ValidationProblemDetails

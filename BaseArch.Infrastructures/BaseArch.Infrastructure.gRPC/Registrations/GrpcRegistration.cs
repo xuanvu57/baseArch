@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace BaseArch.Infrastructure.gRPC.Registrations
 {
     /// <summary>
-    /// Extension methods to register gRPC service
+    /// Extension to register gRPC service
     /// </summary>
     public static class GrpcRegistration
     {

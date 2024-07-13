@@ -3,7 +3,7 @@
     /// <summary>
     /// Google single sign-on option
     /// </summary>
-    public record GoogleSsoOptions
+    public sealed record GoogleSsoOptions
     {
         /// <summary>
         /// Enable to use Google single sign-on

@@ -1,4 +1,5 @@
-﻿using BaseArch.Infrastructure.Identity.Jwt;
+﻿using BaseArch.Infrastructure.Identity.Constants;
+using BaseArch.Infrastructure.Identity.Jwt;
 using BaseArch.Infrastructure.Identity.Sso.Facebook;
 using BaseArch.Infrastructure.Identity.Sso.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,35 +16,20 @@ namespace BaseArch.Infrastructure.Identity.Registrations
     public static class IdentityRegistration
     {
         /// <summary>
-        /// Configuration section for Jwt
-        /// </summary>
-        private const string JwtSection = "Identity:Jwt";
-
-        /// <summary>
-        /// Configuration section for Google Single sign-on
-        /// </summary>
-        private const string GoogleSsoSection = "Identity:GoogleSso";
-
-        /// <summary>
-        /// Configuration section for Facebook Single sign-on
-        /// </summary>
-        private const string FacebookSsoSection = "Identity:FacebookSso";
-
-        /// <summary>
         /// Register identity services
         /// </summary>
         /// <param name="services"></param>
         public static void RegisterIdentity(this IServiceCollection services)
         {
             services.AddOptions<JwtOptions>()
-                .BindConfiguration(JwtSection)
+                .BindConfiguration(IdentityConst.JwtSection)
                 .ValidateOnStart();
 
             services.AddOptions<GoogleSsoOptions>()
-                .BindConfiguration(GoogleSsoSection);
+                .BindConfiguration(IdentityConst.GoogleSsoSection);
 
             services.AddOptions<FacebookSsoOptions>()
-                .BindConfiguration(FacebookSsoSection);
+                .BindConfiguration(IdentityConst.FacebookSsoSection);
 
             var jwtOptions = services.BuildServiceProvider().GetRequiredService<IOptions<JwtOptions>>();
 

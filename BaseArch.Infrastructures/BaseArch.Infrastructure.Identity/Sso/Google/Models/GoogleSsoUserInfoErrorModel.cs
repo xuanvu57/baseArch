@@ -3,7 +3,7 @@
     /// <summary>
     /// Error model when get user information
     /// </summary>
-    public record GoogleSsoUserInfoErrorModel
+    public sealed record GoogleSsoUserInfoErrorModel
     {
         /// <summary>
         /// Error code

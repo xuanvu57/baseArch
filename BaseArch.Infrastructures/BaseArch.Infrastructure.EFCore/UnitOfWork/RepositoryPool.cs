@@ -16,7 +16,7 @@ namespace BaseArch.Infrastructure.EFCore.UnitOfWork
         /// <summary>
         /// Pool of repositories
         /// </summary>
-        private readonly Dictionary<string, object> repositoryPool = [];
+        private readonly Dictionary<string, object> _repositoryPool = [];
 
         /// <summary>
         /// Create the defined repository
@@ -34,20 +34,17 @@ namespace BaseArch.Infrastructure.EFCore.UnitOfWork
                 keyOfIRepository += $"{string.Join("|", genericTypes)}";
             }
 
-            if (!repositoryPool.ContainsKey(keyOfIRepository))
+            if (!_repositoryPool.TryGetValue(keyOfIRepository, out var repository))
             {
                 var typeOfRepository = AppDomain.CurrentDomain.GetAssemblies()
                     .SelectMany(assemble => assemble.GetTypes())
                     .First(type => typeOfIRepository.IsAssignableFrom(type) && type.IsClass);
 
-                var repository = ActivatorUtilities.CreateInstance(serviceProvider, typeOfRepository, dbContext);
-                if (repository is not null)
-                {
-                    repositoryPool.Add(keyOfIRepository, repository);
-                }
+                repository = ActivatorUtilities.CreateInstance(serviceProvider, typeOfRepository, dbContext);
+                _repositoryPool.Add(keyOfIRepository, repository);
             }
 
-            return (TIRepository)repositoryPool[keyOfIRepository];
+            return (TIRepository)repository;
         }
 
         /// <summary>
@@ -62,13 +59,13 @@ namespace BaseArch.Infrastructure.EFCore.UnitOfWork
             var typeOfEntity = typeof(TEntity);
             var keyOfRepository = typeOfEntity.Name;
 
-            if (!repositoryPool.ContainsKey(keyOfRepository))
+            if (!_repositoryPool.TryGetValue(keyOfRepository, out var repository))
             {
-                var repository = ActivatorUtilities.CreateInstance(serviceProvider, typeof(BaseRepository<TEntity, TKey, TUserKey>), dbContext);
-                repositoryPool.Add(keyOfRepository, repository);
+                repository = ActivatorUtilities.CreateInstance(serviceProvider, typeof(BaseRepository<TEntity, TKey, TUserKey>), dbContext);
+                _repositoryPool.Add(keyOfRepository, repository);
             }
 
-            return (IBaseRepository<TEntity, TKey>)repositoryPool[keyOfRepository];
+            return (IBaseRepository<TEntity, TKey>)repository;
         }
     }
 }

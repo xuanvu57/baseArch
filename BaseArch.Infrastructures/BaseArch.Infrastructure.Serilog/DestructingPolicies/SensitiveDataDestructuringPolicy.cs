@@ -13,7 +13,7 @@ namespace BaseArch.Infrastructure.Serilog.DestructingPolicies
         /// <summary>
         /// <see cref="SensitiveDataOptions"/>
         /// </summary>
-        private readonly SensitiveDataOptions options;
+        private readonly SensitiveDataOptions _options;
 
         /// <summary>
         /// Contructor
@@ -21,14 +21,14 @@ namespace BaseArch.Infrastructure.Serilog.DestructingPolicies
         /// <param name="configuration"><see cref="Action(SensitiveDataOptions)"/></param>
         public SensitiveDataDestructuringPolicy(Action<SensitiveDataOptions> configuration)
         {
-            options = new();
-            configuration(options);
+            _options = new();
+            configuration(_options);
         }
 
         /// <inheritdoc/>
         public bool TryDestructure(object value, ILogEventPropertyValueFactory propertyValueFactory, [NotNullWhen(true)] out LogEventPropertyValue? result)
         {
-            if (options.Keywords.Length == 0)
+            if (_options.Keywords.Length == 0)
             {
                 result = new StructureValue([]);
 
@@ -40,9 +40,9 @@ namespace BaseArch.Infrastructure.Serilog.DestructingPolicies
 
             foreach (var propertyInfo in props)
             {
-                if (Array.Exists(options.Keywords, x => x.Equals(propertyInfo.Name, StringComparison.InvariantCultureIgnoreCase)))
+                if (Array.Exists(_options.Keywords, x => x.Equals(propertyInfo.Name, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    logEventProperties.Add(new LogEventProperty(propertyInfo.Name, propertyValueFactory.CreatePropertyValue(options.MaskValue)));
+                    logEventProperties.Add(new LogEventProperty(propertyInfo.Name, propertyValueFactory.CreatePropertyValue(_options.MaskValue)));
                 }
                 else
                 {

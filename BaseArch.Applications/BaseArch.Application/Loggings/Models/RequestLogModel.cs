@@ -3,7 +3,7 @@
     /// <summary>
     /// Request model for logging
     /// </summary>
-    public record RequestLogModel
+    public sealed record RequestLogModel
     {
         /// <summary>
         /// Time before process the request

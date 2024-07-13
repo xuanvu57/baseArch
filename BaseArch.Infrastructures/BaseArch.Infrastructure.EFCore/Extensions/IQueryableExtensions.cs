@@ -144,7 +144,7 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
                 method => method.Name == methodName
                 && method.IsGenericMethodDefinition
                 && method.GetGenericArguments().Length == 2
-                && method.GetParameters().Length == 2).MakeGenericMethod(typeof(TEntity), type).Invoke(null, new object[] { source, lambda });
+                && method.GetParameters().Length == 2).MakeGenericMethod(typeof(TEntity), type).Invoke(null, [source, lambda]);
 
             if (result == null)
                 return source.Order();

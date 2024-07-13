@@ -5,7 +5,7 @@ namespace BaseArch.Infrastructure.Identity.Sso.Google.Models
     /// <summary>
     /// User information model from Google single sign-on
     /// </summary>
-    public partial record GoogleSsoUserInfoModel
+    public sealed record GoogleSsoUserInfoModel
     {
         /// <summary>
         /// User id
@@ -44,7 +44,7 @@ namespace BaseArch.Infrastructure.Identity.Sso.Google.Models
         public string FamilyName { get; init; } = string.Empty;
 
         /// <summary>
-        /// <see cref="GoogleSsoUserInfoModel"/>
+        /// <see cref="GoogleSsoUserInfoErrorModel"/>
         /// </summary>
         public GoogleSsoUserInfoErrorModel? Error { get; init; }
 

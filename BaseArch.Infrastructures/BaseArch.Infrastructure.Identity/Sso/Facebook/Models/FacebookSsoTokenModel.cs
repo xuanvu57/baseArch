@@ -5,7 +5,7 @@ namespace BaseArch.Infrastructure.Identity.Sso.Facebook.Models
     /// <summary>
     /// Token model from Facebook single sign-on
     /// </summary>
-    public record FacebookSsoTokenModel
+    public sealed record FacebookSsoTokenModel
     {
         /// <summary>
         /// Access token

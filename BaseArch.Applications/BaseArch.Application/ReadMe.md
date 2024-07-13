@@ -202,3 +202,20 @@ To be updated
 Reference
 > https://masstransit.io/documentation/concepts/consumers#batch-consumers
 > https://masstransit.io/documentation/concepts/consumers#definitions
+
+## Encryption
+
+You are able to use `IEncryptionProvider` interface to inject to your project
+
+It also provide (some) class to implment the `IEncryptionProvider` interface, such as
+
+- `AesEncryptionProvider` which implement a simple AES algorithm
+
+Note: 
+> You can use `IEnumerable<IEncryptionProvider>` then select your expected algorithm
+
+## Identity
+
+Define the interfaces for `SSO provider` and `Token provider`
+
+`IIdentityUser` will define a standard for Identity user model

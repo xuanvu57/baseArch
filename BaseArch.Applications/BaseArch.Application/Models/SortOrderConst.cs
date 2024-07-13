@@ -3,9 +3,16 @@
     /// <summary>
     /// Order of sorting
     /// </summary>
-    public record SortOrderConst
+    public static class SortOrderConst
     {
+        /// <summary>
+        /// Ascending order
+        /// </summary>
         public const string Asc = "asc";
+
+        /// <summary>
+        /// Descending order
+        /// </summary>
         public const string Desc = "desc";
     }
 }

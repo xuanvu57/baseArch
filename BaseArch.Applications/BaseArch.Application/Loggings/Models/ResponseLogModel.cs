@@ -3,7 +3,7 @@
     /// <summary>
     /// Response model for logging
     /// </summary>
-    public record ResponseLogModel
+    public sealed record ResponseLogModel
     {
         /// <summary>
         /// Time after process the request

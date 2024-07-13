@@ -7,9 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BaseArch.Application.FluentValidation
 {
+    /// <summary>
+    /// Base validator interceptor to handle if validation failed
+    /// </summary>
     [DIService(DIServiceLifetime.Transient)]
     public class BaseArchValidatorInterceptor : IValidatorInterceptor
     {
+        /// <inheritdoc/>
         public ValidationResult AfterAspNetValidation(ActionContext actionContext, IValidationContext validationContext, ValidationResult result)
         {
             if (!result.IsValid)
@@ -20,6 +24,7 @@ namespace BaseArch.Application.FluentValidation
             return result;
         }
 
+        /// <inheritdoc/>
         public IValidationContext BeforeAspNetValidation(ActionContext actionContext, IValidationContext commonContext)
         {
             return commonContext;

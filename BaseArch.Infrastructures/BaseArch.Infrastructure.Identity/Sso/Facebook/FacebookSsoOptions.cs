@@ -1,6 +1,6 @@
 ﻿namespace BaseArch.Infrastructure.Identity.Sso.Facebook
 {
-    public record FacebookSsoOptions
+    public sealed record FacebookSsoOptions
     {
         /// <summary>
         /// Enable to use Facebook single sign-on

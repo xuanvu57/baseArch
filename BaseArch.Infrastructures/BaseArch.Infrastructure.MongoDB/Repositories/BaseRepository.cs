@@ -18,7 +18,7 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
         /// <summary>
         /// Collection of TEntity
         /// </summary>
-        protected readonly IMongoCollection<TEntity> collection = mongoDbContext.Database.GetCollection<TEntity>(typeof(TEntity).Name);
+        protected readonly IMongoCollection<TEntity> _collection = mongoDbContext.Database.GetCollection<TEntity>(typeof(TEntity).Name);
 
         /// <inheritdoc/>
         public async Task<int> Count(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
@@ -107,9 +107,9 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
             var createdEntity = entity.SetCreation<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow());
 
             if (mongoDbContext.SessionHandle is null)
-                await collection.InsertOneAsync(createdEntity, null, cancellationToken);
+                await _collection.InsertOneAsync(createdEntity, null, cancellationToken);
             else
-                await collection.InsertOneAsync(mongoDbContext.SessionHandle, createdEntity, null, cancellationToken);
+                await _collection.InsertOneAsync(mongoDbContext.SessionHandle, createdEntity, null, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -120,9 +120,9 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
             var createdEntities = entities.Select(e => e.SetCreation<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow()));
 
             if (mongoDbContext.SessionHandle is null)
-                await collection.InsertManyAsync(createdEntities, null, cancellationToken);
+                await _collection.InsertManyAsync(createdEntities, null, cancellationToken);
             else
-                await collection.InsertManyAsync(mongoDbContext.SessionHandle, createdEntities, null, cancellationToken);
+                await _collection.InsertManyAsync(mongoDbContext.SessionHandle, createdEntities, null, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -142,16 +142,16 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
                     .Set(x => ((ISoftDeletable)x).IsDeleted, true);
 
                 if (mongoDbContext.SessionHandle is null)
-                    await collection.UpdateOneAsync(filter, updateFilter, cancellationToken: cancellationToken);
+                    await _collection.UpdateOneAsync(filter, updateFilter, cancellationToken: cancellationToken);
                 else
-                    await collection.UpdateOneAsync(mongoDbContext.SessionHandle, filter, updateFilter, cancellationToken: cancellationToken);
+                    await _collection.UpdateOneAsync(mongoDbContext.SessionHandle, filter, updateFilter, cancellationToken: cancellationToken);
             }
             else
             {
                 if (mongoDbContext.SessionHandle is null)
-                    await collection.DeleteOneAsync(filter, cancellationToken: cancellationToken);
+                    await _collection.DeleteOneAsync(filter, cancellationToken: cancellationToken);
                 else
-                    await collection.DeleteOneAsync(mongoDbContext.SessionHandle, filter, cancellationToken: cancellationToken);
+                    await _collection.DeleteOneAsync(mongoDbContext.SessionHandle, filter, cancellationToken: cancellationToken);
             }
         }
 
@@ -176,9 +176,9 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
             var filter = FilterDefinition(x => x.Id.Equals(entity.Id), false);
 
             if (mongoDbContext.SessionHandle is null)
-                await collection.ReplaceOneAsync(filter, updatedEntity, cancellationToken: cancellationToken);
+                await _collection.ReplaceOneAsync(filter, updatedEntity, cancellationToken: cancellationToken);
             else
-                await collection.ReplaceOneAsync(mongoDbContext.SessionHandle, filter, updatedEntity, cancellationToken: cancellationToken);
+                await _collection.ReplaceOneAsync(mongoDbContext.SessionHandle, filter, updatedEntity, cancellationToken: cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -192,9 +192,15 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
             }
         }
 
+        /// <summary>
+        /// Get Mongo queryable
+        /// </summary>
+        /// <param name="predicate">Expression for predication</param>
+        /// <param name="includeDeletedRecords">Include soft-deleted records</param>
+        /// <returns><see cref="IMongoQueryable"/></returns>
         protected IMongoQueryable<TEntity> GetMongoQueryable(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false)
         {
-            var queryable = collection.AsQueryable();
+            var queryable = _collection.AsQueryable();
 
             if (predicate is not null)
                 queryable = queryable.Where(predicate);
@@ -207,6 +213,12 @@ namespace BaseArch.Infrastructure.MongoDB.Repositories
             return queryable;
         }
 
+        /// <summary>
+        /// Get filter definition
+        /// </summary>
+        /// <param name="predicate">Expression for predication</param>
+        /// <param name="includeDeletedRecords">Include soft-deleted records</param>
+        /// <returns><see cref="FilterDefinition{TDocument}"/></returns>
         protected FilterDefinition<TEntity> FilterDefinition(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false)
         {
             var filterBuilder = Builders<TEntity>.Filter;

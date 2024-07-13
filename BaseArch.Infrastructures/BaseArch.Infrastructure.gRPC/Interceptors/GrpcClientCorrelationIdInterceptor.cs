@@ -7,8 +7,14 @@ using Microsoft.Extensions.Options;
 
 namespace BaseArch.Infrastructure.gRPC.Interceptors
 {
+    /// <summary>
+    /// Interceptor to add correlation id into request
+    /// </summary>
+    /// <param name="correlationIdProvider"><see cref="ICorrelationIdProvider"/></param>
+    /// <param name="options"><see cref="CorrelationIdOptions"/></param>
     public class GrpcClientCorrelationIdInterceptor(ICorrelationIdProvider correlationIdProvider, IOptions<CorrelationIdOptions> options) : Interceptor
     {
+        /// <inheritdoc/>
         public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
         {
             var correlationId = correlationIdProvider.Get();

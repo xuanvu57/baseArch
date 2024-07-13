@@ -1,7 +1,13 @@
 ﻿namespace BaseArch.Infrastructure.MassTransit.Options
 {
-    public record InMemoryQueueOptions
+    /// <summary>
+    /// In-memory queue options
+    /// </summary>
+    public sealed record InMemoryQueueOptions
     {
-        public required bool Enable { get; init; }
+        /// <summary>
+        /// Enable
+        /// </summary>
+        public bool Enable { get; init; }
     }
 }

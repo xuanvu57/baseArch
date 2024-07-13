@@ -3,7 +3,7 @@
     /// <summary>
     /// Basic model for request logging
     /// </summary>
-    public record RequestResponseLogModel
+    public sealed record RequestResponseLogModel
     {
         /// <summary>
         /// <see cref="RequestLogModel"/>

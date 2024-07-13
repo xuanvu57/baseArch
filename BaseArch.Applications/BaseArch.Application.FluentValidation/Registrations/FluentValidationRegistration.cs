@@ -7,7 +7,7 @@ using System.Reflection;
 namespace BaseArch.Application.FluentValidation.Registrations
 {
     /// <summary>
-    /// Extension methods for <see cref="IServiceCollection"/> to register FluentValidation
+    /// Extension methods to register FluentValidation
     /// </summary>
     public static class FluentValidationRegistration
     {

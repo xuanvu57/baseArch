@@ -6,27 +6,33 @@
     public static class LogMessageTemplate
     {
         /// <summary>
-        /// Http request and response logging middleware
+        /// Log template for HttpRequest and HttpResponse at server
         /// </summary>
-        public const string HttpRequestResponseLoggingMiddleware = "ApiService {HttpMethod} {RequestPath} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
+        public const string HttpRequestResponseLogTemplate = "ApiService {HttpMethod} {RequestPath} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
 
         /// <summary>
-        /// Http client logging delegating handler
+        /// Log template for HttpRequest and HttpResponse at client
         /// </summary>
-        public const string HttpClientLoggingDelegatingHandler = "HttpClient {HttpMethod} {RequestPath} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
+        public const string HttpClientLogTemplate = "HttpClient {HttpMethod} {RequestPath} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
 
         /// <summary>
-        /// Grpc service logging interceptor
+        /// Log template for GRPC service
         /// </summary>
-        public const string GrpcServiceLoggingInterceptor = "GrpcService {GrpcType} {GrpcServiceMethod} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
+        public const string GrpcServiceLogTemplate = "GrpcService {GrpcType} {GrpcServiceMethod} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
 
         /// <summary>
-        /// Grpc client logging interceptor
+        /// Log template for GRPC client
         /// </summary>
-        public const string GrpcClientLoggingInterceptor = "GrpcClient {GrpcType} {GrpcServiceMethod} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
+        public const string GrpcClientLogTemplate = "GrpcClient {GrpcType} {GrpcServiceMethod} responded {StatusCode} with {@RequestLogModel} {@ResponseLogModel}";
 
-        public const string QueueConsumer = "QueueConsumer {Consumer} completed with {@EventMessageLogModel}";
+        /// <summary>
+        /// Log template for consumer
+        /// </summary>
+        public const string QueueConsumerLogTemplate = "QueueConsumer {Consumer} completed with {@EventMessageLogModel}";
 
-        public const string QueueProducer = "QueueProducer {Producer} completed with {@EventMessageLogModel}";
+        /// <summary>
+        /// Log template for producer
+        /// </summary>
+        public const string QueueProducerLogTemplate = "QueueProducer {Producer} completed with {@EventMessageLogModel}";
     }
 }

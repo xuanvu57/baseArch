@@ -2,7 +2,7 @@
 
 namespace BaseArch.Infrastructure.Identity.Sso.Facebook.Models
 {
-    public record FacebookSsoUserInfoModel
+    public sealed record FacebookSsoUserInfoModel
     {
         /// <summary>
         /// User id

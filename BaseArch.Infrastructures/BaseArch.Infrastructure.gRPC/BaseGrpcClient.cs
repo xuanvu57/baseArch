@@ -6,8 +6,18 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BaseArch.Infrastructure.gRPC
 {
+    /// <summary>
+    /// Base Grpc client
+    /// </summary>
+    /// <param name="configuration"></param>
+    /// <param name="serviceProvider"></param>
     public abstract class BaseGrpcClient(IConfiguration configuration, IServiceProvider serviceProvider)
     {
+        /// <summary>
+        /// Create Grpc channel with base address from configure key
+        /// </summary>
+        /// <param name="uriConfigKey">Key for Uri from configure file</param>
+        /// <returns><see cref="GrpcChannel"/></returns>
         protected GrpcChannel CreateChannelFromConfigureKey(string uriConfigKey)
         {
             var uri = configuration[uriConfigKey] ?? "";
@@ -15,6 +25,11 @@ namespace BaseArch.Infrastructure.gRPC
             return CreateChannelFromUri(uri);
         }
 
+        /// <summary>
+        /// Create Grpc channel with base address from specific Uri
+        /// </summary>
+        /// <param name="uri">Uri</param>
+        /// <returns><see cref="GrpcChannel"/></returns>
         protected static GrpcChannel CreateChannelFromUri(string uri)
         {
             var uriAddress = new Uri(uri);
@@ -28,6 +43,13 @@ namespace BaseArch.Infrastructure.gRPC
             return channel;
         }
 
+        /// <summary>
+        /// Create Grpc client instance with default interceptors
+        /// </summary>
+        /// <typeparam name="TClient">Type of Grpc client</typeparam>
+        /// <param name="channel"><see cref="GrpcChannel"/></param>
+        /// <param name="clientInterceptors">List of <see cref="Interceptor"/></param>
+        /// <returns>Grpc client</returns>
         protected TClient CreateGrpcClient<TClient>(GrpcChannel channel, params Interceptor[] clientInterceptors) where TClient : class
         {
             var grpcClientLoggingInterceptor = ActivatorUtilities.CreateInstance(serviceProvider, typeof(GrpcClientLoggingInterceptor));

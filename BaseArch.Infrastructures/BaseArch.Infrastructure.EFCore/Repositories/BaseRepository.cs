@@ -19,7 +19,7 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
         /// <summary>
         /// The DbSet of TEntity
         /// </summary>
-        protected readonly DbSet<TEntity> dbSet = dbContext.Set<TEntity>();
+        protected readonly DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
 
         /// <inheritdoc/>
         public async Task<int> Count(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false, CancellationToken cancellationToken = default)
@@ -107,7 +107,7 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
 
             var createdEntity = entity.SetCreation<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow());
 
-            await dbSet.AddAsync(createdEntity, cancellationToken);
+            await _dbSet.AddAsync(createdEntity, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -130,15 +130,15 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
             {
                 var deletedEntity = entity.SetDeletion<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow());
 
-                if (dbSet.Entry(entity) is not null)
+                if (_dbSet.Entry(entity) is not null)
                 {
-                    dbSet.Entry(entity).State = EntityState.Detached;
+                    _dbSet.Entry(entity).State = EntityState.Detached;
                 }
-                dbSet.Remove(deletedEntity);
+                _dbSet.Remove(deletedEntity);
             }
             else
             {
-                dbSet.Remove(entity);
+                _dbSet.Remove(entity);
             }
 
             await Task.CompletedTask;
@@ -164,11 +164,11 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
 
             var updatedEntity = entity.SetModification<TEntity>(tokenProvider.GetUserKeyValue(), dateTimeProvider.GetUtcNow());
 
-            if (dbSet.Entry(entity) is not null)
+            if (_dbSet.Entry(entity) is not null)
             {
-                dbSet.Entry(entity).State = EntityState.Detached;
+                _dbSet.Entry(entity).State = EntityState.Detached;
             }
-            dbSet.Update(updatedEntity);
+            _dbSet.Update(updatedEntity);
 
             await Task.CompletedTask;
         }
@@ -188,7 +188,7 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
 
         protected IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>>? predicate = null, bool includeDeletedRecords = false)
         {
-            var queryable = dbSet.AsQueryable();
+            var queryable = _dbSet.AsQueryable();
 
             if (predicate is not null)
                 queryable = queryable.Where(predicate);

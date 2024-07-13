@@ -1,6 +1,7 @@
 ﻿using BaseArch.Application.Identity.Interfaces;
 using BaseArch.Domain.DependencyInjection;
 using BaseArch.Infrastructure.DefaultHttpClient.Registrations;
+using BaseArch.Infrastructure.Identity.Constants;
 using BaseArch.Infrastructure.Identity.Sso.Facebook.Models;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
@@ -19,7 +20,7 @@ namespace BaseArch.Infrastructure.Identity.Sso.Facebook
     public class FacebookSsoProvider(IOptions<FacebookSsoOptions> options, IHttpClientFactory httpClientFactory) : ISsoProvider
     {
         /// <inheritdoc/>
-        public string Name { get; } = "Facebook";
+        public string Name { get; } = IdentityConst.FacebookSsoProviderName;
 
         /// <inheritdoc/>
         public string GetLoginUrl()

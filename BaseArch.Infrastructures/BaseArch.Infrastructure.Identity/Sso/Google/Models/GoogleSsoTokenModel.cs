@@ -5,7 +5,7 @@ namespace BaseArch.Infrastructure.Identity.Sso.Google.Models
     /// <summary>
     /// Token model from Google single sign-on
     /// </summary>
-    public record GoogleSsoTokenModel
+    public sealed record GoogleSsoTokenModel
     {
         /// <summary>
         /// Access token

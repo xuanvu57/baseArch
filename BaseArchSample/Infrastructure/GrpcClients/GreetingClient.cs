@@ -25,7 +25,7 @@ namespace Infrastructure.GrpcClients
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
+                logger.LogError(ex, "Error from calling to Grpc service");
                 return await Task.FromResult(fullName);
             }
         }

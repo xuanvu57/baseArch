@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace BaseArch.Application.Registrations
 {
     /// <summary>
-    /// Extension methods for <see cref="IServiceCollection"/> to register correlation id
+    /// Extension to register correlation id
     /// </summary>
     public static class CorrelationIdRegistration
     {

@@ -1,6 +1,7 @@
 ﻿using BaseArch.Application.Identity.Interfaces;
 using BaseArch.Domain.DependencyInjection;
 using BaseArch.Infrastructure.DefaultHttpClient.Registrations;
+using BaseArch.Infrastructure.Identity.Constants;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Web;
@@ -17,7 +18,7 @@ namespace BaseArch.Infrastructure.Identity.Sso.Google
     public class GoogleSsoProvider(IOptions<GoogleSsoOptions> options, IHttpClientFactory httpClientFactory) : ISsoProvider
     {
         /// <inheritdoc/>
-        public string Name { get; } = "Google";
+        public string Name { get; } = IdentityConst.GoogleSsoProviderName;
 
         /// <inheritdoc/>
         public string GetLoginUrl()

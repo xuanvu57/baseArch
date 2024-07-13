@@ -4,18 +4,22 @@ using System.Security.Cryptography;
 
 namespace BaseArch.Application.Encryptions
 {
+    /// <inheritdoc />
     [DIService(DIServiceLifetime.Singleton)]
     public class AesEncryptionProvider : IEncryptionProvider
     {
+        /// <inheritdoc />
         public string Name { get; } = "AES";
-        private const int Iterations = 10000;
 
+        private const int _iterations = 10000;
+
+        /// <inheritdoc />
         public string Encrypt(string plainText, string secrectKey)
         {
             var plaintextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
             var saltBytes = System.Text.Encoding.UTF8.GetBytes(secrectKey);
 
-            var passwordBytes = new Rfc2898DeriveBytes(secrectKey, saltBytes, Iterations, HashAlgorithmName.SHA256);
+            var passwordBytes = new Rfc2898DeriveBytes(secrectKey, saltBytes, _iterations, HashAlgorithmName.SHA256);
 
             var encryptor = Aes.Create();
             encryptor.Key = passwordBytes.GetBytes(encryptor.KeySize / 8);
@@ -28,12 +32,13 @@ namespace BaseArch.Application.Encryptions
             return Convert.ToBase64String(ms.ToArray());
         }
 
+        /// <inheritdoc />
         public string Decrypt(string encryptedText, string secrectKey)
         {
             var encryptedBytes = Convert.FromBase64String(encryptedText);
             var saltBytes = System.Text.Encoding.UTF8.GetBytes(secrectKey);
 
-            var passwordBytes = new Rfc2898DeriveBytes(secrectKey, saltBytes, Iterations, HashAlgorithmName.SHA256);
+            var passwordBytes = new Rfc2898DeriveBytes(secrectKey, saltBytes, _iterations, HashAlgorithmName.SHA256);
 
             var encryptor = Aes.Create();
             encryptor.Key = passwordBytes.GetBytes(encryptor.KeySize / 8);

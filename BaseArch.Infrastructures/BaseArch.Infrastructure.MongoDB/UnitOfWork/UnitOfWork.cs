@@ -5,20 +5,25 @@ using static BaseArch.Application.Repositories.Enums.DatabaseTypeEnums;
 
 namespace BaseArch.Infrastructure.MongoDB.UnitOfWork
 {
+    /// <summary>
+    /// MongoDb unit of work
+    /// </summary>
+    /// <param name="serviceProvider"><see cref="IServiceProvider"/></param>
+    /// <param name="dbContext"><see cref="IMongoDbContext"/></param>
     public abstract class UnitOfWork(IServiceProvider serviceProvider, IMongoDbContext dbContext) : IUnitOfWork
     {
-        /// <inheritdoc/>
-        public DatabaseType DatabaseType { get; init; } = DatabaseType.MongoDb;
-
         /// <summary>
         /// identify if object disposed
         /// </summary>
-        private bool disposed = false;
+        private bool _disposed = false;
 
         /// <summary>
         /// <see cref="RepositoryPool"/>
         /// </summary>
         private readonly RepositoryPool repositoryPool = new(serviceProvider, dbContext);
+
+        /// <inheritdoc/>
+        public DatabaseType DatabaseType { get; init; } = DatabaseType.MongoDb;
 
         /// <inheritdoc/>
         public TIRepository GetRepository<TIRepository>()
@@ -32,6 +37,7 @@ namespace BaseArch.Infrastructure.MongoDB.UnitOfWork
             return repositoryPool.CreateRepository<TEntity, TKey, TUserKey>();
         }
 
+        /// <inheritdoc/>
         public async Task<int> SaveChangesAndCommit()
         {
             try
@@ -68,12 +74,12 @@ namespace BaseArch.Infrastructure.MongoDB.UnitOfWork
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed && disposing)
+            if (!_disposed && disposing)
             {
                 dbContext.Dispose();
             }
 
-            disposed = true;
+            _disposed = true;
         }
         #endregion
     }

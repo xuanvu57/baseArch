@@ -2,7 +2,7 @@
 
 namespace BaseArch.Infrastructure.Identity.Sso.Facebook.Models
 {
-    public record FacebookSsoUserInfoPictureDataModel
+    public sealed record FacebookSsoUserInfoPictureDataModel
     {
         [JsonPropertyName("height")]
         public int Height { get; init; }

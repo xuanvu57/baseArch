@@ -3,7 +3,7 @@
     /// <summary>
     /// Jwt options
     /// </summary>
-    public record JwtOptions
+    public sealed record JwtOptions
     {
         /// <summary>
         /// Issuer to validate the jwt token

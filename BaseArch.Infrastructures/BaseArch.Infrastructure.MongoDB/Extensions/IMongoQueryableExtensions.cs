@@ -4,6 +4,9 @@ using System.Linq.Expressions;
 
 namespace BaseArch.Infrastructure.MongoDB.Extensions
 {
+    /// <summary>
+    /// Extension methods for <see cref="IMongoQueryable"/>
+    /// </summary>
     internal static class IMongoQueryableExtensions
     {
         /// <summary>
@@ -151,7 +154,7 @@ namespace BaseArch.Infrastructure.MongoDB.Extensions
                 method => method.Name == methodName
                 && method.IsGenericMethodDefinition
                 && method.GetGenericArguments().Length == 2
-                && method.GetParameters().Length == 2).MakeGenericMethod(typeof(TEntity), type).Invoke(null, new object[] { source, lambda });
+                && method.GetParameters().Length == 2).MakeGenericMethod(typeof(TEntity), type).Invoke(null, [source, lambda]);
 
             if (result == null)
                 return (IOrderedMongoQueryable<TEntity>)source.Order();

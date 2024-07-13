@@ -16,12 +16,12 @@ namespace BaseArch.Presentation.RestApi.Middlewares
         /// <summary>
         /// The Request paths will be ignored for logging
         /// </summary>
-        private static readonly IReadOnlyCollection<string> ignoredPaths = ["swagger"];
+        private static readonly IReadOnlyCollection<string> _ignoredPaths = ["swagger"];
 
         /// <summary>
         /// The Request content types will be ignore for logging
         /// </summary>
-        private static readonly IReadOnlyCollection<string> ignoredContentTypes = ["application/grpc"];
+        private static readonly IReadOnlyCollection<string> _ignoredContentTypes = ["application/grpc"];
 
         /// <summary>
         /// Handle the middleware
@@ -74,12 +74,12 @@ namespace BaseArch.Presentation.RestApi.Middlewares
         /// <returns></returns>
         private static bool IgnoreForLogging(HttpContext httpContext)
         {
-            if (ignoredPaths.Any(p => httpContext.Request.Path.ToString().Contains(p)))
+            if (_ignoredPaths.Any(p => httpContext.Request.Path.ToString().Contains(p)))
             {
                 return true;
             }
 
-            if (ignoredContentTypes.Any(t => httpContext.Request.ContentType == t))
+            if (_ignoredContentTypes.Any(t => httpContext.Request.ContentType == t))
             {
                 return true;
             }
@@ -94,7 +94,7 @@ namespace BaseArch.Presentation.RestApi.Middlewares
         /// <param name="requestResponseLogModel"><see cref="RequestResponseLogModel"/></param>
         private static void WriteRequestResponseLog(ILogger<HttpRequestResponseLoggingMiddleware> logger, RequestResponseLogModel requestResponseLogModel)
         {
-            logger.LogInformation(LogMessageTemplate.HttpRequestResponseLoggingMiddleware,
+            logger.LogInformation(LogMessageTemplate.HttpRequestResponseLogTemplate,
                 requestResponseLogModel.RequestLogModel.Method,
                 requestResponseLogModel.RequestLogModel.Path,
                 requestResponseLogModel.ResponseLogModel.Status,
