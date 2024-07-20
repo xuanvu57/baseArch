@@ -1,0 +1,33 @@
+@startuml
+[Host] #Yellow
+[Presentation] #LightGreen
+[Application] #LightGreen
+[Domain] #LightGreen
+[Infrastructure] #LightGreen
+
+
+[Host] --> [Presentation]
+[Host] --> [Infrastructure]
+[Presentation] --> [Application]
+[Infrastructure] --> [Application]
+[Application] --> [Domain]
+
+[Presentation] ...> [BaseArch.Presentation.RestApi] : use
+
+[Infrastructure] .> [BaseArch.Infrastructure] : use
+[Infrastructure] ..> [BaseArch.Infrastructure.DependencyInjection] : use
+[Infrastructure] ...> [BaseArch.Infrastructure.Serilog] : use
+[Infrastructure] ....> [BaseArch.Infrastructure.EFCore] : use
+[Infrastructure] .....> [BaseArch.Infrastructure.MongoDB] : use
+[Infrastructure] ......> [BaseArch.Infrastructure.Identity] : use
+[Infrastructure] .......> [BaseArch.Infrastructure.MassTransit] : use
+[Infrastructure] ........> [BaseArch.Infrastructure.gRPC] : use
+[Infrastructure] .........> [BaseArch.Infrastructure.StaticMultilingualProvider] : use
+[Infrastructure] ..........> [BaseArch.Infrastructure.StaticTimzonesProvider] : use
+
+[Application] .> [BaseArch.Application] : use
+[Application] ...> [BaseArch.Application.AutoMapper] : use
+[Application] ...> [BaseArch.Application.FluentValidation] : use
+
+[Domain] ..> [BaseArch.Domain] : use
+@enduml

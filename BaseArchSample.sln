@@ -59,7 +59,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseArch.Infrastructure.Mas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseArch.Infrastructure.Identity", "BaseArch.Infrastructures\BaseArch.Infrastructure.Identity\BaseArch.Infrastructure.Identity.csproj", "{B5E43AAC-DF65-4455-A47B-621C90373663}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseArch.Infrastructure.StaticTimezonesProvider", "BaseArch.Infrastructures\BaseArch.Infrastructure.StaticTimezonesProvider\BaseArch.Infrastructure.StaticTimezonesProvider.csproj", "{BB62B12E-F5E6-4DB5-8B5F-397FCFBA7594}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseArch.Infrastructure.StaticTimezonesProvider", "BaseArch.Infrastructures\BaseArch.Infrastructure.StaticTimezonesProvider\BaseArch.Infrastructure.StaticTimezonesProvider.csproj", "{BB62B12E-F5E6-4DB5-8B5F-397FCFBA7594}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B4EA812F-DE8E-426C-8393-FB0A0986E0CB}"
+	ProjectSection(SolutionItems) = preProject
+		component.mdpuml = component.mdpuml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
