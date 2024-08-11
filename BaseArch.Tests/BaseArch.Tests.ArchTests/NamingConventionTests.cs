@@ -87,7 +87,7 @@ namespace BaseArch.Tests.ArchTests
                     x.MethodForm == ArchUnitNET.Domain.MethodForm.Normal &&
                     !x.Attributes.Any(a => a.Name == typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute).Name) &&
                     !_ignoredClasses.Contains(x.DeclaringType) &&
-                    !Regex.IsMatch(x.Name.Substring(0, x.Name.IndexOf('(')), RegexPatterns.PascalCase), "name is not matched to Pascal case")
+                    !Regex.IsMatch(x.Name.AsSpan(0, x.Name.IndexOf('(')), RegexPatterns.PascalCase), "name is not matched to Pascal case")
                 .Should()
                 .NotExist();
 
