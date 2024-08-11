@@ -83,7 +83,7 @@ queryable.CustomizedOrderBy("Name").CustomizedThenByDescending("Age");
 ```
 IQueryable queryable =  dbContext.Set<TEntity>().AsQueryable();
 
-queryable.GenerateORFilterExpression(["FirstName", "LastName"], "rain");
+queryable.GenerateOrConditionFilterExpression(["FirstName", "LastName"], "rain");
 // wil be the same to
 // queryable.Where(e => EF.Functions.Like(e.FirstName, "rain") OR EF.Functions.Like(e.LastName, "rain"));
 
@@ -92,7 +92,7 @@ var filter = new List<FilterQueryModel>()
     new FilterQueryModel("rain", "FullName"),
     new FilterQueryModel("VietNam", "Nation")
 };
-queryable.GenerateANDFilterExpression(filter);
+queryable.GenerateAndConditionFilterExpression(filter);
 // wil be the same to
 // queryable.Where(e => EF.Functions.Like(e.FullName, "rain") AND EF.Functions.Like(e.Nation, "VietNam"));
 ```

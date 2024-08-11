@@ -65,7 +65,7 @@ namespace BaseArch.Infrastructure.MongoDB.Extensions
         /// <param name="properties">List of properties to filter</param>
         /// <param name="value">Value to search</param>
         /// <returns><see cref="IMongoQueryable"/></returns>
-        public static IMongoQueryable<TEntity> GenerateORFilterExpression<TEntity>(this IMongoQueryable<TEntity> source, IEnumerable<string> properties, object value)
+        public static IMongoQueryable<TEntity> GenerateOrConditionFilterExpression<TEntity>(this IMongoQueryable<TEntity> source, IEnumerable<string> properties, object value)
         {
             Expression? finalExpression = null;
             var parameterExpression = Expression.Parameter(typeof(TEntity), "e");
@@ -98,7 +98,7 @@ namespace BaseArch.Infrastructure.MongoDB.Extensions
         /// <param name="source">Source queryable</param>
         /// <param name="filters"><see cref="FilterQueryModel"/></param>
         /// <returns><see cref="IMongoQueryable"/></returns>
-        public static IMongoQueryable<TEntity> GenerateANDFilterExpression<TEntity>(this IMongoQueryable<TEntity> source, IEnumerable<FilterQueryModel> filters)
+        public static IMongoQueryable<TEntity> GenerateAndConditionFilterExpression<TEntity>(this IMongoQueryable<TEntity> source, IEnumerable<FilterQueryModel> filters)
         {
             Expression? finalExpression = null;
             var parameterExpression = Expression.Parameter(typeof(TEntity), "e");

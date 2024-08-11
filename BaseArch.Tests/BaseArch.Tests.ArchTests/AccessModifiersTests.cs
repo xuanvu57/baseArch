@@ -12,6 +12,7 @@ namespace BaseArch.Tests.ArchTests
         [Fact]
         public void PublicFields_ShouldNot_Exists()
         {
+            // Arrange
             var rule = FieldMembers()
                 .That()
                 .FollowCustomPredicate(x =>
@@ -23,6 +24,7 @@ namespace BaseArch.Tests.ArchTests
                 .Should()
                 .NotExist();
 
+            // Assert
             rule.Check(architecture);
         }
     }

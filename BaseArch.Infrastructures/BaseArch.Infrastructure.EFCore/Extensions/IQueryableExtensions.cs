@@ -65,7 +65,7 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
         /// <param name="properties">List of properties to filter</param>
         /// <param name="value">Value to search</param>
         /// <returns><see cref="IQueryable"/></returns>
-        public static IQueryable<TEntity> GenerateORFilterExpression<TEntity>(this IQueryable<TEntity> source, IEnumerable<string> properties, object value)
+        public static IQueryable<TEntity> GenerateOrConditionFilterExpression<TEntity>(this IQueryable<TEntity> source, IEnumerable<string> properties, object value)
         {
             Expression? finalExpression = null;
             var parameterExpression = Expression.Parameter(typeof(TEntity), "e");
@@ -93,7 +93,7 @@ namespace BaseArch.Infrastructure.EFCore.Extensions
         /// <param name="source">Source queryable</param>
         /// <param name="filters"><see cref="FilterQueryModel"/></param>
         /// <returns><see cref="IQueryable"/></returns>
-        public static IQueryable<TEntity> GenerateANDFilterExpression<TEntity>(this IQueryable<TEntity> source, IEnumerable<FilterQueryModel> filters)
+        public static IQueryable<TEntity> GenerateAndConditionFilterExpression<TEntity>(this IQueryable<TEntity> source, IEnumerable<FilterQueryModel> filters)
         {
             Expression? finalExpression = null;
             var parameterExpression = Expression.Parameter(typeof(TEntity), "e");

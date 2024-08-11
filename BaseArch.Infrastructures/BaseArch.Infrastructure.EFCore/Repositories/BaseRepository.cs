@@ -36,12 +36,12 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
             {
                 if (queryModel.Filters?.FirstOrDefault() is not null)
                 {
-                    queryable = queryable.GenerateANDFilterExpression(queryModel.Filters);
+                    queryable = queryable.GenerateAndConditionFilterExpression(queryModel.Filters);
                 }
 
                 if (!string.IsNullOrEmpty(queryModel.Search?.SearchText))
                 {
-                    queryable = queryable.GenerateORFilterExpression(queryModel.Search.FieldNames, queryModel.Search.SearchText);
+                    queryable = queryable.GenerateOrConditionFilterExpression(queryModel.Search.FieldNames, queryModel.Search.SearchText);
                 }
             }
 
@@ -63,12 +63,12 @@ namespace BaseArch.Infrastructure.EFCore.Repositories
             {
                 if (queryModel.Filters?.FirstOrDefault() is not null)
                 {
-                    queryable = queryable.GenerateANDFilterExpression(queryModel.Filters);
+                    queryable = queryable.GenerateAndConditionFilterExpression(queryModel.Filters);
                 }
 
                 if (!string.IsNullOrEmpty(queryModel.Search?.SearchText))
                 {
-                    queryable = queryable.GenerateORFilterExpression(queryModel.Search.FieldNames, queryModel.Search.SearchText);
+                    queryable = queryable.GenerateOrConditionFilterExpression(queryModel.Search.FieldNames, queryModel.Search.SearchText);
                 }
 
                 if (queryModel.Sort is not null && !string.IsNullOrWhiteSpace(queryModel.Sort.SortBy))
