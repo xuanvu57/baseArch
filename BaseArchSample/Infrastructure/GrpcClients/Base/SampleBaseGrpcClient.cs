@@ -1,4 +1,4 @@
-﻿using BaseArch.Infrastructure.gRPC;
+﻿using BaseArch.Infrastructure.gRPC.Clients;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
 

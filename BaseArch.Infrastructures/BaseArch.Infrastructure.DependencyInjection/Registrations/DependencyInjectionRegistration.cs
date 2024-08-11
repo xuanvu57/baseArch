@@ -1,5 +1,5 @@
-﻿using BaseArch.Domain.DependencyInjection;
-using BaseArch.Domain.DependencyInjection.Interfaces;
+﻿using BaseArch.Application.ModuleRegistrations.Interfaces;
+using BaseArch.Domain.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
@@ -22,7 +22,7 @@ namespace BaseArch.Infrastructure.DependencyInjection.Registrations
             EnsureToLoadAllAssemblies();
 
             logger.LogInformation("Register services....");
-            services.RegisterAdditionalDependencyInjections(logger);
+            services.RegisterAdditionalModuleRegistration(logger);
             services.RegisterDIServices();
         }
 
@@ -51,20 +51,20 @@ namespace BaseArch.Infrastructure.DependencyInjection.Registrations
         }
 
         /// <summary>
-        /// Scan and register the 3rd libraries with <see cref="IDependencyInjection"/> interfaces
+        /// Scan and register the 3rd libraries with <see cref="IModuleRegistration"/> interfaces
         /// </summary>=
         /// <param name="services"><see cref="IServiceCollection"/></param>
-        private static void RegisterAdditionalDependencyInjections(this IServiceCollection services, ILogger logger)
+        private static void RegisterAdditionalModuleRegistration(this IServiceCollection services, ILogger logger)
         {
-            var additionalDITypes = GetAdditionalDependencyInjectionTypes();
+            var additionalDITypes = GetAdditionalModuleRegistrationTypes();
 
             additionalDITypes.ForEach(type =>
             {
                 var instance = ActivatorUtilities.CreateInstance(services.BuildServiceProvider(), type);
                 if (instance is not null)
                 {
-                    logger.LogInformation("Add dependency injection for {TypeName}....", type.FullName);
-                    var diInstance = (IDependencyInjection)instance;
+                    logger.LogInformation("Register dependencies for {TypeName}....", type.FullName);
+                    var diInstance = (IModuleRegistration)instance;
                     diInstance.Register(services);
                 }
             });
@@ -85,14 +85,14 @@ namespace BaseArch.Infrastructure.DependencyInjection.Registrations
         }
 
         /// <summary>
-        /// Get all types of class that implements from <see cref="IDependencyInjection"/>
+        /// Get all types of class that implements from <see cref="IModuleRegistration"/>
         /// </summary>
         /// <returns>List of Type</returns>
-        private static List<Type> GetAdditionalDependencyInjectionTypes()
+        private static List<Type> GetAdditionalModuleRegistrationTypes()
         {
             var types = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())
-                .Where(type => type.IsAssignableTo(typeof(IDependencyInjection)) && type.IsClass && !type.IsAbstract)
+                .Where(type => type.IsAssignableTo(typeof(IModuleRegistration)) && type.IsClass && !type.IsAbstract)
                 .ToList();
 
             return types;

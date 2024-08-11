@@ -20,7 +20,7 @@ namespace BaseArch.Infrastructure.MongoDB.UnitOfWork
         /// <summary>
         /// <see cref="RepositoryPool"/>
         /// </summary>
-        private readonly RepositoryPool repositoryPool = new(serviceProvider, dbContext);
+        private readonly RepositoryPool _repositoryPool = new(serviceProvider, dbContext);
 
         /// <inheritdoc/>
         public DatabaseType DatabaseType { get; init; } = DatabaseType.MongoDb;
@@ -28,13 +28,13 @@ namespace BaseArch.Infrastructure.MongoDB.UnitOfWork
         /// <inheritdoc/>
         public TIRepository GetRepository<TIRepository>()
         {
-            return repositoryPool.CreateRepository<TIRepository>();
+            return _repositoryPool.CreateRepository<TIRepository>();
         }
 
         /// <inheritdoc/>
         public IBaseRepository<TEntity, TKey> GetVirtualRepository<TEntity, TKey, TUserKey>() where TEntity : BaseEntity<TKey, TUserKey>
         {
-            return repositoryPool.CreateRepository<TEntity, TKey, TUserKey>();
+            return _repositoryPool.CreateRepository<TEntity, TKey, TUserKey>();
         }
 
         /// <inheritdoc/>

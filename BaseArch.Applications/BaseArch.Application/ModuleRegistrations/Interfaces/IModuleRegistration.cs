@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace BaseArch.Domain.DependencyInjection.Interfaces
+namespace BaseArch.Application.ModuleRegistrations.Interfaces
 {
     /// <summary>
     /// Dependency injection contract
     /// </summary>
-    public interface IDependencyInjection
+    public interface IModuleRegistration
     {
         /// <summary>
         /// Register the 3rd libraries

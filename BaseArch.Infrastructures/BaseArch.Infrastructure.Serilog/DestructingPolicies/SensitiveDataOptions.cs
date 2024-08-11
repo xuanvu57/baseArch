@@ -8,12 +8,12 @@
         /// <summary>
         /// Default mask value
         /// </summary>
-        private const string DefaultMaskValue = "**MASKED**";
+        private const string _defaultMaskValue = "**MASKED**";
 
         /// <summary>
         /// Mask value
         /// </summary>
-        public string MaskValue { get; set; } = DefaultMaskValue;
+        public string MaskValue { get; set; } = _defaultMaskValue;
 
         /// <summary>
         /// List of keywords for sensitive data

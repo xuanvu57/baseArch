@@ -1,6 +1,6 @@
 ﻿using Application.Identity.Services.Interfaces;
 using Asp.Versioning;
-using BaseArch.Presentation.RestApi;
+using BaseArch.Presentation.RestApi.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

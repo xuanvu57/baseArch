@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BaseArch.Presentation.RestApi
+namespace BaseArch.Presentation.RestApi.Controllers
 {
     /// <summary>
     /// Base controller

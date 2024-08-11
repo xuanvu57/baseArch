@@ -10,7 +10,7 @@ namespace BaseArch.Application.CorrelationId
         /// <summary>
         /// Current correlation id
         /// </summary>
-        private Guid CorrelationId { get; set; } = Guid.Empty;
+        private Guid _correlationId = Guid.Empty;
 
         /// <inheritdoc/>
         public string Generate()
@@ -21,13 +21,13 @@ namespace BaseArch.Application.CorrelationId
         /// <inheritdoc/>
         public string Get()
         {
-            return CorrelationId.ToString();
+            return _correlationId.ToString();
         }
 
         /// <inheritdoc/>
         public void Set(string correlationId)
         {
-            CorrelationId = Guid.Parse(correlationId);
+            _correlationId = Guid.Parse(correlationId);
         }
     }
 }

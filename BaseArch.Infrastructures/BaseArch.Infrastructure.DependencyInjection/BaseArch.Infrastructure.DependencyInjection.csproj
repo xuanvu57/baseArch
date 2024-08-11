@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\BaseArch.Applications\BaseArch.Application\BaseArch.Application.csproj" />
     <ProjectReference Include="..\..\BaseArch.Domain\BaseArch.Domain.csproj" />
   </ItemGroup>
 

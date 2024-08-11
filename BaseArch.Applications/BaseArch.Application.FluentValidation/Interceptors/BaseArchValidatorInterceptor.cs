@@ -5,7 +5,7 @@ using FluentValidation.AspNetCore;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BaseArch.Application.FluentValidation
+namespace BaseArch.Application.FluentValidation.Interceptors
 {
     /// <summary>
     /// Base validator interceptor to handle if validation failed

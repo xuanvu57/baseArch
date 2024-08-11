@@ -1,4 +1,4 @@
-﻿using BaseArch.Domain.DependencyInjection.Interfaces;
+﻿using BaseArch.Application.ModuleRegistrations.Interfaces;
 using BaseArch.Infrastructure.EFCore.Registrations;
 using BaseArch.Infrastructure.Identity.Registrations;
 using BaseArch.Infrastructure.MassTransit.Registrations;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure
 {
-    public class DependencyInjection : IDependencyInjection
+    public class DependencyInjection : IModuleRegistration
     {
         public void Register(IServiceCollection services)
         {

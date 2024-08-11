@@ -1,7 +1,7 @@
 ﻿using Application.User.Dtos;
 using Application.User.Services.Interfaces;
 using Asp.Versioning;
-using BaseArch.Presentation.RestApi;
+using BaseArch.Presentation.RestApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Users.Controllers

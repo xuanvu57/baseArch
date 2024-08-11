@@ -4,7 +4,7 @@ using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BaseArch.Infrastructure.gRPC
+namespace BaseArch.Infrastructure.gRPC.Clients
 {
     /// <summary>
     /// Base Grpc client

@@ -1,7 +1,7 @@
 ﻿using Application.Identity.Dtos.Requests;
 using Asp.Versioning;
 using BaseArch.Application.Models.Responses;
-using BaseArch.Presentation.RestApi;
+using BaseArch.Presentation.RestApi.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+    <PackageReference Include="TngTech.ArchUnitNET.xUnit" Version="0.10.6" />
+    <PackageReference Include="xunit" Version="2.9.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BaseArch.Applications\BaseArch.Application.AutoMapper\BaseArch.Application.AutoMapper.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Applications\BaseArch.Application.FluentValidation\BaseArch.Application.FluentValidation.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Applications\BaseArch.Application.MediatR\BaseArch.Application.MediatR.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Applications\BaseArch.Application\BaseArch.Application.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Domain\BaseArch.Domain.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.DependencyInjection\BaseArch.Infrastructure.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.EFCore\BaseArch.Infrastructure.EFCore.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.gRPC\BaseArch.Infrastructure.gRPC.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.Identity\BaseArch.Infrastructure.Identity.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.MassTransit\BaseArch.Infrastructure.MassTransit.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.MongoDB\BaseArch.Infrastructure.MongoDB.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.Serilog\BaseArch.Infrastructure.Serilog.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.StaticMultilingualProvider\BaseArch.Infrastructure.StaticMultilingualProvider.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure.StaticTimezonesProvider\BaseArch.Infrastructure.StaticTimezonesProvider.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Infrastructures\BaseArch.Infrastructure\BaseArch.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Presentations\BaseArch.Presentation.RestApi\BaseArch.Presentation.RestApi.csproj" />
+    <ProjectReference Include="..\..\BaseArch.Presentations\BaseArch.Presentation\BaseArch.Presentation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>
