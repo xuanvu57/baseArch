@@ -41,7 +41,7 @@ jobs:
 
       - name: Generate NuGet package
         run: |
-          dotnet pack baseArch/BaseArch.sln \
+          dotnet pack BaseArch.sln \
           --configuration Release \
           -p:PackageVersion=${{ needs.generate-version.outputs.new_version }} \
           -p:RepositoryUrl=https://github.com/xuanvu57/baseArch \
